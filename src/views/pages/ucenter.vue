@@ -9,13 +9,13 @@
                 <div class="user-info">
                     <div class="info-name">{{ name }}</div>
                     <div class="info-desc">
-                        <span>@lin-xin</span>
+                        <span></span>
                         <el-divider direction="vertical" />
-                        <el-link href="https://lin-xin.gitee.io" target="_blank">lin-xin.gitee.io</el-link>
+                        <el-link href="https://lin-xin.gitee.io" target="_blank"></el-link>
                     </div>
-                    <div class="info-desc">FE Developer</div>
+                    <div class="info-desc"></div>
                     <div class="info-icon">
-                        <a href="https://github.com/lin-xin" target="_blank"> <i class="el-icon-lx-github-fill"></i></a>
+                        <a href="https://github.com/Miloboxgithub" target="_blank"> <i class="el-icon-lx-github-fill"></i></a>
                         <i class="el-icon-lx-qq-fill"></i>
                         <i class="el-icon-lx-facebook-fill"></i>
                         <i class="el-icon-lx-twitter-fill"></i>
@@ -23,13 +23,13 @@
                 </div>
                 <div class="user-footer">
                     <div class="user-footer-item">
-                        <el-statistic title="Follower" :value="1800" />
+                        <el-statistic title="Follower" :value="0" />
                     </div>
                     <div class="user-footer-item">
-                        <el-statistic title="Following" :value="666" />
+                        <el-statistic title="Following" :value="0" />
                     </div>
                     <div class="user-footer-item">
-                        <el-statistic title="Total Post" :value="888" />
+                        <el-statistic title="Total Post" :value="0" />
                     </div>
                 </div>
             </el-card>
@@ -39,11 +39,11 @@
                 :body-style="{ padding: '20px 50px', height: '100%', boxSizing: 'border-box' }"
             >
                 <el-tabs tab-position="left" v-model="activeName">
-                    <el-tab-pane name="label1" label="消息通知" class="user-tabpane">
+                    <!-- <el-tab-pane name="label1" label="消息通知" class="user-tabpane">
                         <TabsComp />
-                    </el-tab-pane>
-                    <el-tab-pane name="label2" label="我的头像" class="user-tabpane">
-                        <div class="crop-wrap" v-if="activeName === 'label2'">
+                    </el-tab-pane> -->
+                    <el-tab-pane name="label1" label="我的头像" class="user-tabpane">
+                        <div class="crop-wrap" v-if="activeName === 'label1'">
                             <vueCropper
                                 ref="cropper"
                                 :img="imgSrc"
@@ -78,17 +78,16 @@
                     </el-tab-pane>
                     <el-tab-pane name="label4" label="赞赏作者" class="user-tabpane">
                         <div class="plugins-tips">
-                            如果该框架
                             <el-link href="https://github.com/lin-xin/vue-manage-system" target="_blank"
                                 >vue-manage-system</el-link
                             >
-                            对你有帮助，那就请作者喝杯饮料吧！<el-icon>
+                            <el-icon>
                                 <ColdDrink />
                             </el-icon>
-                            加微信号 linxin_20 探讨问题。
+                            
                         </div>
                         <div>
-                            <img src="https://lin-xin.gitee.io/images/weixin.jpg" />
+                            <!-- <img src="https://lin-xin.gitee.io/images/weixin.jpg" /> -->
                         </div>
                     </el-tab-pane>
                 </el-tabs>

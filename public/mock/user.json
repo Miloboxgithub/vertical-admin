@@ -2,22 +2,25 @@
     "list": [
         {
             "id": 1,
-            "name": "张三",
-            "password": "123",
-            "email": "123@qq.com",
-            "phone": "12345678944",
-            "date": "2024-01-01",
-            "role": "管理员"
+            "name": "会议室1",
+            "num": "123",
+            "lou": "1楼",
+            "status": true
         },
         {
             "id": 2,
-            "name": "李四",
-            "password": "123",
-            "email": "1234@qq.com",
-            "phone": "12345678945",
-            "date": "2024-01-01",
-            "role": "普通用户"
+            "name": "会议室2",
+            "num": "23",
+            "lou": "12楼",
+            "status": true
+        },
+        {
+            "id": 3,
+            "name": "会议室3",
+            "num": "12",
+            "lou": "17楼",
+            "status": false
         }
     ],
-    "pageTotal": 2
+    "pageTotal": 3
 }

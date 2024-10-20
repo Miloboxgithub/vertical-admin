@@ -7,22 +7,22 @@ import 'nprogress/nprogress.css';
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
-        redirect: '/dashboard',
+        redirect: '/system-user',
     },
     {
         path: '/',
         name: 'Home',
         component: Home,
         children: [
-            {
-                path: '/dashboard',
-                name: 'dashboard',
-                meta: {
-                    title: '系统首页',
-                    noAuth: true,
-                },
-                component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
-            },
+            // {
+            //     path: '/dashboard',
+            //     name: 'dashboard',
+            //     meta: {
+            //         title: '系统首页',
+            //         noAuth: true,
+            //     },
+            //     component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
+            // },
             {
                 path: '/system-user',
                 name: 'system-user',
