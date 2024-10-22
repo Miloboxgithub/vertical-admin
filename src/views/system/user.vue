@@ -66,7 +66,7 @@ import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
 import TableSearch from "@/components/table-search.vue";
 import { FormOption, FormOptionList } from "@/types/form-option";
-
+console.log(TableCustom)
 // 查询相关
 const query = reactive({
   name: "",
@@ -81,10 +81,10 @@ const handleSearch = () => {
 // 表格相关
 let columns = ref([
   { type: "index", label: "序号", width: 55, align: "center" },
-  { prop: "name", label: "会议室名称" },
-  { prop: "num", label: "容纳人数" },
-  { prop: "lou", label: "楼层" },
+  { prop: "roomName", label: "会议室名称" },
+  { prop: "capacity", label: "容纳人数" },
   { prop: "status", label: "Status" },
+  { prop: "time", label: "时间" },
   { prop: "operator", label: "操作", width: 250 },
 ]);
 const page = reactive({
@@ -93,16 +93,19 @@ const page = reactive({
   total: 0,
 });
 const tableData = ref<User[]>([]);
-const getData = async () => {
-  const res = await fetchUserData();
-  tableData.value = res.data.list;
-  page.total = res.data.pageTotal;
+const getData = async (e) => {
+  const ress = await fetchUserData(e);
+  console.log(ress,"shdfbkjdbgdfjk");
+   tableData.value = ress.list;
+   page.total = ress.total;
 };
-getData();
+getData(1);
 
 const changePage = (val: number) => {
+  
+  
   page.index = val;
-  getData();
+  getData(page.index);
 };
 
 // 新增/编辑弹窗相关
@@ -112,7 +115,6 @@ let options = ref<FormOption>({
   list: [
     { type: "input", label: "会议室名称", prop: "name", required: true },
     { type: "input", label: "容纳人数", prop: "num", required: true },
-    { type: "input", label: "楼层", prop: "lou", required: true },
     // { type: "input", label: "Status", prop: "status", required: true },
   ],
 });
@@ -126,7 +128,7 @@ const handleEdit = (row: User) => {
 };
 const updateData = () => {
   closeDialog();
-  getData();
+  //getData(2);
 };
 
 const closeDialog = () => {
@@ -150,10 +152,6 @@ const handleView = (row: User) => {
     {
       prop: "num",
       label: "容纳人数",
-    },
-    {
-      prop: "lou",
-      label: "楼层",
     },
     {
       prop: "status",

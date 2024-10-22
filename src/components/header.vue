@@ -123,7 +123,8 @@ const setFullScreen = () => {
 }
 
 .logo {
-    width: 35px;
+    width: 45px;
+    height: auto;
 }
 
 .web-title {

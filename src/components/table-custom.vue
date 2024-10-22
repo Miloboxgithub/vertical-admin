@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="table-toolbar" v-if="hasToolbar">
-            <div class="table-toolbar-left">
+            <div class="table-toolbar-left" style="display: flex;">
                 <slot name="toolbarBtn"></slot>
             </div>
             <div class="table-toolbar-right flex-center">
@@ -77,7 +77,7 @@
 import { toRefs, PropType, ref } from 'vue'
 import { Delete, Edit, View, Refresh } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
-
+import { fetchUserData } from "@/api";
 const props = defineProps({
     // 表格相关
     tableData: {
@@ -138,23 +138,37 @@ const props = defineProps({
         type: Function,
         default: () => { }
     },
-    changePage: {
-        type: Function,
-        default: () => { }
-    }
+    
 })
+const changePage = (val: number) => {
+    
+    getData(val);
+    
+}
 
-let {
-    tableData,
-    columns,
-    rowKey,
-    hasToolbar,
-    hasPagination,
-    total,
-    currentPage,
-    pageSize,
-    layout,
-} = toRefs(props)
+const getData = async (e) => {
+  const ress = await fetchUserData(e);
+  console.log(ress,"shdfbkjdbgdfjk");
+  
+   tableData.value = ress.list;
+   total.value = ress.total;
+   console.log(tableData.value,"tableData.value");
+   
+};
+// let {
+//     tableData,
+//     columns,
+//     rowKey,
+//     hasToolbar,
+//     hasPagination,
+//     total,
+//     currentPage,
+//     pageSize,
+//     layout,
+// } = toRefs(props)
+// 使用 toRefs 将 props 转换为响应式引用，但保持 currentPage 可写
+const { tableData, columns, rowKey, hasToolbar, hasPagination, total, pageSize, layout } = toRefs(props);
+const currentPage = ref(props.currentPage);
 
 columns.value.forEach((item) => {
     if (item.visible === undefined) {
@@ -170,7 +184,11 @@ const handleSelectionChange = (selection: any[]) => {
 
 // 当前页码变化的事件
 const handleCurrentChange = (val: number) => {
-    props.changePage(val)
+    console.log(val,'ssssssssssssssss')
+    currentPage.value = val;
+    console.log(currentPage.value,'qqqqqq');
+    
+    changePage(val)
 }
 
 const handleDelete = (row) => {

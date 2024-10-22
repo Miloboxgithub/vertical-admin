@@ -4,28 +4,38 @@ import VueSetupExtend from 'vite-plugin-vue-setup-extend';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+
 export default defineConfig({
-	base: './',
-	plugins: [
-		vue(),
-		VueSetupExtend(),
-		AutoImport({
-			resolvers: [ElementPlusResolver()]
-		}),
-		Components({
-			resolvers: [ElementPlusResolver()]
-		})
-	],
-	optimizeDeps: {
-		include: ['schart.js']
-	},
-	resolve: {
-		alias: {
-			'@': '/src',
-			'~': '/src/assets'
-		}
-	},
-	define: {
-		__VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "true",
-	},
+  base: './',
+  plugins: [
+    vue(),
+    VueSetupExtend(),
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
+  ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://ehuiyue.buteck.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+  optimizeDeps: {
+    include: ['schart.js'],
+  },
+  resolve: {
+    alias: {
+      '@': '/src',
+      '~': '/src/assets',
+    },
+  },
+  define: {
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true',
+  },
 });
