@@ -17,5 +17,6 @@ const props = defineProps({
 	}
 });
 const { row, title, column = 2, list } = props.data;
+console.log(row, title, column, list,'查看详情');
 
 </script>

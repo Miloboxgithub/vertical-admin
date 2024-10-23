@@ -140,6 +140,7 @@ const props = defineProps({
     },
     
 })
+
 const changePage = (val: number) => {
     
     getData(val);
@@ -147,8 +148,8 @@ const changePage = (val: number) => {
 }
 
 const getData = async (e) => {
-  const ress = await fetchUserData(e);
-  console.log(ress,"shdfbkjdbgdfjk");
+  const ress = await fetchUserData(e,'');
+  //console.log(ress,"shdfbkjdbgdfjk");
   
    tableData.value = ress.list;
    total.value = ress.total;
@@ -167,8 +168,16 @@ const getData = async (e) => {
 //     layout,
 // } = toRefs(props)
 // 使用 toRefs 将 props 转换为响应式引用，但保持 currentPage 可写
-const { tableData, columns, rowKey, hasToolbar, hasPagination, total, pageSize, layout } = toRefs(props);
+const { columns, rowKey, hasToolbar, hasPagination, total, pageSize, layout } = toRefs(props);
 const currentPage = ref(props.currentPage);
+const tableData = ref(props.tableData);
+// const columns = ref(props.columns);
+// const rowKey = ref(props.rowKey);
+// const hasToolbar = ref(props.hasToolbar);
+// const hasPagination = ref(props.hasPagination);
+// const layout = ref(props.layout);
+
+// 设置默认值
 
 columns.value.forEach((item) => {
     if (item.visible === undefined) {
@@ -184,9 +193,10 @@ const handleSelectionChange = (selection: any[]) => {
 
 // 当前页码变化的事件
 const handleCurrentChange = (val: number) => {
-    console.log(val,'ssssssssssssssss')
+    //console.log(val,'ssssssssssssssss')
     currentPage.value = val;
-    console.log(currentPage.value,'qqqqqq');
+
+    //console.log(currentPage.value,'qqqqqq');
     
     changePage(val)
 }
@@ -204,7 +214,7 @@ const handleDelete = (row) => {
 const getIndex = (index: number) => {
     return index + 1 + (currentPage.value - 1) * pageSize.value
 }
-
+//handleCurrentChange(1)
 </script>
 
 <style scoped>

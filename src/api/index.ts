@@ -8,21 +8,21 @@ export const fetchData = () => {
     });
 };
 //./mock/user.json
-export const fetchUserData =  async (e) =>  {
-    console.log('fetchUserData',e);
+export const fetchUserData =  async (e,n) =>  {
+    console.log('fetchUserData',e,'fffff',n);
     try {
         let response = await axios.get('/api/administrator/getmeetingroombypage', {
             params: {
                 page: e,
                 size: 10,
                 // room_id:'',
-                // room_name:'',
+                room_name:n,
                 // capacity:'',
                 // start_time:'',
                 // end_time:'',
             }
         });
-        //console.log(response.data.data.meeting_rooms);
+        console.log(response.data.data.meeting_rooms);
         let ans = response.data.data.meeting_rooms;
         ans.forEach(element => {
             element.time = element.startTime.substring(0, 5) + ' - ' + element.endTime.substring(0, 5);

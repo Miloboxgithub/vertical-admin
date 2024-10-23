@@ -3,6 +3,7 @@
     <TableSearch :query="query" :options="searchOpt" :search="handleSearch" />
     <div class="container">
       <TableCustom
+      :key="componentKey"
         :columns="columns"
         :tableData="tableData"
         :total="page.total"
@@ -33,6 +34,7 @@
       :close-on-click-modal="false"
       @close="closeDialog"
     >
+    
       <TableEdit
         :form-data="rowData"
         :options="options"
@@ -66,7 +68,9 @@ import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
 import TableSearch from "@/components/table-search.vue";
 import { FormOption, FormOptionList } from "@/types/form-option";
-console.log(TableCustom)
+console.log(TableSearch.props,'search');
+const startTime = ref('')
+const endTime = ref('')
 // 查询相关
 const query = reactive({
   name: "",
@@ -74,8 +78,10 @@ const query = reactive({
 const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "会议室查询：", prop: "name" },
 ]);
-const handleSearch = () => {
-  changePage(1);
+const handleSearch = (queryData) => {
+  console.log(queryData,'搜索');
+  
+  changePage(1,queryData.name);
 };
 
 // 表格相关
@@ -92,20 +98,24 @@ const page = reactive({
   size: 10,
   total: 0,
 });
+const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-const getData = async (e) => {
-  const ress = await fetchUserData(e);
+const getData = async (e,n) => {
+  const ress = await fetchUserData(e,n);
   console.log(ress,"shdfbkjdbgdfjk");
    tableData.value = ress.list;
    page.total = ress.total;
+   
+   componentKey.value++; 
+   console.log(tableData.value,'tableData');
 };
-getData(1);
+getData(1,'');
 
-const changePage = (val: number) => {
+const changePage = (val: number, name: string) => {
   
   
   page.index = val;
-  getData(page.index);
+  getData(page.index ,name);
 };
 
 // 新增/编辑弹窗相关
@@ -113,9 +123,10 @@ let options = ref<FormOption>({
   labelWidth: "100px",
   span: 12,
   list: [
-    { type: "input", label: "会议室名称", prop: "name", required: true },
-    { type: "input", label: "容纳人数", prop: "num", required: true },
+    { type: "input", label: "会议室名称", prop: "roomName", required: true },
+    { type: "input", label: "容纳人数", prop: "capacity", required: true },
     // { type: "input", label: "Status", prop: "status", required: true },
+    { type: "select", label: "时间", prop: "time", required: true },
   ],
 });
 const visible = ref(false);
@@ -146,11 +157,11 @@ const handleView = (row: User) => {
   viewData.value.row = { ...row };
   viewData.value.list = [
     {
-      prop: "name",
+      prop: "roomName",
       label: "会议室名称",
     },
     {
-      prop: "num",
+      prop: "capacity",
       label: "容纳人数",
     },
     {
@@ -158,8 +169,8 @@ const handleView = (row: User) => {
       label: "Status",
     },
     {
-      prop: "date",
-      label: "注册日期",
+      prop: "time",
+      label: "时间",
     },
   ];
   visible1.value = true;
