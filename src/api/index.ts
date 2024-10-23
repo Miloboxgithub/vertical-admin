@@ -44,9 +44,38 @@ export const fetchUserData =  async (e,n) =>  {
     
 };
 
-export const fetchRoleData = () => {
-    return request({
-        url: './mock/role.json',
-        method: 'get'
+export const DeleteData = async (e) => {
+      
+  try {
+    // 定义要发送的数据
+    const data = {
+        RoomIds:e
+        // ...其他需要的数据字段
+    };
+    // 发起 POST 请求
+    const response = await fetch('/api/administrator/delmeetingroom', {
+        method: 'DELETE', // 指定请求方法为 POST
+        headers: {
+            'Content-Type': 'application/json', // 设置请求头，告诉服务器发送的是 JSON 数据
+            // 根据需要可能还需要添加其他头部信息，如认证令牌等
+        },
+        body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
     });
+
+    // 检查响应状态
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // 解析响应数据为 JSON
+    const result = await response.json();
+    console.log(result); // 输出获取到的数据
+
+    // 处理 result 数据
+    // ...
+    return result
+} catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    return error
+}
 };

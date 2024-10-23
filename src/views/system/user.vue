@@ -3,7 +3,7 @@
     <TableSearch :query="query" :options="searchOpt" :search="handleSearch" />
     <div class="container">
       <TableCustom
-      :key="componentKey"
+        :key="componentKey"
         :columns="columns"
         :tableData="tableData"
         :total="page.total"
@@ -12,10 +12,10 @@
         :page-change="changePage"
         :editFunc="handleEdit"
       >
-      <template #status="{ rows }">
-                    <el-tag type="success" v-if="rows.status">Active</el-tag>
-                    <el-tag type="danger" v-else>Disabled</el-tag>
-                </template>
+        <template #status="{ rows }">
+          <el-tag type="success" v-if="rows.status">Active</el-tag>
+          <el-tag type="danger" v-else>Disabled</el-tag>
+        </template>
         <template #toolbarBtn>
           <el-button
             type="warning"
@@ -34,7 +34,6 @@
       :close-on-click-modal="false"
       @close="closeDialog"
     >
-    
       <TableEdit
         :form-data="rowData"
         :options="options"
@@ -50,10 +49,10 @@
     >
       <TableDetail :data="viewData">
         <template #status="{ rows }">
-                    <el-tag type="success" v-if="rows.status">Active</el-tag>
-                    <el-tag type="danger" v-else>Disabled</el-tag>
-                </template>
-    </TableDetail>
+          <el-tag type="success" v-if="rows.status">Active</el-tag>
+          <el-tag type="danger" v-else>Disabled</el-tag>
+        </template>
+      </TableDetail>
     </el-dialog>
   </div>
 </template>
@@ -63,14 +62,15 @@ import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
-import { fetchUserData } from "@/api";
+import { fetchUserData, DeleteData } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
 import TableSearch from "@/components/table-search.vue";
 import { FormOption, FormOptionList } from "@/types/form-option";
-console.log(TableSearch.props,'search');
-const startTime = ref('')
-const endTime = ref('')
+import axios from "axios";
+console.log(TableSearch.props, "search");
+const startTime = ref("");
+const endTime = ref("");
 // 查询相关
 const query = reactive({
   name: "",
@@ -79,9 +79,9 @@ const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "会议室查询：", prop: "name" },
 ]);
 const handleSearch = (queryData) => {
-  console.log(queryData,'搜索');
-  
-  changePage(1,queryData.name);
+  console.log(queryData, "搜索");
+
+  changePage(1, queryData.name);
 };
 
 // 表格相关
@@ -100,22 +100,20 @@ const page = reactive({
 });
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-const getData = async (e,n) => {
-  const ress = await fetchUserData(e,n);
-  console.log(ress,"shdfbkjdbgdfjk");
-   tableData.value = ress.list;
-   page.total = ress.total;
-   
-   componentKey.value++; 
-   console.log(tableData.value,'tableData');
+const getData = async (e, n) => {
+  const ress = await fetchUserData(e, n);
+  console.log(ress, "shdfbkjdbgdfjk");
+  tableData.value = ress.list;
+  page.total = ress.total;
+
+  componentKey.value++;
+  console.log(tableData.value, "tableData");
 };
-getData(1,'');
+getData(1, "");
 
 const changePage = (val: number, name: string) => {
-  
-  
   page.index = val;
-  getData(page.index ,name);
+  getData(page.index, name);
 };
 
 // 新增/编辑弹窗相关
@@ -136,6 +134,7 @@ const handleEdit = (row: User) => {
   rowData.value = { ...row };
   isEdit.value = true;
   visible.value = true;
+  getData(1, "");
 };
 const updateData = () => {
   closeDialog();
@@ -177,8 +176,15 @@ const handleView = (row: User) => {
 };
 
 // 删除相关
-const handleDelete = (row: User) => {
-  ElMessage.success("删除成功");
+const handleDelete = async (row: User) => {
+  console.log(row, "删除");
+  const res = await DeleteData(row.id);
+  if (res.data.message == "success") {
+    ElMessage.success("删除成功");
+  } else {
+    ElMessage.error("删除失败");
+  }
+  getData(1, "");
 };
 </script>
 

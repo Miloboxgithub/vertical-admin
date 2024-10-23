@@ -119,11 +119,11 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 		update(form.value);
 	})
 	if(!edit){
-	console.log(form.value,'增添数据');
+	//console.log(form.value,'增添数据');
 	createRoom(form.value);
 	}
 	else{
-		console.log(form.value,'修改数据');
+		//console.log(form.value,'修改数据');
 		changeRoom(form.value);
 	}
 };
@@ -171,8 +171,8 @@ const createRoom = async (e) => {
     try {
         // 定义要发送的数据
         const data = {
-            room_name: e.name,
-            capacity: e.num,
+            room_name: e.roomName,
+            capacity: parseInt(e.capacity),
 			start_time:e.time.substring(0,5)+':00',
 			end_time:e.time.substring(6,11)+':00',
             // ...其他需要的数据字段
