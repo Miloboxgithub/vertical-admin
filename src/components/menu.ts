@@ -20,10 +20,10 @@ export const menuData: Menus[] = [
         title: '用户管理',
     },
     // {
-    //     id: '2',
+    //     id: '3',
     //     icon: 'Odometer',
-    //     index: '/system-menu',
-    //     title: '菜单管理',
+    //     index: '/system-yuyue',
+    //     title: '预约管理',
     // },
     {
         id: '1',
@@ -32,23 +32,23 @@ export const menuData: Menus[] = [
         icon: 'Odometer',
         children: [
             {
-                id: '11',
-                pid: '1',
-                index: '/import',
-                title: '表单',
+                id: '14',
+                pid: '14',
+                index: '/system-yuyue',
+                title: '预约记录',
             },
-            {
-                id: '32',
-                pid: '2',
-                index: '/table-editor',
-                title: '可编辑表格',
-            },
-            {
-                id: '13',
-                pid: '3',
-                index: '/system-menu',
-                title: '菜单管理',
-            },
+            // {
+            //     id: '32',
+            //     pid: '2',
+            //     index: '/table-editor',
+            //     title: '可编辑表格',
+            // },
+            // {
+            //     id: '13',
+            //     pid: '3',
+            //     index: '/system-menu',
+            //     title: '菜单管理',
+            // },
         ],
     },
     // {

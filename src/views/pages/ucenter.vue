@@ -76,7 +76,7 @@
                             </el-form-item>
                         </el-form>
                     </el-tab-pane>
-                    <el-tab-pane name="label4" label="赞赏作者" class="user-tabpane">
+                    <!-- <el-tab-pane name="label4" label="赞赏作者" class="user-tabpane">
                         <div class="plugins-tips">
                             <el-link href="https://github.com/lin-xin/vue-manage-system" target="_blank"
                                 >vue-manage-system</el-link
@@ -87,9 +87,9 @@
                             
                         </div>
                         <div>
-                            <!-- <img src="https://lin-xin.gitee.io/images/weixin.jpg" /> -->
+                            <img src="https://lin-xin.gitee.io/images/weixin.jpg" />
                         </div>
-                    </el-tab-pane>
+                    </el-tab-pane> -->
                 </el-tabs>
             </el-card>
         </div>

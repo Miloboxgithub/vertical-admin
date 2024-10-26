@@ -1,12 +1,12 @@
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
-import VueSetupExtend from 'vite-plugin-vue-setup-extend';
-import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import VueSetupExtend from "vite-plugin-vue-setup-extend";
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
 export default defineConfig({
-  base: './',
+  base: "./",
   plugins: [
     vue(),
     VueSetupExtend(),
@@ -19,23 +19,23 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api': {
-        target: 'https://ehuiyue.buteck.com',
+      "/api": {
+        target: "https://ehuiyue.buteck.com/api/sadmin",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },
   optimizeDeps: {
-    include: ['schart.js'],
+    include: ["schart.js"],
   },
   resolve: {
     alias: {
-      '@': '/src',
-      '~': '/src/assets',
+      "@": "/src",
+      "~": "/src/assets",
     },
   },
   define: {
-    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true',
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "true",
   },
 });

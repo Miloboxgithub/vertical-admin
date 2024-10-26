@@ -51,6 +51,15 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "system-menu" */ '../views/system/menu.vue'),
             },
             {
+                path: '/system-yuyue',
+                name: 'system-yuyue',
+                meta: {
+                    title: '预约管理',
+                    permiss: '14',
+                },
+                component: () => import(/* webpackChunkName: "system-menu" */ '../views/system/yuyue.vue'),
+            },
+            {
                 path: '/table',
                 name: 'basetable',
                 meta: {

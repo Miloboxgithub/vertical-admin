@@ -17,14 +17,14 @@
           <el-tag type="success" v-if="rows.status">Active</el-tag>
           <el-tag type="danger" v-else>Disabled</el-tag>
         </template>
-        <template #toolbarBtn>
-          <el-button
-            type="warning"
-            :icon="CirclePlusFilled"
-            @click="visible = true"
-            >新增</el-button
-          >
-        </template>
+        <!-- <template #toolbarBtn>
+            <el-button
+              type="warning"
+              :icon="CirclePlusFilled"
+              @click="visible = true"
+              >新增</el-button
+            >
+          </template> -->
       </TableCustom>
     </div>
     <el-dialog
@@ -63,7 +63,7 @@ import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
-import { fetchUserData, DeleteData } from "@/api";
+import { fetchUserData3, DeleteData3 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
 import TableSearch from "@/components/table-search.vue";
@@ -77,21 +77,23 @@ const query = reactive({
   name: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "会议室查询：", prop: "name" },
+  { type: "input", label: "预约人查询：", prop: "reservedByName" },
 ]);
 const handleSearch = (queryData) => {
   console.log(queryData, "搜索");
 
-  changePage(1, queryData.name);
+  changePage(1, queryData.reservedByName);
 };
 
 // 表格相关
 let columns = ref([
   { type: "index", label: "序号", width: 55, align: "center" },
-  { prop: "roomName", label: "会议室名称" },
-  { prop: "capacity", label: "容纳人数" },
-  { prop: "status", label: "Status" },
-  { prop: "time", label: "时间" },
+  { prop: "reservedByName", label: "预约人" },
+  { prop: "room_name", label: "会议室名称" },
+  { prop: "ymd", label: "预约日期" },
+  { prop: "reservedByPhone", label: "预约人电话" },
+  { prop: "meetingType", label: "会议类型" },
+  { prop: "time", label: "预约时段" },
   { prop: "operator", label: "操作", width: 250 },
 ]);
 const page = reactive({
@@ -102,8 +104,8 @@ const page = reactive({
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
 const getData = async (e, n) => {
-  const ress = await fetchUserData(e, n);
-  //console.log(ress, "shdfbkjdbgdfjk");
+  const ress = await fetchUserData3(e, n);
+  console.log(ress, "shdfbkjdbgdfjk");
   tableData.value = ress.list;
   page.total = ress.total;
 
@@ -122,10 +124,18 @@ let options = ref<FormOption>({
   labelWidth: "100px",
   span: 12,
   list: [
-    { type: "input", label: "会议室名称", prop: "roomName", required: true },
-    { type: "input", label: "容纳人数", prop: "capacity", required: true },
+    { type: "input", label: "预约人", prop: "reservedByName", required: true },
+    //{ type: "input", label: "会议室名称", prop: "room_name", required: true },
+    { type: "input", label: "预约日期", prop: "ymd", required: true },
     // { type: "input", label: "Status", prop: "status", required: true },
-    { type: "select", label: "时间", prop: "time", required: true },
+    //{ type: "select", label: "时间", prop: "time", required: true },
+    {
+      type: "input",
+      label: "预约人电话",
+      prop: "reservedByPhone",
+      required: true,
+    },
+    { type: "input", label: "会议类型", prop: "meetingType", required: true },
   ],
 });
 const visible = ref(false);
@@ -145,7 +155,6 @@ const updateData = () => {
   }, 500);
   //getData(1, "");
   console.log("更新数据");
-  
 };
 
 const closeDialog = () => {
@@ -163,20 +172,28 @@ const handleView = (row: User) => {
   viewData.value.row = { ...row };
   viewData.value.list = [
     {
-      prop: "roomName",
+      prop: "reservedByName",
+      label: "预约人",
+    },
+    {
+      prop: "room_name",
       label: "会议室名称",
     },
     {
-      prop: "capacity",
-      label: "容纳人数",
+      prop: "ymd",
+      label: "预约日期",
     },
     {
-      prop: "status",
-      label: "Status",
+      prop: "reservedByPhone",
+      label: "预约人电话",
+    },
+    {
+      prop: "meetingType",
+      label: "会议类型",
     },
     {
       prop: "time",
-      label: "时间",
+      label: "时段",
     },
   ];
   visible1.value = true;
@@ -185,7 +202,7 @@ const handleView = (row: User) => {
 // 删除相关
 const handleDelete = async (row: User) => {
   console.log(row, "删除");
-  const res = await DeleteData(row.id);
+  const res = await DeleteData3(row.id);
   if (res.data.message == "success") {
     ElMessage.success("删除成功");
   } else {

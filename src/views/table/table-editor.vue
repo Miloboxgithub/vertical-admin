@@ -58,8 +58,8 @@ let columns = ref([
 ])
 const tableData = ref([]);
 const getData = async () => {
-	const res = await fetchUserData();
-	tableData.value = res.data.list;
+	// const res = await fetchUserData();
+	// tableData.value = res.data.list;
 };
 getData();
 

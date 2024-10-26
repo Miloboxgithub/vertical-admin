@@ -120,11 +120,16 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 	})
 	if(!edit){
 	//console.log(form.value,'增添数据');
-	createRoom(form.value);
+	if('role' in form.value)createRoom2(form.value);
+	else createRoom(form.value);
+	
 	}
 	else{
 		//console.log(form.value,'修改数据');
-		changeRoom(form.value);
+		if('role' in form.value)changeRoom2(form.value);
+		else if('reservedByName' in form.value)changeRoom3(form.value);
+		else changeRoom(form.value);
+		
 	}
 };
 const changeRoom = async (e) => {
@@ -142,7 +147,7 @@ const changeRoom = async (e) => {
 			data.end_time = e.endTime
 		}
         // 发起 POST 请求
-        const response = await fetch('/api/administrator/updmeetingroom', {
+        const response = await fetch('/api/updmeetingroom', {
             method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json', // 设置请求头，告诉服务器发送的是 JSON 数据
@@ -181,7 +186,7 @@ const createRoom = async (e) => {
 			data.end_time = e.endTime
 		}
         // 发起 POST 请求
-        const response = await fetch('/api/administrator/addmeetingroom', {
+        const response = await fetch('/api/addmeetingroom', {
             method: 'POST', // 指定请求方法为 POST
             headers: {
                 'Content-Type': 'application/json', // 设置请求头，告诉服务器发送的是 JSON 数据
@@ -206,6 +211,118 @@ const createRoom = async (e) => {
         console.error('There was a problem with the fetch operation:', error);
     }
 }
+const changeRoom2 = async (e) => {
+	try {
+        // 定义要发送的数据
+        const data = {
+			id: e.id,
+			name: e.name,
+			role: e.role,
+			phone: e.phoneNumber,
+			number: e.studentOrStaffNumber,
+            // ...其他需要的数据字段
+        };
+        // 发起 POST 请求
+        const response = await fetch('/api/updateuser', {
+            method: 'PUT', 
+            headers: {
+                'Content-Type': 'application/json', // 设置请求头，告诉服务器发送的是 JSON 数据
+                // 根据需要可能还需要添加其他头部信息，如认证令牌等
+            },
+            body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
+        });
+
+        // 检查响应状态
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // 解析响应数据为 JSON
+        const result = await response.json();
+        console.log(result); // 输出获取到的数据
+
+        // 处理 result 数据
+        // ...
+
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    }
+        }
+const createRoom2 = async (e) => {
+    try {
+		console.log(e,'创建用户');
+		
+        // 定义要发送的数据
+        const data = {
+            name: e.name,
+            role: e.role,
+            phone: e.phoneNumber,
+            number: e.studentOrStaffNumber,
+            // ...其他需要的数据字段
+        };
+        // 发起 POST 请求
+        const response = await fetch('/api/createuser', {
+            method: 'POST', // 指定请求方法为 POST
+            headers: {
+                'Content-Type': 'application/json', // 设置请求头，告诉服务器发送的是 JSON 数据
+                // 根据需要可能还需要添加其他头部信息，如认证令牌等
+            },
+            body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
+        });
+
+        // 检查响应状态
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // 解析响应数据为 JSON
+        const result = await response.json();
+        console.log(result); // 输出获取到的数据
+
+        // 处理 result 数据
+        // ...
+
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    }
+}
+const changeRoom3 = async (e) => {
+	try {
+        // 定义要发送的数据
+        const data = {
+			id: e.id,
+			meetingType:e.meetingType,
+			ymd:e.ymd,
+			reservedByName: e.reservedByName,
+			reservedByPhone: e.reservedByPhone
+            // ...其他需要的数据字段
+        };
+        // 发起 POST 请求
+        const response = await fetch('/api/updatereservation', {
+            method: 'PUT', 
+            headers: {
+                'Content-Type': 'application/json', // 设置请求头，告诉服务器发送的是 JSON 数据
+                // 根据需要可能还需要添加其他头部信息，如认证令牌等
+            },
+            body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
+        });
+
+        // 检查响应状态
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // 解析响应数据为 JSON
+        const result = await response.json();
+        console.log(result); // 输出获取到的数据
+
+        // 处理 result 数据
+        // ...
+
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    }
+        }
 const handleAvatarSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
 	form.value.thumb = URL.createObjectURL(uploadFile.raw!);
 };
