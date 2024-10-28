@@ -69,6 +69,12 @@ import TableDetail from "@/components/table-detail.vue";
 import TableSearch from "@/components/table-search.vue";
 import { FormOption, FormOptionList } from "@/types/form-option";
 import axios from "axios";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const goTologon = () => {
+  // 使用 router.push 方法进行页面跳转
+  router.push('/login');
+};
 console.log(TableSearch.props, "search");
 const startTime = ref("");
 const endTime = ref("");
@@ -103,12 +109,15 @@ const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
 const getData = async (e, n) => {
   const ress = await fetchUserData(e, n);
+  if(ress=='Request failed with status code 403'){
+    goTologon();
+  }
   //console.log(ress, "shdfbkjdbgdfjk");
   tableData.value = ress.list;
   page.total = ress.total;
 
   componentKey.value++;
-  console.log(tableData.value, "tableData");
+  console.log(ress,tableData.value, "tableData");
 };
 getData(1, "");
 
@@ -125,7 +134,7 @@ let options = ref<FormOption>({
     { type: "input", label: "会议室名称", prop: "roomName", required: true },
     { type: "input", label: "容纳人数", prop: "capacity", required: true },
     // { type: "input", label: "Status", prop: "status", required: true },
-    { type: "select", label: "时间", prop: "time", required: true },
+    // { type: "select", label: "时间", prop: "time", required: true },
   ],
 });
 const visible = ref(false);

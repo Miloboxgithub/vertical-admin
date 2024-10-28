@@ -276,23 +276,23 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-    history: createWebHashHistory(),
-    routes,
-});
+    history: createWebHashHistory('/sadmin'), // 设置基础路径
+    routes
+  });
 
 router.beforeEach((to, from, next) => {
     NProgress.start();
     const role = localStorage.getItem('vuems_name');
     const permiss = usePermissStore();
-    next();
-    // if (!role && to.meta.noAuth !== true) {
-    //     next('/login');
+    if (!role && to.meta.noAuth !== true) {
+        next('/login');}
     // } else if (typeof to.meta.permiss == 'string' && !permiss.key.includes(to.meta.permiss)) {
     //     // 如果没有权限，则进入403
     //     next('/403');
-    // } else {
-    //     next();
-    // }
+    // } 
+    else {
+        next();
+    }
 });
 
 router.afterEach(() => {

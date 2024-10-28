@@ -6,7 +6,7 @@ import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
 export default defineConfig({
-  base: "./",
+  base: "/sadmin/",
   plugins: [
     vue(),
     VueSetupExtend(),
@@ -20,7 +20,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://ehuiyue.buteck.com/api/sadmin",
+        target: "https://ehuiyue.buteck.com/api",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

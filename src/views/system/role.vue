@@ -76,6 +76,12 @@ import { UploadProps } from "element-plus";
 import * as XLSX from "xlsx";
 import RolePermission from "./role-permission.vue";
 import type { UploadInstance, UploadFile } from "element-plus";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const goTologon = () => {
+  // 使用 router.push 方法进行页面跳转
+  router.push("/login");
+};
 console.log(TableSearch.props, "search");
 const startTime = ref("");
 const endTime = ref("");
@@ -98,6 +104,7 @@ let columns = ref([
   { prop: "name", label: "用户姓名" },
   { prop: "phoneNumber", label: "电话" },
   { prop: "studentOrStaffNumber", label: "工号" },
+  { prop: "department", label: "部门" },
   { prop: "role", label: "角色" },
   { prop: "status", label: "Status" },
   { prop: "operator", label: "操作", width: 250 },
@@ -112,6 +119,9 @@ const tableData = ref<User[]>([]);
 const getData = async (e, n) => {
   const ress = await fetchUserData2(e, n);
   //console.log(ress, "shdfbkjdbgdfjk");
+  if (ress == "Request failed with status code 403") {
+    goTologon();
+  }
   tableData.value = ress.list;
   page.total = ress.total;
   componentKey.value++;
@@ -138,7 +148,9 @@ let options = ref<FormOption>({
       prop: "studentOrStaffNumber",
       required: true,
     },
-    { type: "input", label: "角色", prop: "role", required: true },
+    { type: "select", label: "角色", prop: "role", required: true },
+    { type: "input", prop: "department", label: "部门", required: true },
+    { type: "input", prop: "password", label: "密码" },
   ],
 });
 const visible = ref(false);
@@ -194,6 +206,10 @@ const handleView = (row: User) => {
       prop: "status",
       label: "角色状态",
     },
+    {
+      prop: "department",
+      label: "部门",
+    },
   ];
   visible1.value = true;
 };
@@ -211,7 +227,7 @@ const handleDelete = async (row: User) => {
   page.index = 1;
 };
 //批量导入
-const uploadUrl = "/api/teacherlist"; // 替换为你的后端URL
+const uploadUrl = "/api/sadmin/teacherlist"; // 替换为你的后端URL
 
 const selectAndUploadFile = async () => {
   const input = document.createElement("input");
@@ -240,7 +256,7 @@ const selectAndUploadFile = async () => {
         headers: {
           "Content-Type": "multipart/form-data",
           // 如果需要认证，请添加认证头
-          // 'Authorization': 'Bearer 你的Token'
+          Authorization: localStorage.getItem("vuems_token"),
         },
       });
 

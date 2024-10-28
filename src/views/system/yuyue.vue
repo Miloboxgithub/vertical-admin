@@ -68,7 +68,14 @@ import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
 import TableSearch from "@/components/table-search.vue";
 import { FormOption, FormOptionList } from "@/types/form-option";
+import { useRouter } from "vue-router";
 import axios from "axios";
+const router = useRouter();
+const goTologon = () => {
+  // 使用 router.push 方法进行页面跳转
+  router.push('/login');
+};
+
 console.log(TableSearch.props, "search");
 const startTime = ref("");
 const endTime = ref("");
@@ -106,6 +113,9 @@ const tableData = ref<User[]>([]);
 const getData = async (e, n) => {
   const ress = await fetchUserData3(e, n);
   console.log(ress, "shdfbkjdbgdfjk");
+  if(ress=='Request failed with status code 403'){
+    goTologon();
+  }
   tableData.value = ress.list;
   page.total = ress.total;
 
