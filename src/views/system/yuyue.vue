@@ -81,15 +81,15 @@ const startTime = ref("");
 const endTime = ref("");
 // 查询相关
 const query = reactive({
-  name: "",
+  ymd: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "预约人查询：", prop: "reservedByName" },
+  { type: "input", label: "日期查询：", prop: "ymd" },
 ]);
 const handleSearch = (queryData) => {
   console.log(queryData, "搜索");
 
-  changePage(1, queryData.reservedByName);
+  changePage(1, queryData.ymd);
 };
 
 // 表格相关

@@ -8,7 +8,7 @@ export const fetchData = () => {
   });
 };
 //./mock/user.json
-export const fetchUserData = async (e, n) => {
+export const fetchUserData = async (e, n,p) => {
   console.log("fetchUserData", e, "fffff", n);
   try {
     let response = await axios.get("/api/sadmin/getmeetingroombypage", {
@@ -20,9 +20,10 @@ export const fetchUserData = async (e, n) => {
         // capacity:'',
         // start_time:'',
         // end_time:'',
+        reverse : p,
       },
       headers: {
-        "Authorization": localStorage.getItem("vuems_token"),
+        Authorization: localStorage.getItem("vuems_token"),
       },
     });
     console.log(response.data);
@@ -46,7 +47,7 @@ export const fetchUserData = async (e, n) => {
   } catch (error) {
     console.error("Error fetching user data:", error.message);
     //返回登录页
-    return error.message
+    return error.message;
   }
 };
 
@@ -63,7 +64,7 @@ export const DeleteData = async (e) => {
       headers: {
         "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
         // 根据需要可能还需要添加其他头部信息，如认证令牌等
-        "Authorization": localStorage.getItem("vuems_token"),
+        Authorization: localStorage.getItem("vuems_token"),
       },
       body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
     });
@@ -86,7 +87,7 @@ export const DeleteData = async (e) => {
   }
 };
 
-export const fetchUserData2 = async (e, n) => {
+export const fetchUserData2 = async (e, n,p) => {
   console.log("fetchUserData2", e, "fffff", n);
   try {
     let response = await axios.get("/api/sadmin/getuserbypage", {
@@ -98,9 +99,10 @@ export const fetchUserData2 = async (e, n) => {
         // capacity:'',
         // start_time:'',
         // end_time:'',
+        reverse : p,
       },
       headers: {
-        "Authorization": localStorage.getItem("vuems_token"),
+        Authorization: localStorage.getItem("vuems_token"),
       },
     });
     console.log(response.data.data.users);
@@ -119,7 +121,7 @@ export const fetchUserData2 = async (e, n) => {
     return ans;
   } catch (error) {
     console.error("Error fetching user data:", error);
-    return error.message
+    return error.message;
   }
 };
 
@@ -135,7 +137,7 @@ export const DeleteData2 = async (e) => {
       method: "DELETE", // 指定请求方法为 POST
       headers: {
         "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
-        "Authorization": localStorage.getItem("vuems_token"),
+        Authorization: localStorage.getItem("vuems_token"),
       },
       body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
     });
@@ -166,22 +168,20 @@ export const fetchUserData3 = async (e, n) => {
         page: e,
         size: 10,
         // room_id:'',
-        reservedByName: n,
+        ymd: n,
         // capacity:'',
         // start_time:'',
         // end_time:'',
       },
       headers: {
-        "Authorization": localStorage.getItem("vuems_token"),
+        Authorization: localStorage.getItem("vuems_token"),
       },
     });
     console.log(response.data.data.reservations);
     let ans = response.data.data.reservations;
     ans.forEach((element) => {
-      element.time =
-        element.start_time.substring(0, 5) +
-        " - " +
-        element.end_time.substring(0, 5);
+      element.time = element.start_time + " - " + element.end_time;
+
       if (element.deletedAt == null) {
         element.status = true;
       } else {
@@ -195,7 +195,7 @@ export const fetchUserData3 = async (e, n) => {
     return ans;
   } catch (error) {
     console.error("Error fetching user data:", error);
-    return error.message
+    return error.message;
   }
 };
 
@@ -212,7 +212,7 @@ export const DeleteData3 = async (e) => {
       headers: {
         "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
 
-        "Authorization": localStorage.getItem("vuems_token"),
+        Authorization: localStorage.getItem("vuems_token"),
       },
       body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
     });

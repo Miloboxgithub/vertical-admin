@@ -78,7 +78,7 @@ import { FormOption } from "@/types/form-option";
 import { FormInstance, FormRules, UploadProps } from "element-plus";
 import { PropType, ref } from "vue";
 
-const { options, formData, edit, update } = defineProps({
+const { options, formData, edit, update , edits } = defineProps({
   options: {
     type: Object as PropType<FormOption>,
     required: true,
@@ -95,6 +95,10 @@ const { options, formData, edit, update } = defineProps({
     type: Function,
     required: true,
   },
+  edits: {
+    type: Boolean,
+    required: true,
+  }
 });
 options.list.forEach((item) => {
   item.opts = [
@@ -144,7 +148,7 @@ options.list.forEach((item) => {
   // 	value: '18:00-19:00'
   // },
 });
-console.log(edit, "eeeeeeeeeee");
+//console.log(edit, "eeeeeeeeeee");
 const form = ref({ ...(edit ? formData : {}) });
 console.log(form.value.password, "form.value");
 form.value.password=''
@@ -178,6 +182,12 @@ const saveEdit = (formEl: FormInstance | undefined) => {
     else if ("reservedByName" in form.value) changeRoom3(form.value);
     else changeRoom(form.value);
   }
+  //console.log(edits,'edits');
+  if(edits){
+    //console.log(form.value.roomName,'editsform');
+    DeleteRoom(form.value.roomName)
+  }
+  
 };
 const changeRoom = async (e) => {
   try {
@@ -377,6 +387,43 @@ const changeRoom3 = async (e) => {
     console.error("There was a problem with the fetch operation:", error);
   }
 };
+//一键删除房间
+const DeleteRoom = async (e) => {
+  try {
+    // 定义要发送的数据
+    const data = {
+      room_name: e,
+      // ...其他需要的数据字段
+    };
+    // 发起 POST 请求
+    const response = await fetch("/api/sadmin/delmeetingroombyname", {
+      method: "DELETE", // 指定请求方法为 POST
+      headers: {
+        "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
+        // 根据需要可能还需要添加其他头部信息，如认证令牌等
+        "Authorization": localStorage.getItem("vuems_token"),
+      },
+      body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
+    });
+
+    // 检查响应状态
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // 解析响应数据为 JSON
+    const result = await response.json();
+    console.log(result); // 输出获取到的数据
+
+    // 处理 result 数据
+    // ...
+    return result;
+  } catch (error) {
+    console.error("There was a problem with the fetch operation:", error);
+    return error;
+  }
+
+}
 const handleAvatarSuccess: UploadProps["onSuccess"] = (
   response,
   uploadFile

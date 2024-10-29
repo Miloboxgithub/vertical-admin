@@ -14,8 +14,8 @@
         :editFunc="handleEdit"
       >
         <template #status="{ rows }">
-          <el-tag type="success" v-if="rows.status">Active</el-tag>
-          <el-tag type="danger" v-else>Disabled</el-tag>
+          <el-tag type="success" v-if="rows.status">正常</el-tag>
+          <el-tag type="danger" v-else>不可预约</el-tag>
         </template>
         <template #toolbarBtn>
           <el-button
@@ -24,6 +24,10 @@
             @click="visible = true"
             >新增</el-button
           >
+          <el-button type="danger" @click="visible2 = true">
+            <el-icon style="margin-right: 5px"><DeleteFilled /></el-icon>
+            删除会议室
+          </el-button>
         </template>
       </TableCustom>
     </div>
@@ -55,6 +59,21 @@
         </template>
       </TableDetail>
     </el-dialog>
+    <el-dialog
+      title="删除会议室"
+      v-model="visible2"
+      width="700px"
+      destroy-on-close
+      :close-on-click-modal="false"
+      @close="closeDialog"
+    >
+      <TableEdit
+        :form-data="rowData"
+        :options="optionss"
+        :edits="visible2"
+        :update="updateData"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -73,7 +92,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const goTologon = () => {
   // 使用 router.push 方法进行页面跳转
-  router.push('/login');
+  router.push("/login");
 };
 console.log(TableSearch.props, "search");
 const startTime = ref("");
@@ -88,15 +107,14 @@ const searchOpt = ref<FormOptionList[]>([
 const handleSearch = (queryData) => {
   console.log(queryData, "搜索");
 
-  changePage(1, queryData.name);
+  changePage(1, queryData.name, "");
 };
-
 // 表格相关
 let columns = ref([
   { type: "index", label: "序号", width: 55, align: "center" },
-  { prop: "roomName", label: "会议室名称" },
+  { prop: "roomName", label: "会议室名称", sortable: 'custom' },
   { prop: "capacity", label: "容纳人数" },
-  { prop: "status", label: "Status" },
+  { prop: "status", label: "状态" },
   { prop: "time", label: "时间" },
   { prop: "operator", label: "操作", width: 250 },
 ]);
@@ -107,9 +125,9 @@ const page = reactive({
 });
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-const getData = async (e, n) => {
-  const ress = await fetchUserData(e, n);
-  if(ress=='Request failed with status code 403'){
+const getData = async (e, n,p) => {
+  const ress = await fetchUserData(e, n,p);
+  if (ress == "Request failed with status code 403") {
     goTologon();
   }
   //console.log(ress, "shdfbkjdbgdfjk");
@@ -117,13 +135,13 @@ const getData = async (e, n) => {
   page.total = ress.total;
 
   componentKey.value++;
-  console.log(ress,tableData.value, "tableData");
+  console.log(ress, tableData.value, "tableData");
 };
-getData(1, "");
+getData(1, "","");
 
-const changePage = (val: number, name: string) => {
+const changePage = (val: number, name: string, p) => {
   page.index = val;
-  getData(page.index, name);
+  getData(page.index, name,p);
 };
 
 // 新增/编辑弹窗相关
@@ -137,28 +155,39 @@ let options = ref<FormOption>({
     // { type: "select", label: "时间", prop: "time", required: true },
   ],
 });
+let optionss = ref<FormOption>({
+  labelWidth: "100px",
+  span: 12,
+  list: [
+    { type: "input", label: "会议室名称", prop: "roomName", required: true },
+    // { type: "input", label: "Status", prop: "status", required: true },
+    // { type: "select", label: "时间", prop: "time", required: true },
+  ],
+});
 const visible = ref(false);
+const visible2 = ref(false);
 const isEdit = ref(false);
+const isEdits = ref(false);
 const rowData = ref({});
 const handleEdit = (row: User) => {
   rowData.value = { ...row };
   isEdit.value = true;
   visible.value = true;
-  getData(1, "");
+  getData(1, "","");
 };
 const updateData = () => {
   closeDialog();
   //getData(2);
   setTimeout(() => {
-    getData(1, "");
+    getData(1, "","");
   }, 500);
   //getData(1, "");
   console.log("更新数据");
-  
 };
 
 const closeDialog = () => {
   visible.value = false;
+  visible2.value = false;
   isEdit.value = false;
 };
 
@@ -200,7 +229,7 @@ const handleDelete = async (row: User) => {
   } else {
     ElMessage.error("删除失败");
   }
-  getData(1, "");
+  getData(1, "","");
   page.index = 1;
 };
 </script>

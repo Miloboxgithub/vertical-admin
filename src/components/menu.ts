@@ -15,6 +15,12 @@ export const menuData: Menus[] = [
     },
     {
         id: '1',
+        icon: 'Odometer',
+        index: '/system-yuyue',
+        title: '预约记录',
+    },
+    {
+        id: '1',
         icon: 'Avatar',
         index: '/system-role',
         title: '用户管理',
@@ -25,18 +31,18 @@ export const menuData: Menus[] = [
     //     index: '/system-yuyue',
     //     title: '预约管理',
     // },
-    {
-        id: '1',
-        title: '系统管理',
-        index: '1',
-        icon: 'Odometer',
-        children: [
-            {
-                id: '14',
-                pid: '14',
-                index: '/system-yuyue',
-                title: '预约记录',
-            },
+    // {
+    //     id: '1',
+    //     title: '系统管理',
+    //     index: '1',
+    //     icon: 'Odometer',
+    //     children: [
+    //         {
+    //             id: '14',
+    //             pid: '14',
+    //             index: '/system-yuyue',
+    //             title: '预约记录',
+    //         },
             // {
             //     id: '32',
             //     pid: '2',
@@ -49,8 +55,8 @@ export const menuData: Menus[] = [
             //     index: '/system-menu',
             //     title: '菜单管理',
             // },
-        ],
-    },
+    //     ],
+    // },
     // {
     //     id: '2',
     //     title: '组件',

@@ -45,9 +45,10 @@
       :data="tableData"
       :row-key="rowKey"
       @selection-change="handleSelectionChange"
+      @sort-change="customSortMethod"
       table-layout="auto"
     >
-      <template v-for="item in columns" :key="item.prop">
+      <template v-for="item in columns" :key="item.prop" >
         <el-table-column
           v-if="item.visible"
           :prop="item.prop"
@@ -55,6 +56,9 @@
           :width="item.width"
           :type="item.type"
           :align="item.align || 'center'"
+          :sortable="item.sortable"
+
+          
         >
           <template
             #default="{ row, column, $index }"
@@ -227,7 +231,22 @@ columns.value.forEach((item) => {
     item.visible = true;
   }
 });
+let isAscending=true
+ let sortState = localStorage.getItem("sortState");
+const customSortMethod=()=> {
+  
+  console.log(sortState,"sortState");
+  
+          if(sortState){
+            props.changePage(currentPage.value,'', null);
+            localStorage.removeItem("sortState");
+          }
+          else{
+            props.changePage(currentPage.value, '','1');
+            localStorage.setItem("sortState", "1");
+          }
 
+    }
 // 当选择项发生变化时会触发该事件
 const multipleSelection = ref([]);
 const handleSelectionChange = (selection: any[]) => {

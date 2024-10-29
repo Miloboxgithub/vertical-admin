@@ -27,6 +27,9 @@
           <el-button type="success" @click="selectAndUploadFile"
             >批量导入</el-button
           >
+          <el-button type="primary" @click="downloadTemplate"
+            >下载模板</el-button
+          >
         </template>
       </TableCustom>
     </div>
@@ -95,18 +98,20 @@ const searchOpt = ref<FormOptionList[]>([
 const handleSearch = (queryData) => {
   console.log(queryData, "搜索");
 
-  changePage(1, queryData.name);
+  changePage(1, queryData.name,'');
 };
-
+const downloadTemplate = () => {
+  window.location.href = 'https://ehuiyue.buteck.com/api/template.xlsx';
+}
 // 表格相关
 let columns = ref([
   { type: "index", label: "序号", width: 55, align: "center" },
-  { prop: "name", label: "用户姓名" },
+  { prop: "name", label: "用户姓名" ,sortable: 'custom' },
   { prop: "phoneNumber", label: "电话" },
   { prop: "studentOrStaffNumber", label: "工号" },
   { prop: "department", label: "部门" },
   { prop: "role", label: "角色" },
-  { prop: "status", label: "Status" },
+  { prop: "status", label: "状态" },
   { prop: "operator", label: "操作", width: 250 },
 ]);
 const page = reactive({
@@ -116,8 +121,8 @@ const page = reactive({
 });
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-const getData = async (e, n) => {
-  const ress = await fetchUserData2(e, n);
+const getData = async (e, n,p) => {
+  const ress = await fetchUserData2(e, n,p);
   //console.log(ress, "shdfbkjdbgdfjk");
   if (ress == "Request failed with status code 403") {
     goTologon();
@@ -127,11 +132,11 @@ const getData = async (e, n) => {
   componentKey.value++;
   console.log(tableData.value, "tableData");
 };
-getData(1, "");
+getData(1, "",'');
 
-const changePage = (val: number, name: string) => {
+const changePage = (val: number, name: string,p) => {
   page.index = val;
-  getData(page.index, name);
+  getData(page.index, name,p);
 };
 
 // 新增/编辑弹窗相关
@@ -160,13 +165,13 @@ const handleEdit = (row: User) => {
   rowData.value = { ...row };
   isEdit.value = true;
   visible.value = true;
-  getData(1, "");
+  getData(1, "",'');
 };
 const updateData = () => {
   closeDialog();
   //getData(2);
   setTimeout(() => {
-    getData(1, "");
+    getData(1, "",'');
   }, 500);
   //getData(1, "");
   console.log("更新数据");
@@ -223,7 +228,7 @@ const handleDelete = async (row: User) => {
   } else {
     ElMessage.error("删除失败");
   }
-  getData(1, "");
+  getData(1, "",'');
   page.index = 1;
 };
 //批量导入
@@ -263,7 +268,7 @@ const selectAndUploadFile = async () => {
       console.log("File uploaded successfully:", response);
       ElMessage.success("文件导入成功");
       setTimeout(() => {
-        getData(1, "");
+        getData(1, "",'');
       }, 500);
     } catch (error) {
       console.error("Error uploading file:", error);
