@@ -24,9 +24,9 @@
             @click="visible = true"
             >新增</el-button
           >
-          <el-button type="danger" @click="visible2 = true">
-            <el-icon style="margin-right: 5px"><DeleteFilled /></el-icon>
-            删除会议室
+          <el-button type="primary" @click="visible2 = true">
+            <el-icon style="margin-right: 5px"><CirclePlus /></el-icon>
+            增添不可预约时段
           </el-button>
         </template>
       </TableCustom>
@@ -60,7 +60,7 @@
       </TableDetail>
     </el-dialog>
     <el-dialog
-      title="删除会议室"
+      title="增添不可预约时段"
       v-model="visible2"
       width="700px"
       destroy-on-close
@@ -93,6 +93,7 @@ const router = useRouter();
 const goTologon = () => {
   // 使用 router.push 方法进行页面跳转
   router.push("/login");
+  ElMessage.error("获取数据失败")
 };
 console.log(TableSearch.props, "search");
 const startTime = ref("");
@@ -112,10 +113,10 @@ const handleSearch = (queryData) => {
 // 表格相关
 let columns = ref([
   { type: "index", label: "序号", width: 55, align: "center" },
-  { prop: "roomName", label: "会议室名称", sortable: 'custom' },
+  { prop: "id", label: "会议室ID"},
+  { prop: "name", label: "会议室名称", sortable: 'custom' },
   { prop: "capacity", label: "容纳人数" },
   { prop: "status", label: "状态" },
-  { prop: "time", label: "时间" },
   { prop: "operator", label: "操作", width: 250 },
 ]);
 const page = reactive({
@@ -149,9 +150,9 @@ let options = ref<FormOption>({
   labelWidth: "100px",
   span: 12,
   list: [
-    { type: "input", label: "会议室名称", prop: "roomName", required: true },
+    { type: "input", label: "会议室名称", prop: "name", required: true },
     { type: "input", label: "容纳人数", prop: "capacity", required: true },
-    // { type: "input", label: "Status", prop: "status", required: true },
+    { type: "input", label: "状态", prop: "status", required: true },
     // { type: "select", label: "时间", prop: "time", required: true },
   ],
 });
@@ -159,9 +160,9 @@ let optionss = ref<FormOption>({
   labelWidth: "100px",
   span: 12,
   list: [
-    { type: "input", label: "会议室名称", prop: "roomName", required: true },
-    // { type: "input", label: "Status", prop: "status", required: true },
-    // { type: "select", label: "时间", prop: "time", required: true },
+    { type: "input", label: "会议室ID", prop: "id", required: true },
+    { type: "date", label: "日期", prop: "date", required: true },
+    { type: "selects", label: "时段", prop: "time", required: true },
   ],
 });
 const visible = ref(false);
@@ -201,7 +202,7 @@ const handleView = (row: User) => {
   viewData.value.row = { ...row };
   viewData.value.list = [
     {
-      prop: "roomName",
+      prop: "name",
       label: "会议室名称",
     },
     {
@@ -211,10 +212,6 @@ const handleView = (row: User) => {
     {
       prop: "status",
       label: "Status",
-    },
-    {
-      prop: "time",
-      label: "时间",
     },
   ];
   visible1.value = true;

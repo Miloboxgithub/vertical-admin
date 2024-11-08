@@ -99,7 +99,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
     if (valid) {
       // 假设param已经包含了用户名和密码
       const loginData = {
-        name: param.username,
+        sno: param.username,
         password: param.password, // 确保param对象中有password属性
       };
       console.log(loginData);

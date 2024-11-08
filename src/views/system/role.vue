@@ -93,12 +93,12 @@ const query = reactive({
   name: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "用户名查询：", prop: "name" },
+  { type: "input", label: "工号查询：", prop: "sno" },
 ]);
 const handleSearch = (queryData) => {
-  console.log(queryData, "搜索");
+  console.log(queryData.sno, "搜索");
 
-  changePage(1, queryData.name,'');
+  changePage(1, queryData.sno,'');
 };
 const downloadTemplate = () => {
   window.location.href = 'https://ehuiyue.buteck.com/api/template.xlsx';
@@ -107,9 +107,9 @@ const downloadTemplate = () => {
 let columns = ref([
   { type: "index", label: "序号", width: 55, align: "center" },
   { prop: "name", label: "用户姓名" ,sortable: 'custom' },
-  { prop: "phoneNumber", label: "电话" },
-  { prop: "studentOrStaffNumber", label: "工号" },
-  { prop: "department", label: "部门" },
+  { prop: "phone", label: "电话" },
+  { prop: "sno", label: "工号" },
+  { prop: "depart", label: "部门" },
   { prop: "role", label: "角色" },
   { prop: "status", label: "状态" },
   { prop: "operator", label: "操作", width: 250 },
@@ -145,17 +145,18 @@ let options = ref<FormOption>({
   span: 12,
   list: [
     { type: "input", label: "用户姓名", prop: "name", required: true },
-    { type: "input", label: "电话", prop: "phoneNumber", required: true },
+    { type: "input", label: "电话", prop: "phone", required: true },
     // { type: "input", label: "Status", prop: "status", required: true },
     {
       type: "input",
       label: "工号",
-      prop: "studentOrStaffNumber",
+      prop: "sno",
       required: true,
     },
     { type: "select", label: "角色", prop: "role", required: true },
-    { type: "input", prop: "department", label: "部门", required: true },
+    { type: "input", prop: "depart", label: "部门", required: true },
     { type: "input", prop: "password", label: "密码" },
+    { type: "input", prop: "status", label: "状态" },
   ],
 });
 const visible = ref(false);
@@ -196,11 +197,11 @@ const handleView = (row: User) => {
       label: "用户姓名",
     },
     {
-      prop: "phoneNumber",
+      prop: "phone",
       label: "电话",
     },
     {
-      prop: "studentOrStaffNumber",
+      prop: "sno",
       label: "工号",
     },
     {
@@ -212,7 +213,7 @@ const handleView = (row: User) => {
       label: "角色状态",
     },
     {
-      prop: "department",
+      prop: "depart",
       label: "部门",
     },
   ];

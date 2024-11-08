@@ -14,8 +14,10 @@
         :editFunc="handleEdit"
       >
         <template #status="{ rows }">
-          <el-tag type="success" v-if="rows.status">Active</el-tag>
-          <el-tag type="danger" v-else>Disabled</el-tag>
+          <el-tag type="success" v-if="rows.status==0">可预约</el-tag>
+          <el-tag type="primary" v-else-if="rows.status==1">已预约</el-tag>
+          <el-tag type="info" v-else-if="rows.status==2">已取消</el-tag>
+          <el-tag type="danger" v-else-if="rows.status==3">不可预约</el-tag>
         </template>
         <!-- <template #toolbarBtn>
             <el-button
@@ -50,8 +52,10 @@
     >
       <TableDetail :data="viewData">
         <template #status="{ rows }">
-          <el-tag type="success" v-if="rows.status">Active</el-tag>
-          <el-tag type="danger" v-else>Disabled</el-tag>
+          <el-tag type="success" v-if="rows.status==0">可预约</el-tag>
+          <el-tag type="primary" v-else-if="rows.status==1">已预约</el-tag>
+          <el-tag type="info" v-else-if="rows.status==2">已取消</el-tag>
+          <el-tag type="danger" v-else-if="rows.status==3">不可预约</el-tag>
         </template>
       </TableDetail>
     </el-dialog>
@@ -84,24 +88,26 @@ const query = reactive({
   ymd: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "日期查询：", prop: "ymd" },
+  { type: "input", label: "预约人查询：", prop: "appointmentPerson" },
 ]);
 const handleSearch = (queryData) => {
   console.log(queryData, "搜索");
 
-  changePage(1, queryData.ymd);
+  changePage(1, queryData.appointmentPerson,'');
 };
 
 // 表格相关
 let columns = ref([
   { type: "index", label: "序号", width: 55, align: "center" },
-  { prop: "reservedByName", label: "预约人" },
-  { prop: "room_name", label: "会议室名称" },
-  { prop: "ymd", label: "预约日期" },
-  { prop: "reservedByPhone", label: "预约人电话" },
-  { prop: "meetingType", label: "会议类型" },
-  { prop: "time", label: "预约时段" },
+  { prop: "appointmentPerson", label: "预约人" },
+  { prop: "meetingroomName", label: "会议室名称" },
+  { prop: "appointmentDate", label: "预约日期" ,sortable: 'custom'},
+  { prop: "appointmentSno", label: "预约人工号" },
+  { prop: "appointmentType", label: "会议类型" },
+  { prop: "appointmentTime", label: "预约时段" },
+  { prop: "status", label: "状态" },
   { prop: "operator", label: "操作", width: 250 },
+
 ]);
 const page = reactive({
   index: 1,
@@ -110,8 +116,8 @@ const page = reactive({
 });
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-const getData = async (e, n) => {
-  const ress = await fetchUserData3(e, n);
+const getData = async (e, n,p) => {
+  const ress = await fetchUserData3(e, n,p);
   console.log(ress, "shdfbkjdbgdfjk");
   if(ress=='Request failed with status code 403'){
     goTologon();
@@ -122,11 +128,11 @@ const getData = async (e, n) => {
   componentKey.value++;
   console.log(tableData.value, "tableData");
 };
-getData(1, "");
+getData(1, "",'');
 
-const changePage = (val: number, name: string) => {
+const changePage = (val: number, name: string,p) => {
   page.index = val;
-  getData(page.index, name);
+  getData(page.index, name,p);
 };
 
 // 新增/编辑弹窗相关
@@ -134,18 +140,19 @@ let options = ref<FormOption>({
   labelWidth: "100px",
   span: 12,
   list: [
-    { type: "input", label: "预约人", prop: "reservedByName", required: true },
+    { type: "input", label: "预约人", prop: "appointmentPerson", required: true },
     //{ type: "input", label: "会议室名称", prop: "room_name", required: true },
-    { type: "input", label: "预约日期", prop: "ymd", required: true },
+    { type: "input", label: "预约日期", prop: "appointmentDate", required: true },
     // { type: "input", label: "Status", prop: "status", required: true },
     //{ type: "select", label: "时间", prop: "time", required: true },
     {
       type: "input",
-      label: "预约人电话",
-      prop: "reservedByPhone",
+      label: "预约人工号",
+      prop: "appointmentSno",
       required: true,
     },
-    { type: "input", label: "会议类型", prop: "meetingType", required: true },
+    { type: "input", label: "会议类型", prop: "appointmentType", required: true },
+    {type:"input",label:"status",prop:"status",required:true},
   ],
 });
 const visible = ref(false);
@@ -155,13 +162,13 @@ const handleEdit = (row: User) => {
   rowData.value = { ...row };
   isEdit.value = true;
   visible.value = true;
-  getData(1, "");
+  getData(1, "",'');
 };
 const updateData = () => {
   closeDialog();
   //getData(2);
   setTimeout(() => {
-    getData(1, "");
+    getData(1, "",'');
   }, 500);
   //getData(1, "");
   console.log("更新数据");
@@ -182,28 +189,32 @@ const handleView = (row: User) => {
   viewData.value.row = { ...row };
   viewData.value.list = [
     {
-      prop: "reservedByName",
+      prop: "appointmentPerson",
       label: "预约人",
     },
     {
-      prop: "room_name",
+      prop: "meetingroomName",
       label: "会议室名称",
     },
     {
-      prop: "ymd",
+      prop: "appointmentDate",
       label: "预约日期",
     },
     {
-      prop: "reservedByPhone",
-      label: "预约人电话",
+      prop: "appointmentSno",
+      label: "预约人工号",
     },
     {
-      prop: "meetingType",
+      prop: "appointmentType",
       label: "会议类型",
     },
     {
-      prop: "time",
+      prop: "appointmentTime",
       label: "时段",
+    },
+    {
+      prop: "status",
+      label: "状态",
     },
   ];
   visible1.value = true;
@@ -218,7 +229,7 @@ const handleDelete = async (row: User) => {
   } else {
     ElMessage.error("删除失败");
   }
-  getData(1, "");
+  getData(1, "",'');
   page.index = 1;
 };
 </script>

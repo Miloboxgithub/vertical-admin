@@ -16,7 +16,7 @@ export const fetchUserData = async (e, n,p) => {
         page: e,
         size: 10,
         // room_id:'',
-        room_name: n,
+        name: n,
         // capacity:'',
         // start_time:'',
         // end_time:'',
@@ -29,14 +29,11 @@ export const fetchUserData = async (e, n,p) => {
     console.log(response.data);
     let ans = response.data.data.meeting_rooms;
     ans.forEach((element) => {
-      element.time =
-        element.startTime.substring(0, 5) +
-        " - " +
-        element.endTime.substring(0, 5);
-      if (element.deletedAt == null) {
-        element.status = true;
+      element.time =null;
+      if (element.satus == 1) {
+        element.status = 0;
       } else {
-        element.status = false;
+        element.status = 1;
       }
     });
     ans = {
@@ -52,10 +49,11 @@ export const fetchUserData = async (e, n,p) => {
 };
 
 export const DeleteData = async (e) => {
+  
   try {
     // 定义要发送的数据
     const data = {
-      RoomIds: e,
+      Ids: e,
       // ...其他需要的数据字段
     };
     // 发起 POST 请求
@@ -88,14 +86,14 @@ export const DeleteData = async (e) => {
 };
 
 export const fetchUserData2 = async (e, n,p) => {
-  console.log("fetchUserData2", e, "fffff", n);
+  //console.log("fetchUserData2", e, "fffff", n);
   try {
     let response = await axios.get("/api/sadmin/getuserbypage", {
       params: {
         page: e,
         size: 10,
         // room_id:'',
-        name: n,
+        sno: n,
         // capacity:'',
         // start_time:'',
         // end_time:'',
@@ -108,10 +106,10 @@ export const fetchUserData2 = async (e, n,p) => {
     console.log(response.data.data.users);
     let ans = response.data.data.users;
     ans.forEach((element) => {
-      if (element.deletedAt == null) {
-        element.status = true;
+      if (element.status ==1) {
+        element.status = 1;
       } else {
-        element.status = false;
+        element.status = 0;
       }
     });
     ans = {
@@ -160,33 +158,45 @@ export const DeleteData2 = async (e) => {
   }
 };
 
-export const fetchUserData3 = async (e, n) => {
+export const fetchUserData3 = async (e, n,p) => {
   console.log("fetchUserData3", e, "fffff", n);
+  if(n.length0){n+=' 00:00:00'}
   try {
-    let response = await axios.get("/api/sadmin/getreservationbypage", {
+    let response = await axios.get("/api/sadmin/getappointmentrecordbypage", {
       params: {
         page: e,
         size: 10,
+        appointmentPerson:n,
         // room_id:'',
-        ymd: n,
+        // appointmentDate: '2024-11-06 00:00:00',
         // capacity:'',
         // start_time:'',
         // end_time:'',
+        reverse:p
       },
       headers: {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(response.data.data.reservations);
-    let ans = response.data.data.reservations;
+    console.log(response.data.data);
+    let ans = response.data.data.appointmentrecords;
     ans.forEach((element) => {
-      element.time = element.start_time + " - " + element.end_time;
-
-      if (element.deletedAt == null) {
-        element.status = true;
-      } else {
-        element.status = false;
-      }
+      element.time = null;
+      //var date = new Date(element.appointmentDate);
+      var dateStr = element.appointmentDate.substring(0, 10);
+      element.appointmentDate = dateStr
+      // if (element.status == 0) {
+      //   element.status = '可预约';
+      // } else if(element.status == 1){
+      //   element.status = '已预约';
+      // }
+      // else if(element.status == 2){
+      //   element.status = '已取消';
+      // }
+      // else if(element.status == 3){
+      //   element.status = '不可预约';
+        
+      // }
     });
     ans = {
       total: response.data.data.total,
@@ -207,7 +217,7 @@ export const DeleteData3 = async (e) => {
       // ...其他需要的数据字段
     };
     // 发起 POST 请求
-    const response = await fetch("/api/sadmin/delreservation", {
+    const response = await fetch("/api/sadmin/delappointmentrecord", {
       method: "DELETE", // 指定请求方法为 POST
       headers: {
         "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
