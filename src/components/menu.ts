@@ -1,12 +1,12 @@
 import { Menus } from '@/types/menu';
 
 export const menuData: Menus[] = [
-    // {
-    //     id: '0',
-    //     title: '系统首页',
-    //     index: '/dashboard',
-    //     icon: 'Odometer',
-    // },
+    {
+        id: '0',
+        title: '系统管理',
+        index: '/dashboard',
+        icon: 'TrendCharts',
+    },
     {
         id: '0',
         icon: 'HomeFilled',
@@ -17,7 +17,7 @@ export const menuData: Menus[] = [
         id: '1',
         icon: 'Odometer',
         index: '/system-yuyue',
-        title: '预约记录',
+        title: '预约管理',
     },
     {
         id: '1',

@@ -50,6 +50,48 @@
             ></el-option>
             <!-- <el-option v-for="timm" :label="item.label" :value="item.value"></el-option> -->
           </el-select>
+          <el-select
+            v-else-if="item.type === 'status'"
+            v-model="form[item.prop]"
+            :disabled="item.disabled"
+            :placeholder="item.placeholder"
+            clearable
+          >
+            <el-option
+              v-for="status in item.status"
+              :label="status.label"
+              :value="status.value"
+            ></el-option>
+            <!-- <el-option v-for="timm" :label="item.label" :value="item.value"></el-option> -->
+          </el-select>
+          <el-select
+            v-else-if="item.type === 'st'"
+            v-model="form[item.prop]"
+            :disabled="item.disabled"
+            :placeholder="item.placeholder"
+            clearable
+          >
+            <el-option
+              v-for="st in item.st"
+              :label="st.label"
+              :value="st.value"
+            ></el-option>
+            <!-- <el-option v-for="timm" :label="item.label" :value="item.value"></el-option> -->
+          </el-select>
+          <el-select
+            v-else-if="item.type === 'sta'"
+            v-model="form[item.prop]"
+            :disabled="item.disabled"
+            :placeholder="item.placeholder"
+            clearable
+          >
+            <el-option
+              v-for="sta in item.sta"
+              :label="sta.label"
+              :value="sta.value"
+            ></el-option>
+            <!-- <el-option v-for="timm" :label="item.label" :value="item.value"></el-option> -->
+          </el-select>
           <el-date-picker
             v-else-if="item.type === 'date'"
             type="date"
@@ -175,6 +217,45 @@ options.list.forEach((item) => {
       value: "19:00-20:00",
     },
   ];
+  item.status =[
+    {
+      label: "正常",
+      value: "正常",
+    },
+    {
+      label: "不可预约",
+      value: "不可预约",
+    },
+  ];
+  item.st =[
+    {
+      label: "正常",
+      value: "正常",
+    },
+    {
+      label: "禁用",
+      value: "禁用",
+    },
+  ];
+  item.sta =[
+    {
+      label:"可预约",
+      value: "可预约",
+    },
+    {
+      label: "已预约",
+      value: "已预约",
+    },
+    {
+      label: "已取消",
+      value: "已取消",
+    },
+    {
+      label: "不可预约",
+      value: "不可预约",
+    },
+  ];
+  
 });
 //console.log(edit, "eeeeeeeeeee");
 const form = ref({ ...(edit ? formData : {}) });
@@ -219,12 +300,13 @@ const saveEdit = (formEl: FormInstance | undefined) => {
  
 };
 const changeRoom = async (e) => {
-  console.log(e.status);
-
+  console.log(e);
+  if(e.status=='不可预约'){e.status=1}
+  else{e.status=0}
   try {
     // 定义要发送的数据
     const data = {
-      Id: e.id,
+      id: e.id,
       name: e.name,
       capacity: e.capacity,
       status: parseInt(e.status),
@@ -232,10 +314,8 @@ const changeRoom = async (e) => {
       // end_time: e.time.substring(6, 11) + ":00",
       // ...其他需要的数据字段
     };
-    // if (data.end_time == null) {
-    //   data.end_time = e.endTime;
-    // }
-    // 发起 POST 请求
+    //console.log(data);
+    
     const response = await fetch("/api/sadmin/updmeetingroom", {
       method: "PUT",
       headers: {
@@ -252,7 +332,7 @@ const changeRoom = async (e) => {
 
     // 解析响应数据为 JSON
     const result = await response.json();
-    console.log(result); // 输出获取到的数据
+    console.log(result,'get'); // 输出获取到的数据
 
     // 处理 result 数据
     // ...
@@ -261,16 +341,14 @@ const changeRoom = async (e) => {
   }
 };
 const createRoom = async (e) => {
+  if(e.status=='不可预约'){e.status=1}
+  else{e.status=0}
   try {
-    // 定义要发送的数据
+   
     const data = {
       name: e.name,
       capacity: parseInt(e.capacity),
-      status: 1,
-      // start_time: "08:00:00",
-      // end_time: "20:00:00",
-      // interval: 60,
-      // ...其他需要的数据字段
+      status: e.status,
     };
     // 发起 POST 请求
     const response = await fetch("/api/sadmin/addmeetingroom", {
@@ -299,6 +377,8 @@ const createRoom = async (e) => {
   }
 };
 const changeRoom2 = async (e) => {
+  if(e.status=='正常'){e.status=1}
+  else{e.status=0}
   try {
     // 定义要发送的数据
     const data = {
@@ -341,6 +421,8 @@ const changeRoom2 = async (e) => {
   }
 };
 const createRoom2 = async (e) => {
+  if(e.status=='正常'){e.status=1}
+  else{e.status=0}
   try {
     console.log(e, "创建用户");
     // 定义要发送的数据
@@ -383,6 +465,10 @@ const createRoom2 = async (e) => {
   }
 };
 const changeRoom3 = async (e) => {
+  if(e.status=='可预约'){e.status=0}
+  else if(e.status=='已预约'){e.status=1}
+  else if(e.status=='不可预约'){e.status=3}
+  else {e.status=2}
   try {
     // 定义要发送的数据
     const data = {

@@ -30,10 +30,10 @@ export const fetchUserData = async (e, n,p) => {
     let ans = response.data.data.meeting_rooms;
     ans.forEach((element) => {
       element.time =null;
-      if (element.satus == 1) {
-        element.status = 0;
+      if (element.status == 1) {
+        element.status = '不可预约';
       } else {
-        element.status = 1;
+        element.status = '正常';
       }
     });
     ans = {
@@ -85,7 +85,7 @@ export const DeleteData = async (e) => {
   }
 };
 
-export const fetchUserData2 = async (e, n,p) => {
+export const fetchUserData2 = async (e, n,m,p) => {
   //console.log("fetchUserData2", e, "fffff", n);
   try {
     let response = await axios.get("/api/sadmin/getuserbypage", {
@@ -94,6 +94,7 @@ export const fetchUserData2 = async (e, n,p) => {
         size: 10,
         // room_id:'',
         sno: n,
+        name:m,
         // capacity:'',
         // start_time:'',
         // end_time:'',
@@ -106,10 +107,16 @@ export const fetchUserData2 = async (e, n,p) => {
     console.log(response.data.data.users);
     let ans = response.data.data.users;
     ans.forEach((element) => {
+      if( element.role =='user'){
+        element.role = '教师';
+      }
+      else{
+        element.role = '管理员';
+      }
       if (element.status ==1) {
-        element.status = 1;
+        element.status = '正常';
       } else {
-        element.status = 0;
+        element.status = '禁用';
       }
     });
     ans = {
@@ -185,18 +192,18 @@ export const fetchUserData3 = async (e, n,p) => {
       //var date = new Date(element.appointmentDate);
       var dateStr = element.appointmentDate.substring(0, 10);
       element.appointmentDate = dateStr
-      // if (element.status == 0) {
-      //   element.status = '可预约';
-      // } else if(element.status == 1){
-      //   element.status = '已预约';
-      // }
-      // else if(element.status == 2){
-      //   element.status = '已取消';
-      // }
-      // else if(element.status == 3){
-      //   element.status = '不可预约';
+      if (element.status == 0) {
+        element.status = '可预约';
+      } else if(element.status == 1){
+        element.status = '已预约';
+      }
+      else if(element.status == 2){
+        element.status = '已取消';
+      }
+      else if(element.status == 3){
+        element.status = '不可预约';
         
-      // }
+      }
     });
     ans = {
       total: response.data.data.total,

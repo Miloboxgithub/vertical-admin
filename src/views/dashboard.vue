@@ -7,57 +7,59 @@
                         <User />
                     </el-icon>
                     <div class="card-content">
-                        <countup class="card-num color1" :end="6666" />
-                        <div>用户访问量</div>
-                    </div>
-                </el-card>
-            </el-col>
-            <el-col :span="6">
-                <el-card shadow="hover" body-class="card-body">
-                    <el-icon class="card-icon bg2">
-                        <ChatDotRound />
-                    </el-icon>
-                    <div class="card-content">
-                        <countup class="card-num color2" :end="168" />
-                        <div>系统消息</div>
+                        <countup class="card-num color1" :end="112" />
+                        <div>用户数量</div>
                     </div>
                 </el-card>
             </el-col>
             <el-col :span="6">
                 <el-card shadow="hover" body-class="card-body">
                     <el-icon class="card-icon bg3">
-                        <Goods />
+                        <Shop />
                     </el-icon>
                     <div class="card-content">
-                        <countup class="card-num color3" :end="8888" />
-                        <div>商品数量</div>
+                        <countup class="card-num color3" :end="2" />
+                        <div>会议室数量</div>
                     </div>
                 </el-card>
             </el-col>
             <el-col :span="6">
                 <el-card shadow="hover" body-class="card-body">
+                    <el-icon class="card-icon bg2">
+                        <!-- <ChatDotRound /> -->
+                        <Pointer />
+                    </el-icon>
+                    <div class="card-content">
+                        <countup class="card-num color2" :end="168" />
+                        <div>预约记录量</div>
+                    </div>
+                </el-card>
+            </el-col>
+            
+            <el-col :span="6">
+                <el-card shadow="hover" body-class="card-body">
                     <el-icon class="card-icon bg4">
-                        <ShoppingCartFull />
+                        <View />
                     </el-icon>
                     <div class="card-content">
                         <countup class="card-num color4" :end="568" />
-                        <div>今日订单量</div>
+                        <div>今日访问量</div>
                     </div>
                 </el-card>
             </el-col>
         </el-row>
 
-        <el-row :gutter="20" class="mgb20">
-            <el-col :span="18">
+        <el-row :gutter="20" class="mgb20"  >
+            <el-col :span="17">
                 <el-card shadow="hover">
-                    <div class="card-header">
-                        <p class="card-header-title">订单动态</p>
-                        <p class="card-header-desc">最近一周订单状态，包括订单成交量和订单退货量</p>
+                    <div class="card-header" >
+                        <p class="card-header-title">预约动态</p>
+                        <p class="card-header-desc">最近一周预约状态，每个会议室被预约时段数量</p>
                     </div>
-                    <v-chart class="chart" :option="dashOpt1" />
+                    <v-chart class="chart" :option="dashOpt1" style="height: 700px !important;"/>
                 </el-card>
             </el-col>
-            <el-col :span="6">
+            <!-- <el-col :span="6">
                 <el-card shadow="hover">
                     <div class="card-header">
                         <p class="card-header-title">品类分布</p>
@@ -65,17 +67,15 @@
                     </div>
                     <v-chart class="chart" :option="dashOpt2" />
                 </el-card>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
+            </el-col> -->
             <el-col :span="7">
-                <el-card shadow="hover" :body-style="{ height: '400px' }">
-                    <div class="card-header">
+                <el-card shadow="hover" :body-style="{ height: '768.2px' }">
+                    <div class="card-header" >
                         <p class="card-header-title">时间线</p>
-                        <p class="card-header-desc">最新的销售动态和活动信息</p>
+                        <p class="card-header-desc">最新的预约动态和信息</p>
                     </div>
                     <el-timeline>
-                        <el-timeline-item v-for="(activity, index) in activities" :key="index" :color="activity.color">
+                        <el-timeline-item v-for="(activity, index) in activities" :key="index" :color="activity.color" >
                             <div class="timeline-item">
                                 <div>
                                     <p>{{ activity.content }}</p>
@@ -87,6 +87,9 @@
                     </el-timeline>
                 </el-card>
             </el-col>
+        </el-row>
+        <!-- <el-row :gutter="20">
+            
             <el-col :span="10">
                 <el-card shadow="hover" :body-style="{ height: '400px' }">
                     <div class="card-header">
@@ -122,7 +125,7 @@
                     </div>
                 </el-card>
             </el-col>
-        </el-row>
+        </el-row> -->
     </div>
 </template>
 
@@ -156,32 +159,32 @@ use([
 registerMap('china', chinaMap);
 const activities = [
     {
-        content: '收藏商品',
-        description: 'xxx收藏了你的商品，就是不买',
+        content: '用户预约',
+        description: 'xxx预约了会议室A',
         timestamp: '30分钟前',
         color: '#00bcd4',
     },
     {
         content: '用户评价',
-        description: 'xxx给了某某商品一个差评，吐血啊',
+        description: 'xxx对服务进行了好评',
         timestamp: '55分钟前',
         color: '#1ABC9C',
     },
     {
-        content: '订单提交',
-        description: 'xxx提交了订单，快去收钱吧',
+        content: '取消预约',
+        description: 'xxx取消了会议室B的预约',
         timestamp: '1小时前',
         color: '#3f51b5',
     },
     {
-        content: '退款申请',
-        description: 'xxx申请了仅退款，又要亏钱了',
+        content: '删除记录',
+        description: 'xxx删除了了会议室C的预约记录',
         timestamp: '15小时前',
         color: '#f44336',
     },
     {
-        content: '商品上架',
-        description: '运营专员瞒着你上架了一辆飞机',
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
         timestamp: '1天前',
         color: '#009688',
     },
@@ -285,7 +288,7 @@ const ranks = [
 
 .chart {
     width: 100%;
-    height: 400px;
+    height: 100%;
 }
 
 .card-header {

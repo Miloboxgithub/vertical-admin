@@ -14,8 +14,8 @@
         :editFunc="handleEdit"
       >
         <template #status="{ rows }">
-          <el-tag type="success" v-if="rows.status">Active</el-tag>
-          <el-tag type="danger" v-else>Disabled</el-tag>
+          <el-tag type="success" v-if="rows.status=='正常'">正常</el-tag>
+          <el-tag type="danger" v-else>禁用</el-tag>
         </template>
         <template #toolbarBtn>
           <el-button
@@ -56,8 +56,8 @@
     >
       <TableDetail :data="viewData">
         <template #status="{ rows }">
-          <el-tag type="success" v-if="rows.status">Active</el-tag>
-          <el-tag type="danger" v-else>Disabled</el-tag>
+          <el-tag type="success" v-if="rows.status=='正常'">正常</el-tag>
+          <el-tag type="danger" v-else>禁用</el-tag>
         </template>
       </TableDetail>
     </el-dialog>
@@ -94,11 +94,11 @@ const query = reactive({
 });
 const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "工号查询：", prop: "sno" },
+  { type: "input", label: "姓名查询：", prop: "name" },
 ]);
 const handleSearch = (queryData) => {
-  console.log(queryData.sno, "搜索");
-
-  changePage(1, queryData.sno,'');
+  console.log(queryData, "搜索");
+  changePage(1, queryData.sno,queryData.name,'');
 };
 const downloadTemplate = () => {
   window.location.href = 'https://ehuiyue.buteck.com/api/template.xlsx';
@@ -121,8 +121,8 @@ const page = reactive({
 });
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-const getData = async (e, n,p) => {
-  const ress = await fetchUserData2(e, n,p);
+const getData = async (e, n,m,p) => {
+  const ress = await fetchUserData2(e, n,m,p);
   //console.log(ress, "shdfbkjdbgdfjk");
   if (ress == "Request failed with status code 403") {
     goTologon();
@@ -132,11 +132,11 @@ const getData = async (e, n,p) => {
   componentKey.value++;
   console.log(tableData.value, "tableData");
 };
-getData(1, "",'');
+getData(1, "",'','');
 
-const changePage = (val: number, name: string,p) => {
+const changePage = (val: number, name: string,n,p) => {
   page.index = val;
-  getData(page.index, name,p);
+  getData(page.index, name,n,p);
 };
 
 // 新增/编辑弹窗相关
@@ -156,7 +156,7 @@ let options = ref<FormOption>({
     { type: "select", label: "角色", prop: "role", required: true },
     { type: "input", prop: "depart", label: "部门", required: true },
     { type: "input", prop: "password", label: "密码" },
-    { type: "input", prop: "status", label: "状态" },
+    { type: "st", prop: "status", label: "状态" },
   ],
 });
 const visible = ref(false);
@@ -166,13 +166,13 @@ const handleEdit = (row: User) => {
   rowData.value = { ...row };
   isEdit.value = true;
   visible.value = true;
-  getData(1, "",'');
+  getData(1, "",'','');
 };
 const updateData = () => {
   closeDialog();
   //getData(2);
   setTimeout(() => {
-    getData(1, "",'');
+    getData(1, "",'','');
   }, 500);
   //getData(1, "");
   console.log("更新数据");
@@ -229,7 +229,7 @@ const handleDelete = async (row: User) => {
   } else {
     ElMessage.error("删除失败");
   }
-  getData(1, "",'');
+  getData(1, "",'','');
   page.index = 1;
 };
 //批量导入
@@ -269,7 +269,7 @@ const selectAndUploadFile = async () => {
       console.log("File uploaded successfully:", response);
       ElMessage.success("文件导入成功");
       setTimeout(() => {
-        getData(1, "",'');
+        getData(1, "",'','');
       }, 500);
     } catch (error) {
       console.error("Error uploading file:", error);

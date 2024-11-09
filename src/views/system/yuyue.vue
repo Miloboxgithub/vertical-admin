@@ -14,10 +14,10 @@
         :editFunc="handleEdit"
       >
         <template #status="{ rows }">
-          <el-tag type="success" v-if="rows.status==0">可预约</el-tag>
-          <el-tag type="primary" v-else-if="rows.status==1">已预约</el-tag>
-          <el-tag type="info" v-else-if="rows.status==2">已取消</el-tag>
-          <el-tag type="danger" v-else-if="rows.status==3">不可预约</el-tag>
+          <el-tag type="success" v-if="rows.status=='可预约'">可预约</el-tag>
+          <el-tag type="primary" v-else-if="rows.status=='已预约'">已预约</el-tag>
+          <el-tag type="info" v-else-if="rows.status=='已取消'">已取消</el-tag>
+          <el-tag type="danger" v-else-if="rows.status=='不可预约'">不可预约</el-tag>
         </template>
         <!-- <template #toolbarBtn>
             <el-button
@@ -52,10 +52,10 @@
     >
       <TableDetail :data="viewData">
         <template #status="{ rows }">
-          <el-tag type="success" v-if="rows.status==0">可预约</el-tag>
-          <el-tag type="primary" v-else-if="rows.status==1">已预约</el-tag>
-          <el-tag type="info" v-else-if="rows.status==2">已取消</el-tag>
-          <el-tag type="danger" v-else-if="rows.status==3">不可预约</el-tag>
+          <el-tag type="success" v-if="rows.status=='可预约'">可预约</el-tag>
+          <el-tag type="primary" v-else-if="rows.status=='已预约'">已预约</el-tag>
+          <el-tag type="info" v-else-if="rows.status=='已取消'">已取消</el-tag>
+          <el-tag type="danger" v-else-if="rows.status=='不可预约'">不可预约</el-tag>
         </template>
       </TableDetail>
     </el-dialog>
@@ -152,7 +152,7 @@ let options = ref<FormOption>({
       required: true,
     },
     { type: "input", label: "会议类型", prop: "appointmentType", required: true },
-    {type:"input",label:"status",prop:"status",required:true},
+    {type:"sta",label:"status",prop:"status",required:true},
   ],
 });
 const visible = ref(false);

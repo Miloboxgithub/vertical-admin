@@ -19,4 +19,7 @@ export interface FormOptionList {
     activeText?: string;
     inactiveText?: string;
     required?: boolean;
+    status?: any[];
+    st?: any[];
+    sta?: any[];
 }

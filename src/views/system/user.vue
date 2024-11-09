@@ -14,7 +14,7 @@
         :editFunc="handleEdit"
       >
         <template #status="{ rows }">
-          <el-tag type="success" v-if="rows.status">正常</el-tag>
+          <el-tag type="success" v-if="rows.status == '正常'">正常</el-tag>
           <el-tag type="danger" v-else>不可预约</el-tag>
         </template>
         <template #toolbarBtn>
@@ -38,6 +38,7 @@
       destroy-on-close
       :close-on-click-modal="false"
       @close="closeDialog"
+      bu
     >
       <TableEdit
         :form-data="rowData"
@@ -54,8 +55,8 @@
     >
       <TableDetail :data="viewData">
         <template #status="{ rows }">
-          <el-tag type="success" v-if="rows.status">Active</el-tag>
-          <el-tag type="danger" v-else>Disabled</el-tag>
+          <el-tag type="success" v-if="rows.status == '正常'">正常</el-tag>
+          <el-tag type="danger" v-else>不可预约</el-tag>
         </template>
       </TableDetail>
     </el-dialog>
@@ -93,7 +94,7 @@ const router = useRouter();
 const goTologon = () => {
   // 使用 router.push 方法进行页面跳转
   router.push("/login");
-  ElMessage.error("获取数据失败")
+  ElMessage.error("获取数据失败");
 };
 console.log(TableSearch.props, "search");
 const startTime = ref("");
@@ -113,8 +114,8 @@ const handleSearch = (queryData) => {
 // 表格相关
 let columns = ref([
   { type: "index", label: "序号", width: 55, align: "center" },
-  { prop: "id", label: "会议室ID"},
-  { prop: "name", label: "会议室名称", sortable: 'custom' },
+  { prop: "id", label: "会议室ID" },
+  { prop: "name", label: "会议室名称", sortable: "custom" },
   { prop: "capacity", label: "容纳人数" },
   { prop: "status", label: "状态" },
   { prop: "operator", label: "操作", width: 250 },
@@ -126,8 +127,8 @@ const page = reactive({
 });
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-const getData = async (e, n,p) => {
-  const ress = await fetchUserData(e, n,p);
+const getData = async (e, n, p) => {
+  const ress = await fetchUserData(e, n, p);
   if (ress == "Request failed with status code 403") {
     goTologon();
   }
@@ -138,11 +139,11 @@ const getData = async (e, n,p) => {
   componentKey.value++;
   console.log(ress, tableData.value, "tableData");
 };
-getData(1, "","");
+getData(1, "", "");
 
 const changePage = (val: number, name: string, p) => {
   page.index = val;
-  getData(page.index, name,p);
+  getData(page.index, name, p);
 };
 
 // 新增/编辑弹窗相关
@@ -152,7 +153,7 @@ let options = ref<FormOption>({
   list: [
     { type: "input", label: "会议室名称", prop: "name", required: true },
     { type: "input", label: "容纳人数", prop: "capacity", required: true },
-    { type: "input", label: "状态", prop: "status", required: true },
+    { type: "status", label: "状态", prop: "status", required: true },
     // { type: "select", label: "时间", prop: "time", required: true },
   ],
 });
@@ -174,13 +175,13 @@ const handleEdit = (row: User) => {
   rowData.value = { ...row };
   isEdit.value = true;
   visible.value = true;
-  getData(1, "","");
+  getData(1, "", "");
 };
 const updateData = () => {
   closeDialog();
   //getData(2);
   setTimeout(() => {
-    getData(1, "","");
+    getData(1, "", "");
   }, 500);
   //getData(1, "");
   console.log("更新数据");
@@ -226,7 +227,7 @@ const handleDelete = async (row: User) => {
   } else {
     ElMessage.error("删除失败");
   }
-  getData(1, "","");
+  getData(1, "", "");
   page.index = 1;
 };
 </script>
