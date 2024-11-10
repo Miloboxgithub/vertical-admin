@@ -250,7 +250,7 @@ export const dashOpt1 = {
     type: "value",
   },
   grid: {
-    top: "2%",
+    top: "40px",
     left: "2%",
     right: "3%",
     bottom: "2%",

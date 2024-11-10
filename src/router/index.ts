@@ -51,6 +51,15 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "system-menu" */ '../views/system/menu.vue'),
             },
             {
+                path: '/system-logviewer',
+                name: 'system-logviewer',
+                meta:{
+                    title: '日志查看',
+                    permiss: '15',
+                },
+                component: () => import(/* webpackChunkName: "system-logviewer" */ '../views/system/logviewer.vue'),
+            },
+            {
                 path: '/system-yuyue',
                 name: 'system-yuyue',
                 meta: {

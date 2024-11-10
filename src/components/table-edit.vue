@@ -217,7 +217,7 @@ options.list.forEach((item) => {
       value: "19:00-20:00",
     },
   ];
-  item.status =[
+  item.status = [
     {
       label: "正常",
       value: "正常",
@@ -227,7 +227,7 @@ options.list.forEach((item) => {
       value: "不可预约",
     },
   ];
-  item.st =[
+  item.st = [
     {
       label: "正常",
       value: "正常",
@@ -237,9 +237,9 @@ options.list.forEach((item) => {
       value: "禁用",
     },
   ];
-  item.sta =[
+  item.sta = [
     {
-      label:"可预约",
+      label: "可预约",
       value: "可预约",
     },
     {
@@ -255,7 +255,6 @@ options.list.forEach((item) => {
       value: "不可预约",
     },
   ];
-  
 });
 //console.log(edit, "eeeeeeeeeee");
 const form = ref({ ...(edit ? formData : {}) });
@@ -284,25 +283,26 @@ const saveEdit = (formEl: FormInstance | undefined) => {
   if (edits) {
     //console.log(form.value.roomName,'editsform');
     DeleteRoom(form);
-  }
-  else{
-  if (!edit) {
-    //console.log(form.value,'增添数据');
-    if ("role" in form.value) createRoom2(form.value);
-    else createRoom(form.value);
   } else {
-    //console.log(form.value,'修改数据');
-    if ("role" in form.value) changeRoom2(form.value);
-    else if ("appointmentPerson" in form.value) changeRoom3(form.value);
-    else changeRoom(form.value);
+    if (!edit) {
+      //console.log(form.value,'增添数据');
+      if ("role" in form.value) createRoom2(form.value);
+      else createRoom(form.value);
+    } else {
+      //console.log(form.value,'修改数据');
+      if ("role" in form.value) changeRoom2(form.value);
+      else if ("appointmentPerson" in form.value) changeRoom3(form.value);
+      else changeRoom(form.value);
+    }
   }
-}
- 
 };
 const changeRoom = async (e) => {
   console.log(e);
-  if(e.status=='不可预约'){e.status=1}
-  else{e.status=0}
+  if (e.status == "不可预约") {
+    e.status = 1;
+  } else {
+    e.status = 0;
+  }
   try {
     // 定义要发送的数据
     const data = {
@@ -315,7 +315,7 @@ const changeRoom = async (e) => {
       // ...其他需要的数据字段
     };
     //console.log(data);
-    
+
     const response = await fetch("/api/sadmin/updmeetingroom", {
       method: "PUT",
       headers: {
@@ -332,7 +332,7 @@ const changeRoom = async (e) => {
 
     // 解析响应数据为 JSON
     const result = await response.json();
-    console.log(result,'get'); // 输出获取到的数据
+    console.log(result, "get"); // 输出获取到的数据
 
     // 处理 result 数据
     // ...
@@ -341,10 +341,12 @@ const changeRoom = async (e) => {
   }
 };
 const createRoom = async (e) => {
-  if(e.status=='不可预约'){e.status=1}
-  else{e.status=0}
+  if (e.status == "不可预约") {
+    e.status = 1;
+  } else {
+    e.status = 0;
+  }
   try {
-   
     const data = {
       name: e.name,
       capacity: parseInt(e.capacity),
@@ -377,8 +379,13 @@ const createRoom = async (e) => {
   }
 };
 const changeRoom2 = async (e) => {
-  if(e.status=='正常'){e.status=1}
-  else{e.status=0}
+  if (e.status == "正常") {
+    e.status = 1;
+  } else {
+    e.status = 0;
+  }
+  if (e.role == "管理员") e.role = "admin";
+  else e.role = "user";
   try {
     // 定义要发送的数据
     const data = {
@@ -421,8 +428,13 @@ const changeRoom2 = async (e) => {
   }
 };
 const createRoom2 = async (e) => {
-  if(e.status=='正常'){e.status=1}
-  else{e.status=0}
+  if (e.status == "正常") {
+    e.status = 1;
+  } else {
+    e.status = 0;
+  }
+  if (e.role == "管理员") e.role = "admin";
+  else e.role = "user";
   try {
     console.log(e, "创建用户");
     // 定义要发送的数据
@@ -465,10 +477,15 @@ const createRoom2 = async (e) => {
   }
 };
 const changeRoom3 = async (e) => {
-  if(e.status=='可预约'){e.status=0}
-  else if(e.status=='已预约'){e.status=1}
-  else if(e.status=='不可预约'){e.status=3}
-  else {e.status=2}
+  if (e.status == "可预约") {
+    e.status = 0;
+  } else if (e.status == "已预约") {
+    e.status = 1;
+  } else if (e.status == "不可预约") {
+    e.status = 3;
+  } else {
+    e.status = 2;
+  }
   try {
     // 定义要发送的数据
     const data = {

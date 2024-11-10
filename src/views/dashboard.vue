@@ -7,7 +7,7 @@
                         <User />
                     </el-icon>
                     <div class="card-content">
-                        <countup class="card-num color1" :end="112" />
+                        <countup class="card-num color1" :end="endValue1" />
                         <div>用户数量</div>
                     </div>
                 </el-card>
@@ -18,7 +18,7 @@
                         <Shop />
                     </el-icon>
                     <div class="card-content">
-                        <countup class="card-num color3" :end="2" />
+                        <countup class="card-num color3" :end="endValue2" />
                         <div>会议室数量</div>
                     </div>
                 </el-card>
@@ -30,7 +30,7 @@
                         <Pointer />
                     </el-icon>
                     <div class="card-content">
-                        <countup class="card-num color2" :end="168" />
+                        <countup class="card-num color2" :end="endValue3" />
                         <div>预约记录量</div>
                     </div>
                 </el-card>
@@ -42,7 +42,7 @@
                         <View />
                     </el-icon>
                     <div class="card-content">
-                        <countup class="card-num color4" :end="568" />
+                        <countup class="card-num color4" :end="endValue4" />
                         <div>今日访问量</div>
                     </div>
                 </el-card>
@@ -69,7 +69,7 @@
                 </el-card>
             </el-col> -->
             <el-col :span="7">
-                <el-card shadow="hover" :body-style="{ height: '768.2px' }">
+                <el-card shadow="hover" :body-style="{ height: '768.2px', overflowY: 'auto' }" class="scrollable-card">
                     <div class="card-header" >
                         <p class="card-header-title">时间线</p>
                         <p class="card-header-desc">最新的预约动态和信息</p>
@@ -144,6 +144,17 @@ import { CanvasRenderer } from 'echarts/renderers';
 import VChart from 'vue-echarts';
 import { dashOpt1, dashOpt2, mapOptions } from './chart/options';
 import chinaMap from '@/utils/china';
+import { ref } from 'vue';
+import { fetchUserData,fetchUserData2,fetchUserData3 } from "@/api";
+import axios from "axios";
+import { ElMessage } from 'element-plus';
+import { useRouter } from "vue-router";
+const router = useRouter();
+const goTologon = () => {
+  // 使用 router.push 方法进行页面跳转
+  router.push("/login");
+  ElMessage.error("获取数据失败");
+};
 use([
     CanvasRenderer,
     BarChart,
@@ -156,6 +167,23 @@ use([
     VisualMapComponent,
     MapChart,
 ]);
+const endValue1 = ref(0); // 初始值
+const endValue2 = ref(0); // 初始值
+const endValue3 = ref(0); // 初始值
+const endValue4 = ref(0); // 初始值
+async function updateEndValue() {
+  // 这里可以设置逻辑来更新 endValue 的值
+  let ans1 = await fetchUserData(1,'','')
+  let ans2 = await fetchUserData2(2,'','','')
+  let ans3 = await fetchUserData3(3,'','')
+  endValue1.value = ans2.total
+  if (ans1 == "Request failed with status code 403") {
+    goTologon();
+  }
+  endValue2.value = ans1.total
+  endValue3.value = ans3.total
+}
+updateEndValue();
 registerMap('china', chinaMap);
 const activities = [
     {
@@ -181,6 +209,108 @@ const activities = [
         description: 'xxx删除了了会议室C的预约记录',
         timestamp: '15小时前',
         color: '#f44336',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
+    },
+    {
+        content: '会议室添加',
+        description: 'xxx添加了会议室D',
+        timestamp: '1天前',
+        color: '#009688',
     },
     {
         content: '会议室添加',
@@ -233,6 +363,10 @@ const ranks = [
 }
 </style>
 <style scoped>
+.scrollable-card .el-card__body {
+  overflow-y: auto; /* 添加垂直滚动条 */
+  height: 768.2px; /* 设置固定高度 */
+}
 .card-content {
     flex: 1;
     text-align: center;

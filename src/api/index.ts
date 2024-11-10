@@ -251,3 +251,28 @@ export const DeleteData3 = async (e) => {
     return error;
   }
 };
+
+export const fetchLogData = async (e) => {
+  try {
+    // 从 API 获取日志数据
+    const response = await axios.get('/api/sadmin/getlog', {
+      headers: {
+          "Content-Type": "multipart/form-data",
+          // 如果需要认证，请添加认证头
+          Authorization: localStorage.getItem("vuems_token"),
+        },
+      params: {
+        type: e.type,
+        date: e.date,
+      }
+    });
+    console.log(response);
+    return response.data;
+    
+  } catch (error) {
+    console.error('Failed to fetch logs:', error);
+    // 这里可以添加错误处理逻辑，例如显示错误消息等
+    return error.message;
+  }
+
+}
