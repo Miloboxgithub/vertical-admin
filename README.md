@@ -1,1 +1,1 @@
-# 这是基于 Vue3 + pinia + Element Plus 的会议室预约后台管理系统——E会约
+# 这是基于 Vue3 + pinia + Element Plus 的实践课程管理系统-PCMS-后台管理系统

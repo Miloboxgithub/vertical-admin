@@ -3,7 +3,7 @@
     <div class="login-container">
       <div class="login-header">
         <img class="logo mr10" src="../../assets/img/logo.svg" alt="" />
-        <div class="login-title">E会约-后台管理系统</div>
+        <div class="login-title">实践课程管理系统PCMS</div>
       </div>
       <el-form :model="param" :rules="rules" ref="login" size="large">
         <el-form-item prop="username">
@@ -11,6 +11,15 @@
             <template #prepend>
               <el-icon>
                 <User />
+              </el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="sno">
+          <el-input v-model="param.sno" placeholder="工号">
+            <template #prepend>
+              <el-icon>
+                <Money />
               </el-icon>
             </template>
           </el-input>
@@ -46,12 +55,6 @@
           @click="submitForm(login)"
           >登录</el-button
         >
-        <!-- <p class="login-tips">Tips : 用户名和密码随便填。</p> -->
-        <!-- <p class="login-text">
-          没有账号？<el-link type="primary" @click="$router.push('/register')"
-            >立即注册</el-link
-          >
-        </p> -->
       </el-form>
     </div>
   </div>
@@ -68,6 +71,7 @@ import axios from "axios";
 interface LoginInfo {
   username: string;
   password: string;
+  sno: string;
 }
 
 const lgStr = localStorage.getItem("login-param");
@@ -78,6 +82,7 @@ const router = useRouter();
 const param = reactive<LoginInfo>({
   username: defParam ? defParam.username : "",
   password: defParam ? defParam.password : "",
+  sno: defParam ? defParam.sno : "",
 });
 
 const rules: FormRules = {
@@ -89,6 +94,7 @@ const rules: FormRules = {
     },
   ],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+  sno: [{ required: true, message: "请输入工号", trigger: "blur" }],
 };
 const permiss = usePermissStore();
 const login = ref<FormInstance>();
@@ -99,21 +105,20 @@ const submitForm = (formEl: FormInstance | undefined) => {
     if (valid) {
       // 假设param已经包含了用户名和密码
       const loginData = {
-        sno: param.username,
+        name: param.username,
         password: param.password, // 确保param对象中有password属性
+        sno: param.sno,
       };
-      console.log(loginData);
-
       // 向后端发送登录请求
       axios
-        .post("/api/login/passlogin", loginData, {
+        .post("/api/login/adminlogin", loginData, {
           headers: {
             "Content-Type": "application/json",
           },
         })
         .then((response) => {
           // 登录成功
-          console.log(response.data);
+          //console.log(response.data);
           if (response.data.data.message == "success") {
             ElMessage.success("登录成功");
             localStorage.setItem("vuems_name", param.username);
@@ -123,7 +128,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
                 param.username === "admin" ? "admin" : "user"
               ];
             permiss.handleSet(keys);
-            router.push("/");
+            //router.push("/");
 
             // 如果用户勾选了记住我，则保存登录参数
             if (checked.value) {
@@ -173,7 +178,7 @@ tabs.clearTabs();
   justify-content: center;
   width: 100%;
   height: 100vh;
-  background: url(../../assets/img/login-bg.jpg) center/cover no-repeat;
+  background: url(../../assets/img/merry-christmas-2998593_640.jpg) center/cover no-repeat;
 }
 
 .login-header {

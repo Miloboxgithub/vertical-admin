@@ -3,7 +3,7 @@
         <div class="login-container">
             <div class="login-header">
                 <img class="logo mr10" src="../../assets/img/logo.svg" alt="" />
-                <div class="login-title">E会约-后台管理系统</div>
+                <div class="login-title">实践课程管理系统PCMS</div>
             </div>
             <el-form :model="param" :rules="rules" ref="register" size="large">
                 <el-form-item prop="username">
