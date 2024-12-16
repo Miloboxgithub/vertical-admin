@@ -51,6 +51,15 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "system-menu" */ '../views/system/menu.vue'),
             },
             {
+                path: '/system-course',
+                name: 'system-course',
+                meta: {
+                    title: '实践课程管理',
+                    permiss: '16',
+                },
+                component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/course.vue'),
+            },
+            {
                 path: '/system-logviewer',
                 name: 'system-logviewer',
                 meta:{

@@ -9,6 +9,7 @@
       <el-col :span="options.span" v-for="item in options.list">
         <el-form-item :label="item.label" :prop="item.prop">
           <!-- 文本框、数字框、下拉框、日期框、开关、上传 -->
+          
           <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop]"
@@ -16,6 +17,17 @@
             :placeholder="item.placeholder"
             clearable
           ></el-input>
+          <el-date-picker
+            v-else-if="item.type === 'datetimerange'"
+            v-model="form[item.prop]"
+            type="datetimerange"
+            :disabled="item.disabled"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            clearable
+          ></el-date-picker>
           <el-input-number
             v-else-if="item.type === 'number'"
             v-model="form[item.prop]"
@@ -30,7 +42,7 @@
             clearable
           >
             <el-option
-              v-for="opt in item.opts"
+              v-for="opt in item.options"
               :label="opt.label"
               :value="opt.value"
             ></el-option>

@@ -22,4 +22,5 @@ export interface FormOptionList {
     status?: any[];
     st?: any[];
     sta?: any[];
+    options?: any[];
 }

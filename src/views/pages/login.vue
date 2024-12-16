@@ -128,7 +128,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
                 param.username === "admin" ? "admin" : "user"
               ];
             permiss.handleSet(keys);
-            //router.push("/");
+            router.push("/");
 
             // 如果用户勾选了记住我，则保存登录参数
             if (checked.value) {

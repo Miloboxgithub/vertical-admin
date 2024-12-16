@@ -3,13 +3,19 @@ import { Menus } from "@/types/menu";
 export const menuData: Menus[] = [
   {
     id: "0",
-    title: "系统管理",
+    title: "首页",
     index: "/dashboard",
-    icon: "TrendCharts",
+    icon: "HomeFilled",
   },
   {
     id: "0",
-    icon: "HomeFilled",
+    icon: "WalletFilled",
+    index: "/system-course",
+    title: "实践课程管理",
+  },
+  {
+    id: "0",
+    icon: "TrendCharts",
     index: "/system-user",
     title: "会议室管理",
   },
