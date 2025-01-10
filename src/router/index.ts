@@ -7,7 +7,7 @@ import 'nprogress/nprogress.css';
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
-        redirect: '/dashboard',
+        redirect: '/system-course',
     },
     {
         path: '/',
@@ -23,33 +23,33 @@ const routes: RouteRecordRaw[] = [
                 },
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
             },
-            {
-                path: '/system-user',
-                name: 'system-user',
-                meta: {
-                    title: '用户管理',
-                    permiss: '11',
-                },
-                component: () => import(/* webpackChunkName: "system-user" */ '../views/system/user.vue'),
-            },
-            {
-                path: '/system-role',
-                name: 'system-role',
-                meta: {
-                    title: '角色管理',
-                    permiss: '12',
-                },
-                component: () => import(/* webpackChunkName: "system-role" */ '../views/system/role.vue'),
-            },
-            {
-                path: '/system-menu',
-                name: 'system-menu',
-                meta: {
-                    title: '菜单管理',
-                    permiss: '13',
-                },
-                component: () => import(/* webpackChunkName: "system-menu" */ '../views/system/menu.vue'),
-            },
+            // {
+            //     path: '/system-user',
+            //     name: 'system-user',
+            //     meta: {
+            //         title: '用户管理',
+            //         permiss: '11',
+            //     },
+            //     component: () => import(/* webpackChunkName: "system-user" */ '../views/system/user.vue'),
+            // },
+            // {
+            //     path: '/system-role',
+            //     name: 'system-role',
+            //     meta: {
+            //         title: '角色管理',
+            //         permiss: '12',
+            //     },
+            //     component: () => import(/* webpackChunkName: "system-role" */ '../views/system/role.vue'),
+            // },
+            // {
+            //     path: '/system-menu',
+            //     name: 'system-menu',
+            //     meta: {
+            //         title: '菜单管理',
+            //         permiss: '13',
+            //     },
+            //     component: () => import(/* webpackChunkName: "system-menu" */ '../views/system/menu.vue'),
+            // },
             {
                 path: '/system-course',
                 name: 'system-course',
@@ -60,23 +60,68 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/course.vue'),
             },
             {
-                path: '/system-logviewer',
-                name: 'system-logviewer',
-                meta:{
-                    title: '日志查看',
-                    permiss: '15',
+                path: '/system-teacher',
+                name: 'system-teacher',
+                meta: {
+                    title: '教师课题管理',
+                    permiss: '17',
                 },
-                component: () => import(/* webpackChunkName: "system-logviewer" */ '../views/system/logviewer.vue'),
+                component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/teacher.vue'),
             },
             {
-                path: '/system-yuyue',
-                name: 'system-yuyue',
+                path: '/system-student',
+                name: 'system-student',
                 meta: {
-                    title: '预约管理',
-                    permiss: '14',
+                    title: '学生选课管理',
+                    permiss: '18',
                 },
-                component: () => import(/* webpackChunkName: "system-menu" */ '../views/system/yuyue.vue'),
+                component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/student.vue'),
             },
+            {
+                path: '/system-tmessage',
+                name: 'system-tmessage',
+                meta: {
+                    title: '教师信息管理',
+                    permiss: '19',
+                },
+                component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/tmessage.vue'),
+            },
+            {
+                path: '/system-smessage',
+                name: 'system-smessage',
+                meta: {
+                    title: '学生信息管理',
+                    permiss: '20',
+                },
+                component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/smessage.vue'),
+            },
+            {
+                path: '/system-management',
+                name: 'system-management',
+                meta: {
+                    title: '系统管理',
+                    permiss: '20',
+                },
+                component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/management.vue'),
+            },
+            // {
+            //     path: '/system-logviewer',
+            //     name: 'system-logviewer',
+            //     meta:{
+            //         title: '日志查看',
+            //         permiss: '15',
+            //     },
+            //     component: () => import(/* webpackChunkName: "system-logviewer" */ '../views/system/logviewer.vue'),
+            // },
+            // {
+            //     path: '/system-yuyue',
+            //     name: 'system-yuyue',
+            //     meta: {
+            //         title: '预约管理',
+            //         permiss: '14',
+            //     },
+            //     component: () => import(/* webpackChunkName: "system-menu" */ '../views/system/yuyue.vue'),
+            // },
             {
                 path: '/table',
                 name: 'basetable',

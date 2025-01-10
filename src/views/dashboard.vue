@@ -145,7 +145,7 @@ import VChart from 'vue-echarts';
 import { dashOpt1, dashOpt2, mapOptions } from './chart/options';
 import chinaMap from '@/utils/china';
 import { ref } from 'vue';
-import { fetchUserData,fetchUserData2,fetchUserData3 } from "@/api";
+//import { fetchUserData,fetchUserData2,fetchUserData3 } from "@/api";
 import axios from "axios";
 import { ElMessage } from 'element-plus';
 import { useRouter } from "vue-router";
@@ -171,19 +171,19 @@ const endValue1 = ref(0); // 初始值
 const endValue2 = ref(0); // 初始值
 const endValue3 = ref(0); // 初始值
 const endValue4 = ref(0); // 初始值
-async function updateEndValue() {
-  // 这里可以设置逻辑来更新 endValue 的值
-  let ans1 = await fetchUserData(1,'','')
-  let ans2 = await fetchUserData2(2,'','','')
-  let ans3 = await fetchUserData3(3,'','')
-  endValue1.value = ans2.total
-  if (ans1 == "Request failed with status code 403") {
-    goTologon();
-  }
-  endValue2.value = ans1.total
-  endValue3.value = ans3.total
-}
-updateEndValue();
+// async function updateEndValue() {
+//   // 这里可以设置逻辑来更新 endValue 的值
+//   let ans1 = await fetchUserData(1,'','')
+//   let ans2 = await fetchUserData2(2,'','','')
+//   let ans3 = await fetchUserData3(3,'','')
+//   endValue1.value = ans2.total
+//   if (ans1 == "Request failed with status code 403") {
+//     goTologon();
+//   }
+//   endValue2.value = ans1.total
+//   endValue3.value = ans3.total
+// }
+//updateEndValue();
 registerMap('china', chinaMap);
 const activities = [
     {

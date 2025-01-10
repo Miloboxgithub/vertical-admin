@@ -7,6 +7,8 @@ export interface FormOption {
 
 export interface FormOptionList {
     prop: string;
+    stime?: string;
+    etime?: string;
     label: string;
     type: string;
     placeholder?: string;

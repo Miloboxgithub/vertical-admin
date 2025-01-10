@@ -57,8 +57,6 @@
           :type="item.type"
           :align="item.align || 'center'"
           :sortable="item.sortable"
-
-          
         >
           <template
             #default="{ row, column, $index }"
@@ -121,7 +119,7 @@
 import { toRefs, PropType, ref } from "vue";
 import { Delete, Edit, View, Refresh } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
-import { fetchUserData } from "@/api";
+//import { fetchUserData } from "@/api";
 const props = defineProps({
   // 表格相关
   tableData: {

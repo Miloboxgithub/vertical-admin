@@ -21,12 +21,10 @@
             v-else-if="item.type === 'datetimerange'"
             v-model="form[item.prop]"
             type="datetimerange"
-            :disabled="item.disabled"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
             value-format="yyyy-MM-dd HH:mm:ss"
-            clearable
           ></el-date-picker>
           <el-input-number
             v-else-if="item.type === 'number'"
@@ -168,6 +166,7 @@ const { options, formData, edit, update, edits } = defineProps({
     required: true,
   },
 });
+console.log(options.list,'----------------------');
 options.list.forEach((item) => {
   item.opts = [
     {
@@ -268,7 +267,6 @@ options.list.forEach((item) => {
     },
   ];
 });
-//console.log(edit, "eeeeeeeeeee");
 const form = ref({ ...(edit ? formData : {}) });
 console.log(form.value.password, "form.value");
 form.value.password = "";
@@ -284,29 +282,51 @@ const rules: FormRules = options.list
     return {};
   })
   .reduce((acc, cur) => ({ ...acc, ...cur }), {});
+  function formatDate(dateString) {
+  // 创建 Date 对象
+  const date = new Date(dateString);
 
+  // 获取年、月、日、时、分、秒
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // getMonth() 返回的月份是从 0 开始的
+  const day = date.getDate();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+
+  // 格式化月份和日期，确保它们是两位数
+  const formattedMonth = month < 10 ? `0${month}` : month;
+  const formattedDay = day < 10 ? `0${day}` : day;
+  const formattedHours = hours < 10 ? `0${hours}` : hours;
+  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+  const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+
+  // 组合成目标格式
+  return `${year}-${formattedMonth}-${formattedDay} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
 const formRef = ref<FormInstance>();
 const saveEdit = (formEl: FormInstance | undefined) => {
+  
   if (!formEl) return;
-  formEl.validate((valid) => {
-    if (!valid) return false;
+
     update(form.value);
-  });
-  if (edits) {
-    //console.log(form.value.roomName,'editsform');
-    DeleteRoom(form);
-  } else {
-    if (!edit) {
-      //console.log(form.value,'增添数据');
-      if ("role" in form.value) createRoom2(form.value);
-      else createRoom(form.value);
-    } else {
-      //console.log(form.value,'修改数据');
-      if ("role" in form.value) changeRoom2(form.value);
-      else if ("appointmentPerson" in form.value) changeRoom3(form.value);
-      else changeRoom(form.value);
-    }
-  }
+
+  //console.log(form.value, "form.value444444");
+  // if (edits) {
+  //   //console.log(form.value.roomName,'editsform');
+  //   DeleteRoom(form);
+  // } else {
+  //   if (!edit) {
+  //     //console.log(form.value,'增添数据');
+  //     if ("role" in form.value) createRoom2(form.value);
+  //     else createRoom(form.value);
+  //   } else {
+  //     //console.log(form.value,'修改数据');
+  //     if ("role" in form.value) changeRoom2(form.value);
+  //     else if ("appointmentPerson" in form.value) changeRoom3(form.value);
+  //     else changeRoom(form.value);
+  //   }
+  // }
 };
 const changeRoom = async (e) => {
   console.log(e);
@@ -352,7 +372,7 @@ const changeRoom = async (e) => {
     console.error("There was a problem with the fetch operation:", error);
   }
 };
-const createRoom = async (e) => {
+const createCourse = async (e) => {
   if (e.status == "不可预约") {
     e.status = 1;
   } else {
@@ -589,6 +609,7 @@ const DeleteRoom = async (e) => {
     return error;
   }
 };
+
 const handleAvatarSuccess: UploadProps["onSuccess"] = (
   response,
   uploadFile
