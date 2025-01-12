@@ -40,20 +40,26 @@ export const menuData: Menus[] = [
     {
       id: "1",
     icon: "Tools",
-    index: "/system-mansgement",
+    index: "/system-management",
     title: "系统管理",
       children: [
   {
       id: '32',
       pid: '2',
-      index: '/table-editor',
-      title: '可编辑表格',
+      index: '/system-management',
+      title: '项目实践管理员',
   },
   {
     id: "13",
     icon: "Tools",
-    index: "/system-mansgement",
-    title: "系统管理",
+    index: "/pages-reset-pwd",
+    title: "修改密码",
+  },
+  {
+    id: "13",
+    icon: "Tools",
+    index: "/system-journal",
+    title: "发现日志",
   },
       ],
   },

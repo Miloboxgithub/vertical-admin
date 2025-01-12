@@ -7,6 +7,9 @@ interface ObjectList {
 export const usePermissStore = defineStore('permiss', {
     state: () => {
         const defaultList: ObjectList = {
+            superadmin:[
+                '19','20','21'
+            ],
             admin: [
                 '0',
                 '1',

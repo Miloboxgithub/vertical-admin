@@ -9,7 +9,12 @@
       <el-col :span="options.span" v-for="item in options.list">
         <el-form-item :label="item.label" :prop="item.prop">
           <!-- 文本框、数字框、下拉框、日期框、开关、上传 -->
-          
+          <div
+          v-if="item.type === 'sss'"
+          style="width: 100px; height: 100px; background-color: red;"
+          >
+            sss
+          </div>
           <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop]"
@@ -166,7 +171,6 @@ const { options, formData, edit, update, edits } = defineProps({
     required: true,
   },
 });
-console.log(options.list,'----------------------');
 options.list.forEach((item) => {
   item.opts = [
     {
@@ -268,7 +272,7 @@ options.list.forEach((item) => {
   ];
 });
 const form = ref({ ...(edit ? formData : {}) });
-console.log(form.value.password, "form.value");
+//console.log(form.value.password, "form.value");
 form.value.password = "";
 const rules: FormRules = options.list
   .map((item) => {

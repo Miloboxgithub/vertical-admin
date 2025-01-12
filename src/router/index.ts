@@ -100,9 +100,27 @@ const routes: RouteRecordRaw[] = [
                 name: 'system-management',
                 meta: {
                     title: '系统管理',
-                    permiss: '20',
+                    permiss: '21',
                 },
                 component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/management.vue'),
+            },
+            {
+                path: '/pages-reset-pwd',
+                name: 'pages-reset-pwd',
+                meta: {
+                    title: '重置密码',
+                    permiss: '22',
+                },
+                component: () => import(/* webpackChunkName: "system-notice" */ '../views/pages/reset-pwd.vue'),
+            },
+            {
+                path: '/system-journal',
+                name: 'system-journal',
+                meta: {
+                    title: '发现日志',
+                    permiss: '23',
+                },
+                component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/journal.vue'),
             },
             // {
             //     path: '/system-logviewer',
@@ -311,14 +329,14 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import(/* webpackChunkName: "register" */ '../views/pages/register.vue'),
     },
-    {
-        path: '/reset-pwd',
-        meta: {
-            title: '重置密码',
-            noAuth: true,
-        },
-        component: () => import(/* webpackChunkName: "reset-pwd" */ '../views/pages/reset-pwd.vue'),
-    },
+    // {
+    //     path: '/reset-pwd',
+    //     meta: {
+    //         title: '重置密码',
+    //         noAuth: true,
+    //     },
+    //     component: () => import(/* webpackChunkName: "reset-pwd" */ '../views/pages/reset-pwd.vue'),
+    // },
     {
         path: '/403',
         meta: {
@@ -343,20 +361,30 @@ const router = createRouter({
     routes
   });
 
-router.beforeEach((to, from, next) => {
-    NProgress.start();
-    const role = localStorage.getItem('vuems_name');
-    const permiss = usePermissStore();
-    if (!role && to.meta.noAuth !== true) {
-        next('/login');}
-    // } else if (typeof to.meta.permiss == 'string' && !permiss.key.includes(to.meta.permiss)) {
-    //     // 如果没有权限，则进入403
-    //     next('/403');
-    // } 
-    else {
-        next();
-    }
-});
+
+  router.beforeEach((to, from, next) => {
+      NProgress.start();
+      const role = localStorage.getItem('vuems_role');
+      const permissStore = usePermissStore();
+      const permissList = permissStore.defaultList;
+  
+      if (!role && to.meta.noAuth !== true) {
+          next('/login');
+      } else {
+          // 检查是否是需要superadmin权限的页面
+          const isSuperadminPage = to.meta.permiss === '19'|| to.meta.permiss === '20'|| to.meta.permiss === '21';
+          if (isSuperadminPage) {
+              // 如果是需要superadmin权限的页面，检查角色是否为superadmin
+              if (role === 'superadmin') {
+                  next(); // 是superadmin，放行
+              } else {
+                  next('/403'); // 不是superadmin，跳转到403
+              }
+          } else {
+              next(); // 不是superadmin页面，放行
+          }
+      }
+  });
 
 router.afterEach(() => {
     NProgress.done();
