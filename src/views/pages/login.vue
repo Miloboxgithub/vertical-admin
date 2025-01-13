@@ -2,7 +2,7 @@
   <div class="login-bg">
     <div class="login-container">
       <div class="login-header">
-        <img class="logo mr10" src="../../assets/img/logo.svg" alt="" />
+        <img class="logo mr10" src="../../assets/img/logofav.png" alt="" />
         <div class="login-title">实践课程管理系统PCMS</div>
       </div>
       <el-form :model="param" :rules="rules" ref="login" size="large">

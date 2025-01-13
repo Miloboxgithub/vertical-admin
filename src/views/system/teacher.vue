@@ -19,7 +19,7 @@
           <el-tag type="success" v-else-if="rows.reimburse == 1">已报销</el-tag>
         </template>
         <template #toolbarBtn>
-          <el-button
+          <!-- <el-button
             type="warning"
             :icon="CirclePlusFilled"
             @click="
@@ -27,11 +27,27 @@
               isEdit = false;
             "
             >新增数据</el-button
-          >
+          > -->
+          <el-button type="success" @click="daochu()">
+              <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
+              导出
+            </el-button>
           <!-- <el-button type="primary" @click="visible2 = true">
               <el-icon style="margin-right: 5px"><CirclePlus /></el-icon>
               增添不可预约时段
             </el-button> -->
+          <el-select
+            v-model="practiceName"
+            placeholder="Select"
+            style="width: 240px; margin-left: 10px"
+          >
+            <el-option
+              v-for="item in Projectpractice"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </template>
       </TableCustom>
     </div>
@@ -68,7 +84,7 @@
 </template>
 
 <script setup lang="ts" name="system-user">
-import { ref, reactive } from "vue";
+import { ref, reactive, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
@@ -78,11 +94,13 @@ import {
   SearchCourse,
   createCourse,
   updateCourse,
+  exportTeacherCourseData,
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
 import TableSearch from "@/components/table-search.vue";
 import { FormOption, FormOptionList } from "@/types/form-option";
+import { ElMessageBox } from "element-plus";
 import axios from "axios";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -99,7 +117,9 @@ const query = reactive({
   //name: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "编号查询：", prop: "projectpracticeCode" },
+  { type: "input", label: "题目查询：", prop: "TitleName" },
+  { type: "input", label: "名称查询", prop: "projectpracticeName" },
+  { type: "input", label: "教师查询：", prop: "teacherName" },
 ]);
 
 // 表格相关
@@ -115,17 +135,40 @@ let columns = ref([
   { prop: "guidancePlace", label: "地点" },
   { prop: "budget", label: "经费" },
   { prop: "reimburse", label: "是否已报销" },
-  { prop: "operator", label: "操作", width: 250 },
+  { prop: "operators", label: "操作", width: 200 },
 ]);
 const page = reactive({
   index: 1,
   size: 10,
   total: 0,
 });
+
+const Projectpractice = ref([]);
+const practiceName = ref("");
+// 监听practiceName的变化
+watch(practiceName, (newValue, oldValue) => {
+  console.log(`选中的值从 ${oldValue} 变为 ${newValue}`);
+  // 在这里调用你需要的函数
+  getData(1, 0);
+});
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
+let esp = localStorage.getItem("v_codes");
+esp = JSON.parse(esp);
+console.log(esp, "esp");
+if (Array.isArray(esp)) {
+  esp.forEach((element) => {
+    Projectpractice.value.push({
+      value: element.projectPracticeCode,
+      label: element.projectPracticeName,
+    });
+  });
+}
+if (Projectpractice.value.length > 0) {
+  practiceName.value = Projectpractice.value[0].value;
+}
 const getData = async (e, p) => {
-  const ress = await fetchTeacherCourseData(e, p);
+  const ress = await fetchTeacherCourseData(e, p, practiceName.value,'','','');
   if (ress == "Request failed with status code 403") {
     goTologon();
   }
@@ -136,20 +179,53 @@ const getData = async (e, p) => {
   console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
+
 const handleSearch = async (queryData) => {
-  if (!queryData.projectpracticeCode) {
+  if (!queryData.TitleName&&!queryData.projectpracticeName&&!queryData.teacherName) {
     getData(1, 0);
   } else {
-    const ress = await SearchCourse(queryData.projectpracticeCode);
+    const ress = await fetchTeacherCourseData(1, 0, practiceName.value, queryData.TitleName, queryData.projectpracticeName, queryData.teacherName);
     if (ress == null) {
       ElMessage.error("查询失败");
     } else {
-      tableData.value = ress.ProjectPracticeInfoList;
+      tableData.value = ress.SetTopicInfoList;
       page.total = ress.total;
       componentKey.value++;
     }
   }
 };
+async function daochu() {
+  ElMessageBox.confirm("确定要导出表格吗？", "提示", {
+    type: "info",
+  })
+    .then(async () => {
+      const res = await exportTeacherCourseData(practiceName.value);
+      if (res.code == 50)
+        ElMessage({
+          type: "warning",
+          message: "导出失败",
+        });
+      else {
+        const url = window.URL.createObjectURL(new Blob([res],
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
+        link.style.display = 'none' // 隐藏元素
+        document.body.appendChild(link);
+        link.click();
+        
+        // 清理 DOM 和释放 URL 对象
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        ElMessage({
+          type: "success",
+          message: "导出成功",
+        });
+      }
+    })
+    .catch(() => {});
+}
 const changePage = (val: number, name: string, p) => {
   page.index = val;
   getData(page.index, p);
@@ -187,12 +263,12 @@ let options = ref<FormOption>({
       prop: "projectpracticeCode",
       required: true,
     },
-    // {
-    //   type: "sss",
-    //   label: "实践课程编号",
-    //   prop: "projectpracticeCode",
-    //   required: true,
-    // },
+    {
+      type: "sss",
+      label: "实践课程编号",
+      prop: "projectpracticeCode",
+      required: true,
+    },
     {
       type: "input",
       label: "题目",
@@ -204,7 +280,6 @@ let options = ref<FormOption>({
       label: "指导老师",
       prop: "teacherName",
       required: true,
-
     },
     {
       type: "input",
@@ -235,35 +310,28 @@ let options = ref<FormOption>({
       label: "是否已报销",
       prop: "reimburse",
       required: true,
-      options:[
+      options: [
         { label: "已报销", value: 1 },
         { label: "未报销", value: 0 },
-      ]
+      ],
     },
     //{ type: "input", label: "负责人", prop: "adminName", required: true },
   ],
 });
 let newoptions = ref<FormOption>({
-  labelWidth: "140px",
-  span: 12,
+  labelWidth: "120px",
+  span: 22,
   list: [
-    {
-      type: "input",
-      label: "题目编号",
-      prop: "projectpracticeCode",
-      required: true,
-    },
-    // {
-    //   type: "sss",
-    //   label: "实践课程编号",
-    //   prop: "projectpracticeCode",
-    //   required: true,
-    // },
     {
       type: "input",
       label: "题目",
       prop: "projectpracticeName",
       required: true,
+    },
+    {
+      type: "sss",
+      label: "已选课学生",
+      prop: "",
     },
     {
       type: "input",
@@ -316,10 +384,10 @@ const handleEdit = (row: User) => {
   getData(1, 0);
 };
 const mapping = {
-  机械设计制作及其自动化: "0101",
-  电子科学与技术: "0102",
-  机器人工程: "0104",
-  自动化: "0103",
+  "机械设计制作及其自动化": "0101",
+  "电子科学与技术": "0102",
+  "机器人工程": "0104",
+  "自动化": "0103",
 };
 const updateData = async (e) => {
   e.selectEtime = formatDate(e.selectEtime);
@@ -409,7 +477,7 @@ const handleView = (row: User) => {
     {
       prop: "status",
       label: "是否报销",
-    }
+    },
   ];
   visible1.value = true;
 };

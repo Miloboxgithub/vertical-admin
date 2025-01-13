@@ -9,12 +9,23 @@
       <el-col :span="options.span" v-for="item in options.list">
         <el-form-item :label="item.label" :prop="item.prop">
           <!-- 文本框、数字框、下拉框、日期框、开关、上传 -->
-          <div
-          v-if="item.type === 'sss'"
-          style="width: 100px; height: 100px; background-color: red;"
-          >
-            sss
-          </div>
+<div v-if="item.type === 'sss'" style="width: 100%; height: 100%; ">
+  <div style="width: 100%; height: 40px; border: 1px solid #ccc; border-radius: 5px; padding: 10px; display: flex;  align-items: center;">
+      <div style="color:#2272FB;">指定学生（{{numnum}}人）</div>
+      <el-input v-model="inputname" style="width: 240px" placeholder="学生姓名查询" />
+  </div>
+          <div class="scrollable-window">
+  <div class="window-content">
+    <el-table :data="stableData" class="custom-table-font-size" >
+    
+    <el-table-column prop="name" label="name" width="80" />
+    <el-table-column prop="sno" label="sno" width="80" />
+    <el-table-column prop="major" label="major" width="130" />
+    <el-table-column prop="class" label="class" width="60" />
+    <el-table-column prop="phone" label="phone" width="120" />
+  </el-table>
+  </div>
+</div></div>
           <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop]"
@@ -148,7 +159,31 @@
 import { FormOption } from "@/types/form-option";
 import { FormInstance, FormRules, UploadProps } from "element-plus";
 import { PropType, ref } from "vue";
-
+const numnum = ref(0);
+const inputname = ref("");
+const stableData = ref([
+  {
+    name: "张三",
+    sno: "20210001",
+    class: "1班",
+    phone: "12345678901",
+    major: "计算机科学与技术",
+  },
+  {
+    name: "李四",
+    sno: "20210002",
+    class: "1班",
+    phone: "12345678902",
+    major: "计算机科学与技术",
+  },
+  {
+    name: "王五",
+    sno: "20210003",
+    class: "1班",
+    phone: "12345678903",
+    major: "计算机科学与技术",
+  }
+])
 const { options, formData, edit, update, edits } = defineProps({
   options: {
     type: Object as PropType<FormOption>,
@@ -332,287 +367,7 @@ const saveEdit = (formEl: FormInstance | undefined) => {
   //   }
   // }
 };
-const changeRoom = async (e) => {
-  console.log(e);
-  if (e.status == "不可预约") {
-    e.status = 1;
-  } else {
-    e.status = 0;
-  }
-  try {
-    // 定义要发送的数据
-    const data = {
-      id: e.id,
-      name: e.name,
-      capacity: e.capacity,
-      status: parseInt(e.status),
-      // start_time: e.time.substring(0, 5) + ":00",
-      // end_time: e.time.substring(6, 11) + ":00",
-      // ...其他需要的数据字段
-    };
-    //console.log(data);
 
-    const response = await fetch("/api/sadmin/updmeetingroom", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
-        Authorization: localStorage.getItem("vuems_token"),
-      },
-      body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
-    });
-
-    // 检查响应状态
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // 解析响应数据为 JSON
-    const result = await response.json();
-    console.log(result, "get"); // 输出获取到的数据
-
-    // 处理 result 数据
-    // ...
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-  }
-};
-const createCourse = async (e) => {
-  if (e.status == "不可预约") {
-    e.status = 1;
-  } else {
-    e.status = 0;
-  }
-  try {
-    const data = {
-      name: e.name,
-      capacity: parseInt(e.capacity),
-      status: e.status,
-    };
-    // 发起 POST 请求
-    const response = await fetch("/api/sadmin/addmeetingroom", {
-      method: "POST", // 指定请求方法为 POST
-      headers: {
-        "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
-        // 根据需要可能还需要添加其他头部信息，如认证令牌等
-        Authorization: localStorage.getItem("vuems_token"),
-      },
-      body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
-    });
-
-    // 检查响应状态
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // 解析响应数据为 JSON
-    const result = await response.json();
-    console.log(result); // 输出获取到的数据
-
-    // 处理 result 数据
-    // ...
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-  }
-};
-const changeRoom2 = async (e) => {
-  if (e.status == "正常") {
-    e.status = 1;
-  } else {
-    e.status = 0;
-  }
-  if (e.role == "管理员") e.role = "admin";
-  else e.role = "user";
-  try {
-    // 定义要发送的数据
-    const data = {
-      id: e.id,
-      name: e.name,
-      role: e.role,
-      phone: e.phone,
-      sno: e.sno,
-      depart: e.depart,
-      status: e.status,
-      // password: e.password,
-      // ...其他需要的数据字段
-    };
-    if (e.password) {
-      data["password"] = e.password;
-    }
-    // 发起 POST 请求
-    const response = await fetch("/api/sadmin/updateuser", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
-        Authorization: localStorage.getItem("vuems_token"),
-      },
-      body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
-    });
-
-    // 检查响应状态
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // 解析响应数据为 JSON
-    const result = await response.json();
-    console.log(result); // 输出获取到的数据
-
-    // 处理 result 数据
-    // ...
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-  }
-};
-const createRoom2 = async (e) => {
-  if (e.status == "正常") {
-    e.status = 1;
-  } else {
-    e.status = 0;
-  }
-  if (e.role == "管理员") e.role = "admin";
-  else e.role = "user";
-  try {
-    console.log(e, "创建用户");
-    // 定义要发送的数据
-    const data = {
-      name: e.name,
-      role: e.role,
-      phone: e.phone,
-      sno: e.sno,
-      depart: e.depart,
-      status: 1,
-      // password: e.password,
-      // ...其他需要的数据字段
-    };
-    if (e.password.length > 0) {
-      data["password"] = e.password;
-    }
-    // 发起 POST 请求
-    const response = await fetch("/api/sadmin/createuser", {
-      method: "POST", // 指定请求方法为 POST
-      headers: {
-        "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
-        Authorization: localStorage.getItem("vuems_token"),
-      },
-      body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
-    });
-
-    // 检查响应状态
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // 解析响应数据为 JSON
-    const result = await response.json();
-    console.log(result); // 输出获取到的数据
-
-    // 处理 result 数据
-    // ...
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-  }
-};
-const changeRoom3 = async (e) => {
-  if (e.status == "可预约") {
-    e.status = 0;
-  } else if (e.status == "已预约") {
-    e.status = 1;
-  } else if (e.status == "不可预约") {
-    e.status = 3;
-  } else {
-    e.status = 2;
-  }
-  try {
-    // 定义要发送的数据
-    const data = {
-      id: e.id,
-      meetingroomId: e.meetingroomId,
-      appointmentDate: e.appointmentDate,
-      appointmentTime: e.appointmentTime,
-      appointmentSno: e.appointmentSno,
-      appointmentType: e.appointmentType,
-      status: e.status,
-      // ...其他需要的数据字段
-    };
-    console.log(data, "editststs");
-
-    // 发起 POST 请求
-    const response = await fetch("/api/sadmin/updateappointmentrecord", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
-        Authorization: localStorage.getItem("vuems_token"),
-      },
-      body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
-    });
-
-    // 检查响应状态
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // 解析响应数据为 JSON
-    const result = await response.json();
-    console.log(result, "editsssss"); // 输出获取到的数据
-
-    // 处理 result 数据
-    // ...
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-  }
-};
-//一键删除房间
-const DeleteRoom = async (e) => {
-  var dateStr = e.value.date;
-  // 将字符串转换为Date对象
-  var date = new Date(dateStr);
-  // 使用Date对象的toLocaleDateString方法来格式化日期
-  // 这里的选项{ year: 'numeric', month: '2-digit', day: '2-digit' }表示年、月、日的格式
-  var formattedDate = date
-    .toLocaleDateString("zh-CN", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
-    .replace(/\//g, "-"); // 将斜杠替换为破折号
-
-  //console.log(formattedDate, "好好好");
-  try {
-    // 定义要发送的数据
-    const data = {
-      meetingroomId: e.value.id,
-      appointmentDate: formattedDate,
-      times: e.value.time,
-      // ...其他需要的数据字段
-    };
-    // 发起 POST 请求
-    const response = await fetch("/api/sadmin/addforbidappointmenttimebunch", {
-      method: "POST", // 指定请求方法为 POST
-      headers: {
-        "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
-        // 根据需要可能还需要添加其他头部信息，如认证令牌等
-        Authorization: localStorage.getItem("vuems_token"),
-      },
-      body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
-    });
-
-    // 检查响应状态
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // 解析响应数据为 JSON
-    const result = await response.json();
-    console.log(result, "不可预约时间"); // 输出获取到的数据
-
-    // 处理 result 数据
-    // ...
-    return result;
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-    return error;
-  }
-};
 
 const handleAvatarSuccess: UploadProps["onSuccess"] = (
   response,
@@ -623,6 +378,22 @@ const handleAvatarSuccess: UploadProps["onSuccess"] = (
 </script>
 
 <style>
+.scrollable-window {
+  max-width: 800px; /* 最大宽度为800px */
+  width: 100%; /* 宽度占满父容器 */
+  height: 200px; /* 窗口高度 */
+  overflow-y: auto; /* 允许垂直滚动 */
+  border: 1px solid #ccc; /* 边框样式 */
+  margin: 20px auto; /* 水平居中，上下外边距20px */
+  padding: 10px; /* 内边距 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  border-radius: 5px; /* 边框圆角 */
+}
+
+.window-content {
+  /* 窗口内容的样式，可根据需要调整 */
+  width: 100%;
+}
 .avatar-uploader .el-upload {
   border: 1px dashed var(--el-border-color);
   border-radius: 6px;
@@ -642,5 +413,8 @@ const handleAvatarSuccess: UploadProps["onSuccess"] = (
   width: 178px;
   height: 178px;
   text-align: center;
+}
+.custom-table-font-size {
+  font-size: 10px; /* 设置字体大小为14px */
 }
 </style>

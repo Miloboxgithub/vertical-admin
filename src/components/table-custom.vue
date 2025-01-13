@@ -92,6 +92,24 @@
                   删除
                 </el-button>
               </template>
+              <template v-if="item.prop == 'operators'">
+                <el-button
+                  type="warning"
+                  size="small"
+                  :icon="View"
+                  @click="viewFunc(row)"
+                >
+                  查看
+                </el-button>
+                <el-button
+                  type="danger"
+                  size="small"
+                  :icon="Delete"
+                  @click="handleDelete(row)"
+                >
+                  删除
+                </el-button>
+              </template>
               <span v-else-if="item.formatter">
                 {{ item.formatter(row[item.prop]) }}
               </span>

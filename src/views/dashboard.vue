@@ -19,7 +19,7 @@
                     </el-icon>
                     <div class="card-content">
                         <countup class="card-num color3" :end="endValue2" />
-                        <div>会议室数量</div>
+                        <div>数量</div>
                     </div>
                 </el-card>
             </el-col>
@@ -31,7 +31,7 @@
                     </el-icon>
                     <div class="card-content">
                         <countup class="card-num color2" :end="endValue3" />
-                        <div>预约记录量</div>
+                        <div>预约量</div>
                     </div>
                 </el-card>
             </el-col>

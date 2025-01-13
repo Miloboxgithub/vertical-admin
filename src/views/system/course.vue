@@ -147,11 +147,11 @@ const getadmindata = async () => {
   const ress = await fetchAdminData();
   if (ress.code != 50) {
     let op = ress.data.propracticeList;
-    let esp = [];
-    op.forEach((item) => {
-      esp.push(item.projectPracticeCode);
-    });
-    localStorage.setItem("v_codes", JSON.stringify(esp));
+    // let esp = [];
+    // op.forEach((item) => {
+    //   esp.push(item.projectPracticeCode);
+    // });
+    localStorage.setItem("v_codes", JSON.stringify(op));
   } else {
     goTologon();
   }
@@ -234,12 +234,6 @@ let options = ref<FormOption>({
   labelWidth: "140px",
   span: 12,
   list: [
-    // {
-    //   type: "input",
-    //   label: "实践课程编号",
-    //   prop: "projectpracticeCode",
-    //   required: true,
-    // },
     {
       type: "input",
       label: "实践课程名称",

@@ -24,17 +24,14 @@
               type="warning"
               :icon="CirclePlusFilled"
               @click="visible = true ; isEdit = false"
-              >新增实践课程</el-button
+              >新增管理员</el-button
             >
-            <el-button type="success" @click="daochu()">
-                <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
-                导出
-              </el-button>
+
           </template>
         </TableCustom>
       </div>
       <el-dialog
-        :title="isEdit ? '编辑' : '新增实践课程'"
+        :title="isEdit ? '编辑' : '新增管理员'"
         v-model="visible"
         width="700px"
         destroy-on-close
@@ -73,7 +70,7 @@
   import { ElMessage } from "element-plus";
   import { CirclePlusFilled } from "@element-plus/icons-vue";
   import { User } from "@/types/user";
-  import { fetchCourseData, DeleteCourseData, SearchCourse ,createCourse,updateCourse,exportCourseData} from "@/api";
+  import { fetchManageData, DeleteAdminData, SearchAdmin ,createAdmin,updateAdmin,exportCourseData} from "@/api";
   import TableCustom from "@/components/table-custom.vue";
   import TableDetail from "@/components/table-detail.vue";
   import TableSearch from "@/components/table-search.vue";
@@ -95,7 +92,7 @@
    //name: "",
   });
   const searchOpt = ref<FormOptionList[]>([
-    { type: "input", label: "实践课程编号查询：", prop: "projectpracticeCode" },
+    { type: "input", label: "查询：", prop: "name" },
   ]);
   
   // 表格相关
@@ -103,14 +100,12 @@
     //{ type: "index", label: "序号", width: 55, align: "center" },
     { type: "selection", width: 55, align: "center" },
     { prop: "ad", label: "序号", width: 55, align: "center" },
-    { prop: "projectpracticeCode", label: "实践课程编号" },
-    { prop: "projectpracticeName", label: "实践课程名称", sortable: "custom" },
-    { prop: "majorName", label: "专业" },
+    { prop: "adminName", label: "管理员姓名" },
+    { prop: "adminSno", label: "管理员工号" },
+    { prop: "email", label: "邮箱"},
     { prop: "grade", label: "年级" },
-    { prop: "adminName", label: "负责人" },
-    { prop: "titleTime", label: "教师出题时间" },
-    { prop: "selectTime", label: "学生选课时间" },
-    { prop: "status", label: "状态" },
+    { prop: "majorName", label: "专业" },
+    { prop: "phone", label: "电话号码" },
     { prop: "operator", label: "操作", width: 250 },
   ]);
   const page = reactive({
@@ -121,11 +116,11 @@
   const componentKey = ref(0); // 强制刷新组件
   const tableData = ref<User[]>([]);
   const getData = async (e, p) => {
-    const ress = await fetchCourseData(e, p);
+    const ress = await fetchManageData(e, p,'');
     if (ress == "Request failed with status code 403") {
       goTologon();
     }
-    tableData.value = ress.ProjectPracticeInfoList;
+    tableData.value = ress.AdminAdmins;
     page.total = ress.total;
   
     componentKey.value++;
@@ -133,18 +128,21 @@
   };
   getData(1, 0);
   const handleSearch = async (queryData) => {
-    if(!queryData.projectpracticeCode){
+    if(!queryData.name){
       getData(1, 0);
     }
     else{
-    const ress = await SearchCourse(queryData.projectpracticeCode);
-      if(ress==null){
+    const ress = await fetchManageData(1,0,queryData.name);
+      if(ress.AdminAdmins==null){
         ElMessage.error("查询失败");
       }
       else{
-      tableData.value = ress.ProjectPracticeInfoList;
-      page.total = ress.total;
+        console.log(ress, "ress");
+        
+      tableData.value = ress.AdminAdmins;
+      page.total = ress.AdminAdmins.length;
       componentKey.value++;
+      ElMessage.success("查询成功");
       }
     }
   };
@@ -190,21 +188,89 @@
     // 组合成目标格式
     return `${year}-${formattedMonth}-${formattedDay} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   }
+  function getRecentYears(numYears) {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let i = 0; i < numYears; i++) {
+    years.push({
+      label: currentYear - i,
+      value: currentYear - i
+    });
+  }
+  return years;
+}
+
+const recentYears = getRecentYears(4); // 获取最近3年
   // 新增/编辑弹窗相关
   let options = ref<FormOption>({
     labelWidth: "140px",
     span: 12,
     list: [
-      // {
-      //   type: "input",
-      //   label: "实践课程编号",
-      //   prop: "projectpracticeCode",
-      //   required: true,
-      // },
       {
         type: "input",
-        label: "实践课程名称",
-        prop: "projectpracticeName",
+        label: "姓名",
+        prop: "adminName",
+        required: true,
+      },
+      {
+        type: "input",
+        label: "工号",
+        prop: "adminSno",
+        required: true,
+      },
+      {
+        type: "input",
+        label: "电话",
+        prop: "phone",
+
+      },
+      {
+        type: "input",
+        label: "邮箱",
+        prop: "email",
+
+      },
+      {
+        type: "select",
+        label: "专业",
+        prop: "majorName",
+        required: true,
+        options: [
+          { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
+          {label:"电子科学与技术",value:"电子科学与技术"},
+          { label: "自动化", value: "自动化" },
+          {label:"机器人工程",value:"机器人工程"}
+        ],
+      },
+      {
+        type: "select",
+        label: "年级",
+        prop: "grade",
+        required: true,
+        options: recentYears,
+      },
+    ],
+  });
+  let newoptions = ref<FormOption>({
+    labelWidth: "140px",
+    span: 12,
+    list: [
+      {
+        type: "input",
+        label: "姓名",
+        prop: "adminName",
+        required: true,
+      },
+      {
+        type: "input",
+        label: "工号",
+        prop: "adminSno",
+        required: true,
+      },
+      {
+        type: "input",
+        label: "密码",
+        prop: "password",
         required: true,
       },
       {
@@ -224,127 +290,8 @@
         label: "年级",
         prop: "grade",
         required: true,
-        options: [
-        { label: "2022", value: 2022 },
-          { label: "2023", value: 2023 },
-          { label: "2024", value: 2024 },
-        ],
+        options:recentYears,
       },
-      {
-        type: "select",
-        label: "状态",
-        prop: "status",
-        required: true,
-        options: [
-          { label: "未开始", value: 0 },
-          { label: "已停止", value: 2 },
-          { label: "已开始", value: 1 },
-        ],
-      },
-      {
-        type: "date",
-        label: "教师出题开始时间",
-        prop: "titleStime",
-        required: true,
-      },
-      {
-        type: "date",
-        label: "教师出题结束时间",
-        prop: "titleEtime",
-        required: true,
-      },
-      {
-        type: "date",
-        label: "学生选课开始时间",
-        prop: "selectStime",
-        required: true,
-      },
-      {
-        type: "date",
-        label: "学生选课结束时间",
-        prop: "selectEtime",
-        required: true,
-      },
-      //{ type: "input", label: "负责人", prop: "adminName", required: true },
-      
-    ],
-  });
-  let newoptions = ref<FormOption>({
-    labelWidth: "140px",
-    span: 12,
-    list: [
-      // {
-      //   type: "input",
-      //   label: "项目课程号",
-      //   prop: "majorCode",
-      //   required: true,
-      // },
-      {
-        type: "input",
-        label: "实践课程名称",
-        prop: "projectpracticeName",
-        required: true,
-      },
-      {
-        type: "select",
-        label: "专业",
-        prop: "majorName",
-        required: true,
-        options: [
-        { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
-          {label:"电子科学与技术",value:"电子科学与技术"},
-          { label: "自动化", value: "自动化" },
-          {label:"机器人工程",value:"机器人工程"}
-        ],
-      },
-      {
-        type: "select",
-        label: "年级",
-        prop: "grade",
-        required: true,
-        options: [
-          { label: "2022", value: 2022 },
-          { label: "2023", value: 2023 },
-          { label: "2024", value: 2024 },
-        ],
-      },
-      {
-        type: "select",
-        label: "状态",
-        prop: "status",
-        required: true,
-        options: [
-          { label: "未开始", value: 0 },
-          { label: "已停止", value: 2 },
-          { label: "已开始", value: 1 },
-        ],
-      },
-      {
-        type: "date",
-        label: "教师出题开始时间",
-        prop: "titleStime",
-        required: true,
-      },
-      {
-        type: "date",
-        label: "教师出题结束时间",
-        prop: "titleEtime",
-        required: true,
-      },
-      {
-        type: "date",
-        label: "学生选课开始时间",
-        prop: "selectStime",
-        required: true,
-      },
-      {
-        type: "date",
-        label: "学生选课结束时间",
-        prop: "selectEtime",
-        required: true,
-      },
-      //{ type: "input", label: "负责人", prop: "adminName", required: true },
-      
     ],
   });
   const visible = ref(false);
@@ -365,26 +312,17 @@
     "自动化": "0103",
   };
   const updateData = async (e) => {
-    e.selectEtime = formatDate(e.selectEtime);
-    e.selectStime = formatDate(e.selectStime);
-    e.titleEtime = formatDate(e.titleEtime);
-    e.titleStime = formatDate(e.titleStime);
     e.majorCode = mapping[e.majorName]
     if(isEdit.value){
-      console.log(e, "编辑数据");
-      
-      if("projectpracticeCode" in rowData.value){
-      e.projectpracticeCode = rowData.value.projectpracticeCode
-      const res = await updateCourse(e)
+
+ 
+      const res = await updateAdmin(e)
       console.log(res, "更新数据");
-      }
-      else{
-        console.log("无数据");
-      }
+
     }
     else{
       
-      const res = await createCourse(e) 
+      const res = await createAdmin(e) 
     console.log(res, "新建数据");
     }
     closeDialog();
@@ -413,12 +351,12 @@
         label: "序号",
       },
       {
-        prop: "projectpracticeCode",
-        label: "实践课程编号",
+        prop: "adminName",
+        label: "姓名",
       },
       {
-        prop: "projectpracticeName",
-        label: "实践课程名称",
+        prop: "adminSno",
+        label: "工号",
       },
       {
         prop: "majorName",
@@ -429,21 +367,14 @@
         label: "年级",
       },
       {
-        prop: "adminName",
-        label: "负责人",
+        prop: "phone",
+        label: "电话",
       },
       {
-        prop: "titleTime",
-        label: "教师出题时间",
+        prop: "email",
+        label: "邮箱",
       },
-      {
-        prop: "selectTime",
-        label: "学生选课时间",
-      },
-      {
-        prop: "status",
-        label: "状态",
-      },
+
     ];
     visible1.value = true;
   };
@@ -451,10 +382,10 @@
     let delt = []
     if (e.length > 0) {
     e.forEach((value) => {
-      delt.push(value.projectpracticeCode)
+      delt.push(value.adminSno)
     });
   }
-    DeleteCourseData(delt).then((res) => {
+    DeleteAdminData(delt).then((res) => {
       ElMessage.success("删除成功");
       getData(1, 0);
       page.index = 1;
@@ -464,9 +395,9 @@
   }
   // 删除相关
   const handleDelete = async (row) => {
-    //console.log(row, "删除");
-    const res = await DeleteCourseData(row.projectpracticeCode);
-    if (res.data.message == "success") {
+    let ttt = [row.adminSno]
+    const res = await DeleteAdminData(ttt);
+    if (res.code!=50) {
       ElMessage.success("删除成功");
     } else {
       ElMessage.error("删除失败");

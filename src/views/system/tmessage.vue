@@ -28,6 +28,10 @@
             "
             >新增数据</el-button
           >
+          <el-button type="danger" @click="moban()">
+              <el-icon style="margin-right: 5px"><el-icon><Bottom /></el-icon></el-icon>
+              下载模板
+            </el-button>
           <el-button type="primary" @click="daoru()">
               <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
               批量导入
@@ -82,6 +86,7 @@ import {
   createTeacher,
   updateTeacher,
   exportTeacherData,
+  getTemplate,
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
@@ -104,7 +109,7 @@ const query = reactive({
   //name: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "工号查询：", prop: "sno" },
+  { type: "input", label: "查询：", prop: "sno" },
 ]);
 
 // 表格相关
@@ -185,23 +190,67 @@ async function daochu() {
     })
     .catch(() => {});
 }
-async function daoru() {
-  ElMessageBox.confirm("确定要导出表格吗？", "提示", {
+const daoru = async () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".xlsx, .xls"; // 限制只能选择Excel文件
+
+  input.addEventListener("change", (e: Event) => {
+    const eventTarget = e.target as HTMLInputElement;
+    const files = eventTarget.files;
+    if (files.length === 0) {
+      ElMessage.error("请选择文件");
+      return;
+    }
+
+    const file = files[0];
+    // if (file.size > 524288) { // 限制文件大小为500KB
+    //   alert('File size should be less than 500KB.');
+    //   return;
+    // }
+
+    try {
+      const formData = new FormData();
+      formData.append("teacherfile", file);
+
+      const response = axios.post('/api/superadmin/createbatchteacher', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          // 如果需要认证，请添加认证头
+          Authorization: localStorage.getItem("vuems_token"),
+        },
+      });
+
+      console.log("File uploaded successfully:", response);
+      ElMessage.success("文件导入成功");
+      setTimeout(() => {
+        getData(1, 0);
+      }, 500);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      ElMessage.error("文件导入失败");
+    }
+  });
+
+  input.click(); // 触发点击事件以打开文件选择对话框
+};
+async function moban() {
+  ElMessageBox.confirm("确定要下载模板吗？", "提示", {
     type: "info",
   })
     .then(async () => {
-      const res = await exportTeacherData();
+      const res = await getTemplate('teacher');
       if (res.code == 50)
         ElMessage({
           type: "warning",
-          message: "导出失败",
+          message: "下载失败",
         });
       else {
         const url = window.URL.createObjectURL(new Blob([res],
         { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
+        link.setAttribute('download', 'template.xlsx'); // 设置下载的文件名
         link.style.display = 'none' // 隐藏元素
         document.body.appendChild(link);
         link.click();
@@ -211,7 +260,7 @@ async function daoru() {
         window.URL.revokeObjectURL(url);
         ElMessage({
           type: "success",
-          message: "导出成功",
+          message: "下载成功",
         });
       }
     })

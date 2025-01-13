@@ -16,13 +16,13 @@ export const fetchAdminData = async () => {
       },
     });
     console.log(res.data, "fetchAdminData");
-    return res.data
+    return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
     //返回登录页
     return error.message;
   }
-}
+};
 //获取日志
 export const fetchLogData = async (e) => {};
 //分页获取实践课程
@@ -41,7 +41,7 @@ export const fetchCourseData = async (e, p) => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data);
+    console.log(res.data, "---");
     let ans = {
       ProjectPracticeInfoList: res.data.data.ProjectPracticeInfoList,
       total: res.data.data.count,
@@ -215,16 +215,18 @@ export const exportCourseData = async () => {
   }
 };
 //分页获取教师出题信息
-export const fetchTeacherCourseData = async (e, p) => {
-  console.log("fetchCourseData", e, p);
+export const fetchTeacherCourseData = async (e, p,esp,c,n,t) => {
   try {
     let res = await axios.get("/api/admin/getsettopicbypage", {
       params: {
-        page: e,
-        size: 20,
-        Content: "",
-        Type: "",
-        reverse: p,
+        Page: e,
+        Size: 20,
+        TeacherName: t,
+        ProjectpracticeName: n,
+        ProjectpracticeCode: esp,
+        TitleName: c,
+        Type: "000000",
+        Reserve: "0",
       },
       headers: {
         Authorization: localStorage.getItem("vuems_token"),
@@ -315,16 +317,41 @@ export const DeleteTeacherCourseData = async (e) => {
     return error;
   }
 };
-//分页获取学生信息
-export const fetchStudentCourseData = async (e, p) => {
+//导出教师出题
+export const exportTeacherCourseData = async (e) => {
+  try {
+    let res = await axios.get("/api/admin/getexportsettopic", {
+      params: {
+        TeacherName: "",
+    ProjectpracticeName:"",
+    ProjectpracticeCode:e,
+    TitleName:"",
+    Type: "000000",
+    Reserve: "0"
+      },
+      headers: {
+        Authorization: localStorage.getItem("vuems_token"),
+      },
+      responseType: "blob",
+    });
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    //返回登录页
+    return error.message;
+  }
+};
+//分页获取学生选课信息
+export const fetchStudentCourseData = async (e, p,esp,n,s) => {
   try {
     let res = await axios.get("/api/admin/getselectcoursebypage", {
       params: {
         Page: e,
         Size: 20,
-        ProjectpracticeCode: p,
-        StudentName: "",
-        StudentSno: "",
+        ProjectpracticeCode: esp,
+        StudentName: n,
+        StudentSno: s,
         Phone: "",
         Class: "",
         TitleName: "",
@@ -383,7 +410,7 @@ export const DeleteStudentCourseData = async (e) => {
   try {
     // 定义要发送的数据
     const data = {
-      projectpracticeCode: e,
+      DeleteArray: e,
       // ...其他需要的数据字段
     };
     // 发起 POST 请求
@@ -414,22 +441,52 @@ export const DeleteStudentCourseData = async (e) => {
     return error;
   }
 };
-
-//分页获取教师信息
-export const fetchTeacherData = async (e, p,c) => {
+//导出学生选题
+export const exportStudentCourseData = async (e) => {
   try {
-    let res = await axios.post("/api/superadmin/getteacherbypage", 
-       {
+    let res = await axios.get("/api/admin/getexportselectcourse", {
+      params: {
+        ProjectpracticeCode:e,
+    StudentName: "",
+    StudentSno:"",
+    Phone:"",
+    Class:"",
+    TitleName:"",
+    TeacherName:"",
+    Type: "000000",
+    Reserve: "0"
+      },
+      headers: {
+        Authorization: localStorage.getItem("vuems_token"),
+      },
+      responseType: "blob",
+    });
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    //返回登录页
+    return error.message;
+  }
+};
+//分页获取教师信息
+export const fetchTeacherData = async (e, p, c) => {
+  try {
+    let res = await axios.post(
+      "/api/superadmin/getteacherbypage",
+      {
         Page: e,
         Size: 20,
         Content: c,
         Type: "000000",
         Reserve: "0",
-      },{
-      headers: {
-        Authorization: localStorage.getItem("vuems_token"),
       },
-    });
+      {
+        headers: {
+          Authorization: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
     console.log(res.data);
     let ans = {
       TeacherInfoList: res.data.data.TeacherInfoList,
@@ -470,7 +527,7 @@ export const createTeacher = async (e) => {
   }
 };
 //修改教师信息
-export const updateTeacher= async (e) => {
+export const updateTeacher = async (e) => {
   console.log(e, "dsads");
 
   try {
@@ -554,5 +611,310 @@ export const exportTeacherData = async () => {
     console.error("Error fetching user data:", error);
     //返回登录页
     return error.message;
+  }
+};
+//分页获取学生信息
+export const fetchStudentData = async (e, p, c) => {
+  try {
+    let res = await axios.post(
+      "/api/superadmin/getstudentbypage",
+      {
+        Page: e,
+        Size: 20,
+        Content: c,
+        Type: "000000",
+        Reserve: "0",
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
+    console.log(res.data);
+    let ans = {
+      StudentInfoList: res.data.data.StudentInfoList,
+      total: res.data.data.count,
+    };
+    return ans;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    //返回登录页
+    return error.message;
+  }
+};
+//新建学生信息
+export const createStudent = async (e) => {
+  try {
+    let res = await axios.post(
+      "/api/superadmin/createstudent",
+      {
+        name: e.name,
+        sno: e.sno,
+        phone: e.phone,
+        class: e.class,
+        grade: e.grade,
+        major_name: e.major_name,
+        major_code: e.major_code,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error.message);
+    //返回登录页
+    return error.message;
+  }
+};
+//修改学生信息
+export const updateStudent = async (e) => {
+  try {
+    let res = await axios.post(
+      "/api/superadmin/updatestudent",
+      {
+        name: e.name,
+        sno: e.sno,
+        phone: e.phone,
+        class: e.class,
+        grade: e.grade,
+        major_name: e.major_name,
+        major_code: e.major_code,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error.message);
+    //返回登录页
+    return error.message;
+  }
+};
+//删除学生信息
+export const DeleteStudentData = async (e) => {
+  try {
+    // 定义要发送的数据
+    const data = {
+      sno: e,
+      // ...其他需要的数据字段
+    };
+    // 发起 POST 请求
+    const response = await fetch("/api/superadmin/deletebatchstudent", {
+      method: "DELETE", // 指定请求方法为 POST
+      headers: {
+        "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
+        // 根据需要可能还需要添加其他头部信息，如认证令牌等
+        Authorization: localStorage.getItem("vuems_token"),
+      },
+      body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
+    });
+
+    // 检查响应状态
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // 解析响应数据为 JSON
+    const res = await response.json();
+    console.log(res); // 输出获取到的数据
+
+    // 处理 result 数据
+    // ...
+    return res;
+  } catch (error) {
+    console.error("There was a problem with the fetch operation:", error);
+    return error;
+  }
+};
+//导出学生信息
+export const exportStudentData = async () => {
+  try {
+    let res = await axios.get("/api/superadmin/getexportstudent", {
+      params: {
+        Content: "",
+        Type: "00000000",
+      },
+      headers: {
+        Authorization: localStorage.getItem("vuems_token"),
+      },
+      responseType: "blob",
+    });
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    //返回登录页
+    return error.message;
+  }
+};
+//获取模板
+export const getTemplate = async (e) => {
+  try {
+    let res = await axios.get("/api/admin/getmodulefile", {
+      params: {
+        type: e,
+      },
+      headers: {
+        Authorization: localStorage.getItem("vuems_token"),
+      },
+      responseType: "blob",
+    });
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    //返回登录页
+    return error.message;
+  }
+};
+
+//分页获取管理员信息
+
+export const fetchManageData = async (e, p, c) => {
+  try {
+    let res = await axios.get("/api/superadmin/getadminbypage", {
+      params: {
+        page: e,
+        size: 20,
+        Content: c,
+        Type: "",
+        reverse: p,
+      },
+      headers: {
+        Authorization: localStorage.getItem("vuems_token"),
+      },
+    });
+    console.log(res.data);
+    let ans = {
+      AdminAdmins: res.data.data.AdminAdmins,
+      total: res.data.data.count,
+    };
+    return ans;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    //返回登录页
+    return error.message;
+  }
+};
+//根据姓名获取管理员信息
+export const SearchAdmin = async (e) => {
+  try {
+    let res = await axios.get("/api/superadmin/getadmin", {
+      params: {
+        adminSno: e,
+      },
+      headers: {
+        Authorization: localStorage.getItem("vuems_token"),
+      },
+    });
+    if (res.data.code != 0) {
+      return null;
+    }
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error.message);
+    //返回登录页
+    return error.message;
+  }
+};
+//新建管理员
+export const createAdmin = async (e) => {
+  try {
+    let res = await axios.post(
+      "/api/superadmin/createadmin",
+      {
+        adminName: e.adminName,
+        adminSno: e.adminSno,
+        password: e.password,
+        grade: e.grade,
+        majorName: e.majorName,
+        majorCode: e.majorCode,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error.message);
+    //返回登录页
+    return error.message;
+  }
+};
+//编辑管理员
+export const updateAdmin = async (e) => {
+  try {
+    let res = await axios.post(
+      "/api/superadmin/updateadmin",
+      {
+        adminName: e.adminName,
+        adminSno: e.adminSno,
+        phone: e.phone,
+        email: e.email,
+        grade: e.grade,
+        majorName: e.majorName,
+        majorCode: e.majorCode,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error.message);
+    //返回登录页
+    return error.message;
+  }
+};
+//删除管理员
+export const DeleteAdminData = async (e) => {
+  try {
+    // 定义要发送的数据
+    const data = {
+      adminSno: e,
+      // ...其他需要的数据字段
+    };
+    // 发起 POST 请求
+    const response = await fetch("/api/superadmin/deletebatchadmin", {
+      method: "DELETE", // 指定请求方法为 POST
+      headers: {
+        "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
+        // 根据需要可能还需要添加其他头部信息，如认证令牌等
+        Authorization: localStorage.getItem("vuems_token"),
+      },
+      body: JSON.stringify(data), // 将 JavaScript 对象转换为 JSON 字符串
+    });
+
+    // 检查响应状态
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // 解析响应数据为 JSON
+    const res = await response.json();
+    console.log(res); // 输出获取到的数据
+
+    // 处理 result 数据
+    // ...
+    return res;
+  } catch (error) {
+    console.error("There was a problem with the fetch operation:", error);
+    return error;
   }
 };

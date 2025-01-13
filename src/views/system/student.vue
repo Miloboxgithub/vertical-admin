@@ -21,7 +21,11 @@
           >
         </template>
         <template #toolbarBtn>
-          <el-button
+          <el-button type="success" @click="daochu()">
+              <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
+              导出
+            </el-button>
+          <!-- <el-button
             type="warning"
             :icon="CirclePlusFilled"
             @click="
@@ -29,11 +33,19 @@
               isEdit = false;
             "
             >新增数据</el-button
+          > -->
+          <el-select
+            v-model="practiceName"
+            placeholder="Select"
+            style="width: 240px; margin-left: 10px"
           >
-          <!-- <el-button type="primary" @click="visible2 = true">
-              <el-icon style="margin-right: 5px"><CirclePlus /></el-icon>
-              增添不可预约时段
-            </el-button> -->
+            <el-option
+              v-for="item in Projectpractice"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </template>
       </TableCustom>
     </div>
@@ -72,7 +84,7 @@
 </template>
 
 <script setup lang="ts" name="system-user">
-import { ref, reactive } from "vue";
+import { ref, reactive,watch } from "vue";
 import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
@@ -82,6 +94,7 @@ import {
   SearchCourse,
   createStudentCourse,
   updateCourse,
+  exportStudentCourseData,
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
@@ -89,6 +102,7 @@ import TableSearch from "@/components/table-search.vue";
 import { FormOption, FormOptionList } from "@/types/form-option";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { ElMessageBox } from "element-plus";
 const router = useRouter();
 const goTologon = () => {
   // 使用 router.push 方法进行页面跳转
@@ -103,8 +117,8 @@ const query = reactive({
   //name: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "编号查询：", prop: "projectpracticeCode" },
-  { type: "input", label: "", prop: "projectpracticeCode" },
+  { type: "input", label: "姓名查询：", prop: "name" },
+  { type: "input", label: "学号查询", prop: "sno" },
 ]);
 
 // 表格相关
@@ -119,20 +133,43 @@ let columns = ref([
   { prop: "class", label: "班级" },
   { prop: "title", label: "题目" },
   { prop: "teacher_name", label: "指导老师" },
-
+  { prop: "code", label: "选课课题编号" },
   { prop: "selectStatus", label: "状态" },
 
-  { prop: "operator", label: "操作", width: 250 },
+  { prop: "operators", label: "操作", width: 200 },
 ]);
 const page = reactive({
   index: 1,
   size: 10,
   total: 0,
 });
+const Projectpractice = ref([]);
+const practiceName = ref("");
+// 监听practiceName的变化
+watch(practiceName, (newValue, oldValue) => {
+  console.log(`选中的值从 ${oldValue} 变为 ${newValue}`);
+  // 在这里调用你需要的函数
+  getData(1, 0);
+});
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
+  let esp = localStorage.getItem("v_codes");
+esp = JSON.parse(esp);
+console.log(esp, "esp");
+if (Array.isArray(esp)) {
+  esp.forEach((element) => {
+    Projectpractice.value.push({
+      value: element.projectPracticeCode,
+      label: element.projectPracticeName,
+    });
+  });
+}
+if (Projectpractice.value.length > 0) {
+  practiceName.value = Projectpractice.value[0].value;
+}
 const getData = async (e, p) => {
-  const ress = await fetchStudentCourseData(e, "KS202400002");
+
+  const ress = await fetchStudentCourseData(e, p,practiceName.value,'','');
   if (ress == "Request failed with status code 403") {
     goTologon();
   }
@@ -144,19 +181,51 @@ const getData = async (e, p) => {
 };
 getData(1, 0);
 const handleSearch = async (queryData) => {
-  if (!queryData.projectpracticeCode) {
+  if (!queryData.name&&!queryData.sno) {
     getData(1, 0);
   } else {
-    const ress = await SearchCourse(queryData.projectpracticeCode);
+    const ress = await fetchStudentCourseData(1, 0,practiceName.value,queryData.name,queryData.sno);
     if (ress == null) {
       ElMessage.error("查询失败");
     } else {
-      tableData.value = ress.ProjectPracticeInfoList;
+      tableData.value = ress.SelectCourseInfoList;
       page.total = ress.total;
       componentKey.value++;
     }
   }
 };
+async function daochu() {
+  ElMessageBox.confirm("确定要导出表格吗？", "提示", {
+    type: "info",
+  })
+    .then(async () => {
+      const res = await exportStudentCourseData(practiceName.value);
+      if (res.code == 50)
+        ElMessage({
+          type: "warning",
+          message: "导出失败",
+        });
+      else {
+        const url = window.URL.createObjectURL(new Blob([res],
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
+        link.style.display = 'none' // 隐藏元素
+        document.body.appendChild(link);
+        link.click();
+        
+        // 清理 DOM 和释放 URL 对象
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        ElMessage({
+          type: "success",
+          message: "导出成功",
+        });
+      }
+    })
+    .catch(() => {});
+}
 const changePage = (val: number, name: string, p) => {
   page.index = val;
   getData(page.index, p);
@@ -362,6 +431,10 @@ const handleView = (row: User) => {
       label: "指导老师",
     },
     {
+      prop: "code",
+      label: "题目编号",
+    },
+    {
       prop: "status",
       label: "状态",
     },
@@ -372,7 +445,10 @@ const handleDelSelection = (e) => {
   let delt = [];
   if (e.length > 0) {
     e.forEach((value) => {
-      delt.push(value.projectpracticeCode);
+      delt.push({
+    StudentSno:value.sno,
+    TitleCode:value.code
+  });
     });
   }
   DeleteStudentCourseData(delt)
@@ -388,7 +464,11 @@ const handleDelSelection = (e) => {
 // 删除相关
 const handleDelete = async (row) => {
   //console.log(row, "删除");
-  const res = await DeleteStudentCourseData(row.projectpracticeCode);
+  let ttt =[{
+    StudentSno:row.sno,
+    TitleCode:row.code
+  }]
+  const res = await DeleteStudentCourseData(ttt);
   if (res.data.message == "success") {
     ElMessage.success("删除成功");
   } else {
