@@ -128,7 +128,7 @@ let columns = ref([
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
   { prop: "projectpracticeCode", label: "实践课程编号" },
-  { prop: "projectpracticeName", label: "实践课程名称", sortable: "custom" },
+  { prop: "projectpracticeName", label: "实践课程名称" },
   { prop: "title", label: "题目" },
   { prop: "teacherName", label: "指导老师" },
   { prop: "guidanceTime", label: "时间" },

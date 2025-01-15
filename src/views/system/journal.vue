@@ -82,7 +82,7 @@
   import { ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
   import axios from "axios";
   import { useRouter } from "vue-router";
-  import { fetchLogData } from "@/api";
+  //import { fetchLogData } from "@/api";
   import dayjs from "dayjs";
   import { ElMessage } from "element-plus";
   const fullscreenElement = ref<HTMLElement | null>(null);
@@ -160,7 +160,7 @@
       let es = {
         type: selectedLogType.value || "common",
       };
-      const res = await fetchLogData(es);
+      //const res = await fetchLogData(es);
     //   console.log(res.data.Dates, allowedDates,'1');
     //   allowedDates.value = res.data.Dates;
     //   console.log(allowedDates,'2');

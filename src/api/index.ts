@@ -15,7 +15,7 @@ export const fetchAdminData = async () => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data, "fetchAdminData");
+    //console.log(res.data, "fetchAdminData");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -24,10 +24,14 @@ export const fetchAdminData = async () => {
   }
 };
 //获取日志
-export const fetchLogData = async (e) => {};
+// export const fetchLogData = async (e) => {
+//   try {
+    
+//   }
+// };
 //分页获取实践课程
 export const fetchCourseData = async (e, p) => {
-  console.log("fetchCourseData", e, p);
+  //console.log("fetchCourseData", e, p);
   try {
     let res = await axios.get("/api/admin/getprojectpracticebypage", {
       params: {
@@ -41,7 +45,7 @@ export const fetchCourseData = async (e, p) => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data, "---");
+    //console.log(res.data, "---");
     let ans = {
       ProjectPracticeInfoList: res.data.data.ProjectPracticeInfoList,
       total: res.data.data.count,
@@ -85,7 +89,7 @@ export const DeleteCourseData = async (e) => {
 
     // 解析响应数据为 JSON
     const res = await response.json();
-    console.log(res); // 输出获取到的数据
+    //console.log(res); // 输出获取到的数据
 
     // 处理 result 数据
     // ...
@@ -159,8 +163,6 @@ export const createCourse = async (e) => {
 };
 //修改实践课程
 export const updateCourse = async (e) => {
-  console.log(e, "dsads");
-
   try {
     let res = await axios.post(
       "/api/admin/updateprojectpractice",
@@ -206,7 +208,7 @@ export const exportCourseData = async () => {
       },
       responseType: "blob",
     });
-    console.log(res.data);
+    //console.log(res.data);
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -232,7 +234,7 @@ export const fetchTeacherCourseData = async (e, p,esp,c,n,t) => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data);
+    //console.log(res.data);
     let ans = {
       SetTopicInfoList: res.data.data.SetTopicInfoList,
       total: res.data.data.count,
@@ -307,7 +309,7 @@ export const DeleteTeacherCourseData = async (e) => {
 
     // 解析响应数据为 JSON
     const res = await response.json();
-    console.log(res); // 输出获取到的数据
+    //console.log(res); // 输出获取到的数据
 
     // 处理 result 数据
     // ...
@@ -334,7 +336,7 @@ export const exportTeacherCourseData = async (e) => {
       },
       responseType: "blob",
     });
-    console.log(res.data);
+    //console.log(res.data);
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -363,7 +365,7 @@ export const fetchStudentCourseData = async (e, p,esp,n,s) => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data);
+    //console.log(res.data);
     let ans = {
       SelectCourseInfoList: res.data.data.SelectCourseInfoList,
       total: res.data.data.Count,
@@ -377,7 +379,7 @@ export const fetchStudentCourseData = async (e, p,esp,n,s) => {
 };
 //新建学生选课
 export const createStudentCourse = async (e) => {
-  console.log(e, "sssssssssssssssssssssssssss");
+  //console.log(e, "sssssssssssssssssssssssssss");
 
   try {
     let res = await axios.post(
@@ -431,7 +433,7 @@ export const DeleteStudentCourseData = async (e) => {
 
     // 解析响应数据为 JSON
     const res = await response.json();
-    console.log(res); // 输出获取到的数据
+    //console.log(res); // 输出获取到的数据
 
     // 处理 result 数据
     // ...
@@ -461,7 +463,7 @@ export const exportStudentCourseData = async (e) => {
       },
       responseType: "blob",
     });
-    console.log(res.data);
+    //console.log(res.data);
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -487,7 +489,7 @@ export const fetchTeacherData = async (e, p, c) => {
         },
       }
     );
-    console.log(res.data);
+    //console.log(res.data);
     let ans = {
       TeacherInfoList: res.data.data.TeacherInfoList,
       total: res.data.data.count,
@@ -528,8 +530,6 @@ export const createTeacher = async (e) => {
 };
 //修改教师信息
 export const updateTeacher = async (e) => {
-  console.log(e, "dsads");
-
   try {
     let res = await axios.post(
       "/api/superadmin/updateteacher",
@@ -581,7 +581,7 @@ export const DeleteTeacherData = async (e) => {
 
     // 解析响应数据为 JSON
     const res = await response.json();
-    console.log(res); // 输出获取到的数据
+    //console.log(res); // 输出获取到的数据
 
     // 处理 result 数据
     // ...
@@ -605,7 +605,7 @@ export const exportTeacherData = async () => {
       },
       responseType: "blob",
     });
-    console.log(res.data);
+    //console.log(res.data);
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -631,7 +631,7 @@ export const fetchStudentData = async (e, p, c) => {
         },
       }
     );
-    console.log(res.data);
+    //console.log(res.data);
     let ans = {
       StudentInfoList: res.data.data.StudentInfoList,
       total: res.data.data.count,
@@ -725,7 +725,7 @@ export const DeleteStudentData = async (e) => {
 
     // 解析响应数据为 JSON
     const res = await response.json();
-    console.log(res); // 输出获取到的数据
+    //console.log(res); // 输出获取到的数据
 
     // 处理 result 数据
     // ...
@@ -748,7 +748,7 @@ export const exportStudentData = async () => {
       },
       responseType: "blob",
     });
-    console.log(res.data);
+    //console.log(res.data);
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -768,7 +768,7 @@ export const getTemplate = async (e) => {
       },
       responseType: "blob",
     });
-    console.log(res.data);
+    //console.log(res.data);
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -793,7 +793,7 @@ export const fetchManageData = async (e, p, c) => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data);
+    //console.log(res.data);
     let ans = {
       AdminAdmins: res.data.data.AdminAdmins,
       total: res.data.data.count,
@@ -819,7 +819,7 @@ export const SearchAdmin = async (e) => {
     if (res.data.code != 0) {
       return null;
     }
-    console.log(res.data);
+    //.log(res.data);
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error.message);
@@ -908,7 +908,7 @@ export const DeleteAdminData = async (e) => {
 
     // 解析响应数据为 JSON
     const res = await response.json();
-    console.log(res); // 输出获取到的数据
+    //console.log(res); // 输出获取到的数据
 
     // 处理 result 数据
     // ...

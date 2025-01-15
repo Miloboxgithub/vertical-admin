@@ -127,7 +127,7 @@ let columns = ref([
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
 
-  { prop: "name", label: "姓名", sortable: "custom" },
+  { prop: "name", label: "姓名" },
   { prop: "sno", label: "学号" },
   { prop: "phone", label: "电话" },
   { prop: "class", label: "班级" },

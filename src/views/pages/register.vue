@@ -73,15 +73,15 @@ const rules: FormRules = {
 };
 const register = ref<FormInstance>();
 const submitForm = (formEl: FormInstance | undefined) => {
-    if (!formEl) return;
-    formEl.validate((valid: boolean) => {
-        if (valid) {
-            ElMessage.success('注册成功，请登录');
-            router.push('/login');
-        } else {
-            return false;
-        }
-    });
+    // if (!formEl) return;
+    // formEl.validate((valid: boolean) => {
+    //     if (valid) {
+    //         ElMessage.success('注册成功，请登录');
+    //         router.push('/login');
+    //     } else {
+    //         return false;
+    //     }
+    // });
 };
 </script>
 

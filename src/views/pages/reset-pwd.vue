@@ -42,14 +42,14 @@ const rules: FormRules = {
 };
 const register = ref<FormInstance>();
 const submitForm = (formEl: FormInstance | undefined) => {
-    if (!formEl) return;
-    formEl.validate((valid: boolean) => {
-        if (valid) {
-            ElMessage.success('邮件已发送，请注意查收');
-        } else {
-            return false;
-        }
-    });
+    // if (!formEl) return;
+    // formEl.validate((valid: boolean) => {
+    //     if (valid) {
+    //         ElMessage.success('邮件已发送，请注意查收');
+    //     } else {
+    //         return false;
+    //     }
+    // });
 };
 </script>
 

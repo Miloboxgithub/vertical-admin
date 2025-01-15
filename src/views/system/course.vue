@@ -115,7 +115,7 @@ let columns = ref([
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
   { prop: "projectpracticeCode", label: "实践课程编号" },
-  { prop: "projectpracticeName", label: "实践课程名称", sortable: "custom" },
+  { prop: "projectpracticeName", label: "实践课程名称"},
   { prop: "majorName", label: "专业" },
   { prop: "grade", label: "年级" },
   { prop: "adminName", label: "负责人" },
@@ -229,6 +229,19 @@ function formatDate(dateString) {
   // 组合成目标格式
   return `${year}-${formattedMonth}-${formattedDay} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
+function getRecentYears(numYears) {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let i = 0; i < numYears; i++) {
+    years.push({
+      label: currentYear - i,
+      value: currentYear - i
+    });
+  }
+  return years;
+}
+
+const recentYears = getRecentYears(4); // 获取最近3年
 // 新增/编辑弹窗相关
 let options = ref<FormOption>({
   labelWidth: "140px",
@@ -257,11 +270,7 @@ let options = ref<FormOption>({
       label: "年级",
       prop: "grade",
       required: true,
-      options: [
-        { label: "2022", value: 2022 },
-        { label: "2023", value: 2023 },
-        { label: "2024", value: 2024 },
-      ],
+      options: recentYears,
     },
     {
       type: "select",
@@ -334,11 +343,7 @@ let newoptions = ref<FormOption>({
       label: "年级",
       prop: "grade",
       required: true,
-      options: [
-        { label: "2022", value: 2022 },
-        { label: "2023", value: 2023 },
-        { label: "2024", value: 2024 },
-      ],
+      options:recentYears,
     },
     {
       type: "select",
