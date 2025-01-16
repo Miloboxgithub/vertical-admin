@@ -132,7 +132,7 @@ const page = reactive({
   total: 0,
 });
 const componentKey = ref(0); // 强制刷新组件
-const tableData = ref<User[]>([]);
+const tableData = ref([]);
 const getData = async (e, p) => {
   // const ress = await fetchCourseData(e, p);
   // if (ress == "Request failed with status code 403") {
@@ -302,7 +302,7 @@ let options = ref<FormOption>({
   labelWidth: "140px",
   span: 12,
   list: [
-      {}
+    
   ],
 });
 let newoptions = ref<FormOption>({

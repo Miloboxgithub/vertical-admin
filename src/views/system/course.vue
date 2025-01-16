@@ -127,7 +127,7 @@ const page = reactive({
   total: 0,
 });
 const componentKey = ref(0); // 强制刷新组件
-const tableData = ref<User[]>([]);
+const tableData = ref([]);
 const getData = async (e, p) => {
   // const ress = await fetchCourseData(e, p);
   // if (ress == "Request failed with status code 403") {
@@ -364,7 +364,7 @@ const updateData = async (e) => {
   e.selectStime = formatDate(e.selectStime);
   e.titleEtime = formatDate(e.titleEtime);
   e.titleStime = formatDate(e.titleStime);
-  e.majorCode = mapping[e.majorName];
+
   if (isEdit.value) {
     console.log(e, "编辑数据");
 
