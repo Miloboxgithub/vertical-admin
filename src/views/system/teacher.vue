@@ -14,45 +14,32 @@
         :editFunc="handleEdit"
         :delSelection="handleDelSelection"
       >
-        <template #reimburse="{ rows }">
-          <el-tag type="warning" v-if="rows.reimburse == 0">未报销</el-tag>
-          <el-tag type="success" v-else-if="rows.reimburse == 1">已报销</el-tag>
+        <template #status="{ rows }">
+          <el-tag type="warning" v-if="rows.status == 0">未开始</el-tag>
+          <el-tag type="success" v-else-if="rows.status == 1">已开始</el-tag>
+          <el-tag type="info" v-else>已停止</el-tag>
         </template>
         <template #toolbarBtn>
-          <!-- <el-button
+          <el-button
             type="warning"
             :icon="CirclePlusFilled"
             @click="
               visible = true;
               isEdit = false;
             "
-            >新增数据</el-button
-          > -->
-          <el-button type="success" @click="daochu()">
-              <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
-              导出
-            </el-button>
-          <!-- <el-button type="primary" @click="visible2 = true">
-              <el-icon style="margin-right: 5px"><CirclePlus /></el-icon>
-              增添不可预约时段
-            </el-button> -->
-          <el-select
-            v-model="practiceName"
-            placeholder="Select"
-            style="width: 240px; margin-left: 10px"
+            >新增管理员</el-button
           >
-            <el-option
-              v-for="item in Projectpractice"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+          <!-- <el-button type="success" @click="daochu()">
+            <el-icon style="margin-right: 5px"
+              ><el-icon><UploadFilled /></el-icon
+            ></el-icon>
+            导出
+          </el-button> -->
         </template>
       </TableCustom>
     </div>
     <el-dialog
-      :title="isEdit ? '编辑' : '新增数据'"
+      :title="isEdit ? '编辑' : '新增管理员'"
       v-model="visible"
       width="700px"
       destroy-on-close
@@ -75,8 +62,9 @@
     >
       <TableDetail :data="viewData">
         <template #status="{ rows }">
-          <el-tag type="warning" v-if="rows.reimburse == 0">未报销</el-tag>
-          <el-tag type="success" v-else-if="rows.reimburse == 1">已报销</el-tag>
+          <el-tag type="warning" v-if="rows.status == 0">未开始</el-tag>
+          <el-tag type="success" v-else-if="rows.status == 1">已开始</el-tag>
+          <el-tag type="info" v-else>已停止</el-tag>
         </template>
       </TableDetail>
     </el-dialog>
@@ -84,31 +72,32 @@
 </template>
 
 <script setup lang="ts" name="system-user">
-import { ref, reactive, watch } from "vue";
+import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
 import {
-  fetchTeacherCourseData,
-  DeleteTeacherCourseData,
+  fetchCourseData,
+  DeleteCourseData,
   SearchCourse,
   createCourse,
   updateCourse,
-  exportTeacherCourseData,
+  exportCourseData,
+  fetchAdminData,
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
 import TableSearch from "@/components/table-search.vue";
 import { FormOption, FormOptionList } from "@/types/form-option";
-import { ElMessageBox } from "element-plus";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { ElMessageBox } from "element-plus";
 const router = useRouter();
-const goTologon = () => {
-  // 使用 router.push 方法进行页面跳转
-  router.push("/login");
-  ElMessage.error("获取数据失败");
-};
+// const goTologon = () => {
+//   // 使用 router.push 方法进行页面跳转
+//   router.push("/login");
+//   ElMessage.error("获取数据失败");
+// };
 console.log(TableSearch.props, "search");
 const startTime = ref("");
 const endTime = ref("");
@@ -117,9 +106,7 @@ const query = reactive({
   //name: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "题目查询：", prop: "TitleName" },
-  { type: "input", label: "名称查询", prop: "projectpracticeName" },
-  { type: "input", label: "教师查询：", prop: "teacherName" },
+  { type: "input", label: "查询：", prop: "projectpracticeCode" },
 ]);
 
 // 表格相关
@@ -127,68 +114,88 @@ let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
-  { prop: "projectpracticeCode", label: "实践课程编号" },
-  { prop: "projectpracticeName", label: "实践课程名称" },
-  { prop: "title", label: "题目" },
-  { prop: "teacherName", label: "指导老师" },
-  { prop: "guidanceTime", label: "时间" },
-  { prop: "guidancePlace", label: "地点" },
-  { prop: "budget", label: "经费" },
-  { prop: "reimburse", label: "是否已报销" },
-  { prop: "operators", label: "操作", width: 200 },
+  { prop: "sno", label: "管理员账号", align: "center" },
+  { prop: "time", label: "创建时间", align: "center" },
+  { prop: "password", label: "密码", align: "center"},
+  { prop: "name", label: "名称" },
+  { prop: "role", label: "角色" },
+  { prop: "operator", label: "操作", width: 250 },
 ]);
 const page = reactive({
   index: 1,
-  size: 10,
+  size: 20,
   total: 0,
-});
-
-const Projectpractice = ref([]);
-const practiceName = ref("");
-// 监听practiceName的变化
-watch(practiceName, (newValue, oldValue) => {
-  console.log(`选中的值从 ${oldValue} 变为 ${newValue}`);
-  // 在这里调用你需要的函数
-  getData(1, 0);
 });
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-let esp = localStorage.getItem("v_codes");
-esp = JSON.parse(esp);
-console.log(esp, "esp");
-if (Array.isArray(esp)) {
-  esp.forEach((element) => {
-    Projectpractice.value.push({
-      value: element.projectPracticeCode,
-      label: element.projectPracticeName,
-    });
-  });
-}
-if (Projectpractice.value.length > 0) {
-  practiceName.value = Projectpractice.value[0].value;
-}
 const getData = async (e, p) => {
-  const ress = await fetchTeacherCourseData(e, p, practiceName.value,'','','');
-  if (ress == "Request failed with status code 403") {
-    goTologon();
-  }
-  tableData.value = ress.SetTopicInfoList;
-  page.total = ress.total;
+  // const ress = await fetchCourseData(e, p);
+  // if (ress == "Request failed with status code 403") {
+  //   //goTologon();
+  // }
+  tableData.value = [
+    {
+      ad: 1,
+      sno: "admin",
+      time: "2023-11-21",
+      password: "admin",
+      name: "管理员",
+      role: "超级管理员",
+    },
+    {
+      ad: 2,
+      sno: "admin1",
+      time: "2023-11-21",
+      password: "admin1",
+      name: "管理员1",
+      role: "管理员",
+    },
+    {
+      ad: 3,
+      sno: "admin2",
+      time: "2023-11-21",
+      password: "admin2",
+      name: "管理员2",
+      role: "管理员",
+    },
+    {
+      ad: 4,
+      sno: "admin3",
+      time: "2023-11-21",
+      password: "admin3",
+      name: "管理员3",
+      role: "管理员",
+    }
+  ];
+  page.total = 4;
 
   componentKey.value++;
-  console.log(ress, tableData.value, "tableData");
+  //console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
-
+const getadmindata = async () => {
+  const ress = await fetchAdminData();
+  if (ress.code != 50) {
+    let op = ress.data.propracticeList;
+    // let esp = [];
+    // op.forEach((item) => {
+    //   esp.push(item.projectPracticeCode);
+    // });
+    localStorage.setItem("v_codes", JSON.stringify(op));
+  } else {
+    //goTologon();
+  }
+};
+getadmindata();
 const handleSearch = async (queryData) => {
-  if (!queryData.TitleName&&!queryData.projectpracticeName&&!queryData.teacherName) {
+  if (!queryData.projectpracticeCode) {
     getData(1, 0);
   } else {
-    const ress = await fetchTeacherCourseData(1, 0, practiceName.value, queryData.TitleName, queryData.projectpracticeName, queryData.teacherName);
+    const ress = await SearchCourse(queryData.projectpracticeCode);
     if (ress == null) {
       ElMessage.error("查询失败");
     } else {
-      tableData.value = ress.SetTopicInfoList;
+      tableData.value = ress.ProjectPracticeInfoList;
       page.total = ress.total;
       componentKey.value++;
     }
@@ -199,7 +206,7 @@ async function daochu() {
     type: "info",
   })
     .then(async () => {
-      const res = await exportTeacherCourseData(practiceName.value);
+      const res = await exportCourseData();
       if (res.code == 50)
         ElMessage({
           type: "warning",
@@ -252,124 +259,32 @@ function formatDate(dateString) {
   // 组合成目标格式
   return `${year}-${formattedMonth}-${formattedDay} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
+function getRecentYears(numYears) {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let i = 0; i < numYears; i++) {
+    years.push({
+      label: currentYear - i,
+      value: currentYear - i
+    });
+  }
+  return years;
+}
+
+const recentYears = getRecentYears(4); // 获取最近3年
 // 新增/编辑弹窗相关
 let options = ref<FormOption>({
   labelWidth: "140px",
   span: 12,
   list: [
-    {
-      type: "input",
-      label: "题目编号",
-      prop: "projectpracticeCode",
-      required: true,
-    },
-    {
-      type: "sss",
-      label: "实践课程编号",
-      prop: "projectpracticeCode",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "题目",
-      prop: "title",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "指导老师",
-      prop: "teacherName",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "最大可选人数",
-      prop: "studentRequirements",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "地点",
-      prop: "guidancePlace",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "时间",
-      prop: "guidanceTime",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "经费",
-      prop: "budget",
-      required: true,
-    },
-    {
-      type: "select",
-      label: "是否已报销",
-      prop: "reimburse",
-      required: true,
-      options: [
-        { label: "已报销", value: 1 },
-        { label: "未报销", value: 0 },
-      ],
-    },
-    //{ type: "input", label: "负责人", prop: "adminName", required: true },
+      {}
   ],
 });
 let newoptions = ref<FormOption>({
-  labelWidth: "120px",
-  span: 22,
+  labelWidth: "140px",
+  span: 12,
   list: [
-    {
-      type: "input",
-      label: "题目",
-      prop: "projectpracticeName",
-      required: true,
-    },
-    {
-      type: "sss",
-      label: "已选课学生",
-      prop: "",
-    },
-    {
-      type: "input",
-      label: "指导老师",
-      prop: "teacher_name",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "最大可选人数",
-      prop: "studentRequirements",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "地点",
-      prop: "guidance_place",
-      required: true,
-    },
-    {
-      type: "date",
-      label: "时间",
-      prop: "guidance_time",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "经费",
-      prop: "budget",
-      required: true,
-    },
-    {
-      type: "select",
-      label: "是否已报销",
-      prop: "reimburse",
-      required: true,
-    },
-    //{ type: "input", label: "负责人", prop: "adminName", required: true },
+    
   ],
 });
 const visible = ref(false);
@@ -383,18 +298,13 @@ const handleEdit = (row: User) => {
   visible.value = true;
   getData(1, 0);
 };
-const mapping = {
-  "机械设计制作及其自动化": "0101",
-  "电子科学与技术": "0102",
-  "机器人工程": "0104",
-  "自动化": "0103",
-};
+
 const updateData = async (e) => {
   e.selectEtime = formatDate(e.selectEtime);
   e.selectStime = formatDate(e.selectStime);
   e.titleEtime = formatDate(e.titleEtime);
   e.titleStime = formatDate(e.titleStime);
-  e.majorCode = mapping[e.majorName];
+
   if (isEdit.value) {
     console.log(e, "编辑数据");
 
@@ -430,54 +340,27 @@ const viewData = ref({
 const handleView = (row: User) => {
   viewData.value.row = { ...row };
   viewData.value.list = [
-    {
-      prop: "projectpracticeCode",
-      label: "题目编号",
-    },
-    {
-      prop: "title",
-      label: "题目",
-    },
-    {
-      prop: "projectpracticeName",
-      label: "实践课程名称",
-    },
-    {
-      prop: "teacherName",
-      label: "指导老师",
-    },
-    {
-      prop: "studentRequirements",
-      label: "最大可选人数",
-    },
-    {
-      prop: "content",
-      label: "题目详情",
-    },
-    {
-      prop: "resultDisplay",
-      label: "题目交付要求",
-    },
-    {
-      prop: "studentNeed",
-      label: "剩余人数",
-    },
-    {
-      prop: "guidancePlace",
-      label: "地点",
-    },
-    {
-      prop: "guidanceTime",
-      label: "时间",
-    },
-    {
-      prop: "budget",
-      label: "经费",
-    },
-    {
-      prop: "status",
-      label: "是否报销",
-    },
+   {
+    prop: "sno",
+    label: "管理员账号",
+   },
+   {
+    prop: "time",
+    label: "时间",
+
+   },
+   {
+    prop: "password",
+    label: "密码",
+   },
+   {
+    prop: "name",
+    label: "姓名",
+   },
+   {
+    prop: "role",
+    label: "角色",
+   },
   ];
   visible1.value = true;
 };
@@ -485,10 +368,10 @@ const handleDelSelection = (e) => {
   let delt = [];
   if (e.length > 0) {
     e.forEach((value) => {
-      delt.push(value.code);
+      delt.push(value.projectpracticeCode);
     });
   }
-  DeleteTeacherCourseData(delt)
+  DeleteCourseData(delt)
     .then((res) => {
       ElMessage.success("删除成功");
       getData(1, 0);
@@ -500,7 +383,8 @@ const handleDelSelection = (e) => {
 };
 // 删除相关
 const handleDelete = async (row) => {
-  const res = await DeleteTeacherCourseData(row.code);
+  //console.log(row, "删除");
+  const res = await DeleteCourseData(row.projectpracticeCode);
   if (res.data.message == "success") {
     ElMessage.success("删除成功");
   } else {

@@ -2,8 +2,8 @@
     <div class="header">
         <!-- 折叠按钮 -->
         <div class="header-left">
-            <img class="logo" src="../assets/img/logofav.png" alt="" />
-            <div class="web-title">实践课程管理系统PCMS</div>
+            <img class="logo" src="../assets/img/logo.svg " alt="" />
+            <div class="web-title">实习大全后台管理系统</div>
             <div class="collapse-btn" @click="collapseChage">
                 <el-icon v-if="sidebar.collapse">
                     <Expand />

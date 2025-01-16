@@ -27,19 +27,19 @@
               visible = true;
               isEdit = false;
             "
-            >新增实践课程</el-button
+            >新增</el-button
           >
-          <el-button type="success" @click="daochu()">
+          <!-- <el-button type="success" @click="daochu()">
             <el-icon style="margin-right: 5px"
               ><el-icon><UploadFilled /></el-icon
             ></el-icon>
             导出
-          </el-button>
+          </el-button> -->
         </template>
       </TableCustom>
     </div>
     <el-dialog
-      :title="isEdit ? '编辑' : '新增实践课程'"
+      :title="isEdit ? '编辑' : '新增'"
       v-model="visible"
       width="700px"
       destroy-on-close
@@ -93,11 +93,11 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import { ElMessageBox } from "element-plus";
 const router = useRouter();
-const goTologon = () => {
-  // 使用 router.push 方法进行页面跳转
-  router.push("/login");
-  ElMessage.error("获取数据失败");
-};
+// const goTologon = () => {
+//   // 使用 router.push 方法进行页面跳转
+//   router.push("/login");
+//   ElMessage.error("获取数据失败");
+// };
 console.log(TableSearch.props, "search");
 const startTime = ref("");
 const endTime = ref("");
@@ -106,7 +106,7 @@ const query = reactive({
   //name: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "实践课程编号查询：", prop: "projectpracticeCode" },
+  { type: "input", label: "查询：", prop: "projectpracticeCode" },
 ]);
 
 // 表格相关
@@ -114,14 +114,11 @@ let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
-  { prop: "projectpracticeCode", label: "实践课程编号" },
-  { prop: "projectpracticeName", label: "实践课程名称"},
-  { prop: "majorName", label: "专业" },
-  { prop: "grade", label: "年级" },
-  { prop: "adminName", label: "负责人" },
-  { prop: "titleTime", label: "教师出题时间" },
-  { prop: "selectTime", label: "学生选课时间" },
-  { prop: "status", label: "状态" },
+  { prop: "name", label: "名称" },
+  { prop: "picture", label: "图片"},
+  { prop: "link", label: "链接" },
+  { prop: "time", label: "创建时间" },
+  { prop: "dian", label: "点击量" },
   { prop: "operator", label: "操作", width: 250 },
 ]);
 const page = reactive({
@@ -132,15 +129,50 @@ const page = reactive({
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
 const getData = async (e, p) => {
-  const ress = await fetchCourseData(e, p);
-  if (ress == "Request failed with status code 403") {
-    goTologon();
-  }
-  tableData.value = ress.ProjectPracticeInfoList;
-  page.total = ress.total;
+  // const ress = await fetchCourseData(e, p);
+  // if (ress == "Request failed with status code 403") {
+  //   //goTologon();
+  // }
+  tableData.value = [
+    {
+      ad: 1,
+      name: "图片1",
+      picture: "https://img2",
+      link: "https://www.baidu.com",
+      time: "2023-11-11",
+      dian: 100,
+    },
+    {
+      ad: 2,
+      name: "图片2",
+      picture: "https://img2",
+      link: "https://www.baidu.com",
+      time: "2023-11-11",
+      dian: 100,
+    }
+    ,
+    {
+      ad: 3,
+      name: "图片3",
+      picture: "https://img2.",
+      link: "https://www.baidu.com",
+      time: "2023-11-11",
+      dian: 100,
+
+    },
+    {
+      ad: 4,
+      name: "图片4",
+      picture: "https://img2",
+      link: "https://www.baidu.com",
+      time: "2023-11-11",
+      dian: 100,
+    }
+  ];
+  page.total = 4;
 
   componentKey.value++;
-  console.log(ress, tableData.value, "tableData");
+  //console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
 const getadmindata = async () => {
@@ -153,7 +185,7 @@ const getadmindata = async () => {
     // });
     localStorage.setItem("v_codes", JSON.stringify(op));
   } else {
-    goTologon();
+    //goTologon();
   }
 };
 getadmindata();
@@ -249,138 +281,70 @@ let options = ref<FormOption>({
   list: [
     {
       type: "input",
-      label: "实践课程名称",
-      prop: "projectpracticeName",
+      label: "名称",
+      prop: "name",
       required: true,
     },
     {
-      type: "select",
-      label: "专业",
-      prop: "majorName",
-      required: true,
-      options: [
-        { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
-        { label: "电子科学与技术", value: "电子科学与技术" },
-        { label: "自动化", value: "自动化" },
-        { label: "机器人工程", value: "机器人工程" },
-      ],
-    },
-    {
-      type: "select",
-      label: "年级",
-      prop: "grade",
-      required: true,
-      options: recentYears,
-    },
-    {
-      type: "select",
-      label: "状态",
-      prop: "status",
-      required: true,
-      options: [
-        { label: "未开始", value: 0 },
-        { label: "已停止", value: 2 },
-        { label: "已开始", value: 1 },
-      ],
-    },
-    {
-      type: "date",
-      label: "教师出题开始时间",
-      prop: "titleStime",
+      type: "input",
+      label: "图片",
+      prop: "img",
       required: true,
     },
     {
-      type: "date",
-      label: "教师出题结束时间",
-      prop: "titleEtime",
+      type: "input",
+      label: "链接",
+      prop: "description",
       required: true,
     },
     {
-      type: "date",
-      label: "学生选课开始时间",
-      prop: "selectStime",
+      type: "input",
+      label: "创建时间",
+      prop: "courseCode",
       required: true,
     },
     {
-      type: "date",
-      label: "学生选课结束时间",
-      prop: "selectEtime",
+      type: "input",
+      label: "点击量",
+      prop: "courseName",
       required: true,
-    },
-    //{ type: "input", label: "负责人", prop: "adminName", required: true },
+    }
   ],
 });
 let newoptions = ref<FormOption>({
   labelWidth: "140px",
   span: 12,
   list: [
-    // {
-    //   type: "input",
-    //   label: "项目课程号",
-    //   prop: "majorCode",
-    //   required: true,
-    // },
     {
       type: "input",
-      label: "实践课程名称",
-      prop: "projectpracticeName",
+      label: "名称",
+      prop: "name",
       required: true,
     },
     {
-      type: "select",
-      label: "专业",
-      prop: "majorName",
-      required: true,
-      options: [
-        { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
-        { label: "电子科学与技术", value: "电子科学与技术" },
-        { label: "自动化", value: "自动化" },
-        { label: "机器人工程", value: "机器人工程" },
-      ],
-    },
-    {
-      type: "select",
-      label: "年级",
-      prop: "grade",
-      required: true,
-      options:recentYears,
-    },
-    {
-      type: "select",
-      label: "状态",
-      prop: "status",
-      required: true,
-      options: [
-        { label: "未开始", value: 0 },
-        { label: "已停止", value: 2 },
-        { label: "已开始", value: 1 },
-      ],
-    },
-    {
-      type: "date",
-      label: "教师出题开始时间",
-      prop: "titleStime",
+      type: "input",
+      label: "图片",
+      prop: "img",
       required: true,
     },
     {
-      type: "date",
-      label: "教师出题结束时间",
-      prop: "titleEtime",
+      type: "input",
+      label: "链接",
+      prop: "description",
       required: true,
     },
     {
-      type: "date",
-      label: "学生选课开始时间",
-      prop: "selectStime",
+      type: "input",
+      label: "创建时间",
+      prop: "courseCode",
       required: true,
     },
     {
-      type: "date",
-      label: "学生选课结束时间",
-      prop: "selectEtime",
+      type: "input",
+      label: "点击量",
+      prop: "courseName",
       required: true,
-    },
-    //{ type: "input", label: "负责人", prop: "adminName", required: true },
+    }
   ],
 });
 const visible = ref(false);
@@ -394,12 +358,7 @@ const handleEdit = (row: User) => {
   visible.value = true;
   getData(1, 0);
 };
-const mapping = {
-  机械设计制作及其自动化: "0101",
-  电子科学与技术: "0102",
-  机器人工程: "0104",
-  自动化: "0103",
-};
+
 const updateData = async (e) => {
   e.selectEtime = formatDate(e.selectEtime);
   e.selectStime = formatDate(e.selectStime);
@@ -446,37 +405,25 @@ const handleView = (row: User) => {
       label: "序号",
     },
     {
-      prop: "projectpracticeCode",
-      label: "实践课程编号",
+      prop: "name",
+      label: "名称",
     },
     {
-      prop: "projectpracticeName",
-      label: "实践课程名称",
+      prop: "picture",
+      label: "图片",
     },
     {
-      prop: "majorName",
-      label: "专业",
+      prop: "link",
+      label: "链接",
     },
     {
-      prop: "grade",
-      label: "年级",
+      prop: "time",
+      label: "创建时间",
     },
     {
-      prop: "adminName",
-      label: "负责人",
-    },
-    {
-      prop: "titleTime",
-      label: "教师出题时间",
-    },
-    {
-      prop: "selectTime",
-      label: "学生选课时间",
-    },
-    {
-      prop: "status",
-      label: "状态",
-    },
+      prop: "dian",
+      label: "点击量",
+    }
   ];
   visible1.value = true;
 };

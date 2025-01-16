@@ -363,27 +363,28 @@ const router = createRouter({
 
 
   router.beforeEach((to, from, next) => {
-      NProgress.start();
-      const role = localStorage.getItem('vuems_role');
-      const permissStore = usePermissStore();
-      const permissList = permissStore.defaultList;
+    //   NProgress.start();
+    //   const role = localStorage.getItem('vuems_role');
+    //   const permissStore = usePermissStore();
+    //   const permissList = permissStore.defaultList;
   
-      if (!role && to.meta.noAuth !== true) {
-          next('/login');
-      } else {
-          // 检查是否是需要superadmin权限的页面
-          const isSuperadminPage = to.meta.permiss === '19'|| to.meta.permiss === '20'|| to.meta.permiss === '21';
-          if (isSuperadminPage) {
-              // 如果是需要superadmin权限的页面，检查角色是否为superadmin
-              if (role === 'superadmin') {
-                  next(); // 是superadmin，放行
-              } else {
-                  next('/403'); // 不是superadmin，跳转到403
-              }
-          } else {
-              next(); // 不是superadmin页面，放行
-          }
-      }
+    //   if (!role && to.meta.noAuth !== true) {
+    //       next('/login');
+    //   } else {
+    //       // 检查是否是需要superadmin权限的页面
+    //       const isSuperadminPage = to.meta.permiss === '19'|| to.meta.permiss === '20'|| to.meta.permiss === '21';
+    //       if (isSuperadminPage) {
+    //           // 如果是需要superadmin权限的页面，检查角色是否为superadmin
+    //           if (role === 'superadmin') {
+    //               next(); // 是superadmin，放行
+    //           } else {
+    //               next('/403'); // 不是superadmin，跳转到403
+    //           }
+    //       } else {
+    //           next(); // 不是superadmin页面，放行
+    //       }
+    //   }
+    next();
   });
 
 router.afterEach(() => {

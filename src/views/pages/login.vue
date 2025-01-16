@@ -2,12 +2,12 @@
   <div class="login-bg">
     <div class="login-container">
       <div class="login-header">
-        <img class="logo mr10" src="../../assets/img/logofav.png" alt="" />
-        <div class="login-title">实践课程管理系统PCMS</div>
+        <!-- <img class="logo mr10" src="../../assets/img/logofav.png" alt="" /> -->
+        <div class="login-title">实习大全</div>
       </div>
       <el-form :model="param" :rules="rules" ref="login" size="large">
         <el-form-item prop="username">
-          <el-input v-model="param.username" placeholder="用户名">
+          <el-input v-model="param.username" placeholder="账号">
             <template #prepend>
               <el-icon>
                 <User />
@@ -15,7 +15,7 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item prop="sno">
+        <!-- <el-form-item prop="sno">
           <el-input v-model="param.sno" placeholder="工号">
             <template #prepend>
               <el-icon>
@@ -23,7 +23,7 @@
               </el-icon>
             </template>
           </el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item prop="password">
           <el-input
             type="password"
@@ -71,7 +71,7 @@ import axios from "axios";
 interface LoginInfo {
   username: string;
   password: string;
-  sno: string;
+
 }
 
 const lgStr = localStorage.getItem("login-param");
@@ -82,19 +82,19 @@ const router = useRouter();
 const param = reactive<LoginInfo>({
   username: defParam ? defParam.username : "",
   password: defParam ? defParam.password : "",
-  sno: defParam ? defParam.sno : "",
+
 });
 
 const rules: FormRules = {
   username: [
     {
       required: true,
-      message: "请输入用户名",
+      message: "请输入账号",
       trigger: "blur",
     },
   ],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }],
-  sno: [{ required: true, message: "请输入工号", trigger: "blur" }],
+
 };
 const permiss = usePermissStore();
 const login = ref<FormInstance>();
@@ -107,60 +107,62 @@ const submitForm = (formEl: FormInstance | undefined) => {
       const loginData = {
         name: param.username,
         password: param.password, // 确保param对象中有password属性
-        sno: param.sno,
+
       };
+      ElMessage.success("登录成功");
+      router.push("/");
       // 向后端发送登录请求
-      axios
-        .post("/api/login/adminlogin", loginData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response) => {
-          // 登录成功
-          //console.log(response.data);
-          if (response.data.data.message == "success") {
-            ElMessage.success("登录成功");
-            localStorage.setItem("vuems_role", response.data.data.role);
-            localStorage.setItem("vuems_token", response.data.data.token); // 确保返回的数据中有token字段
-            const keys =
-              permiss.defaultList[
-                param.username === "admin" ? "admin" : "user"
-              ];
-            permiss.handleSet(keys);
-            router.push("/");
+      // axios
+      //   .post("/api/login/adminlogin", loginData, {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   })
+      //   .then((response) => {
+      //     // 登录成功
+      //     //console.log(response.data);
+      //     if (response.data.data.message == "success") {
+      //       ElMessage.success("登录成功");
+      //       localStorage.setItem("vuems_role", response.data.data.role);
+      //       localStorage.setItem("vuems_token", response.data.data.token); // 确保返回的数据中有token字段
+      //       const keys =
+      //         permiss.defaultList[
+      //           param.username === "admin" ? "admin" : "user"
+      //         ];
+      //       permiss.handleSet(keys);
+      //       router.push("/");
 
-            // 如果用户勾选了记住我，则保存登录参数
-            if (checked.value) {
-              localStorage.setItem("login-param", JSON.stringify(param));
-            } else {
-              localStorage.removeItem("login-param");
-            }
-          } else {
-            ElMessage.error("登录失败，请检查表单填写是否正确");
-          }
-        })
-        .catch((error) => {
-          // 处理错误
-          console.error(error);
+      //       // 如果用户勾选了记住我，则保存登录参数
+      //       if (checked.value) {
+      //         localStorage.setItem("login-param", JSON.stringify(param));
+      //       } else {
+      //         localStorage.removeItem("login-param");
+      //       }
+      //     } else {
+      //       ElMessage.error("登录失败，请检查表单填写是否正确");
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     // 处理错误
+      //     console.error(error);
 
-          if (error.response) {
-            // 请求已发出但服务器响应的状态码不在2xx范围内
-            if (error.response.status === 401) {
-              ElMessage.error("用户名或密码错误");
-            } else {
-              ElMessage.error(
-                `登录失败，请稍后再试 (${error.response.status})`
-              );
-            }
-          } else if (error.request) {
-            // 请求已发出但没有收到响应
-            ElMessage.error("网络请求超时，请检查您的网络连接");
-          } else {
-            // 发生了一些设置请求时的错误
-            ElMessage.error("发生了一个错误，请稍后再试");
-          }
-        });
+      //     if (error.response) {
+      //       // 请求已发出但服务器响应的状态码不在2xx范围内
+      //       if (error.response.status === 401) {
+      //         ElMessage.error("用户名或密码错误");
+      //       } else {
+      //         ElMessage.error(
+      //           `登录失败，请稍后再试 (${error.response.status})`
+      //         );
+      //       }
+      //     } else if (error.request) {
+      //       // 请求已发出但没有收到响应
+      //       ElMessage.error("网络请求超时，请检查您的网络连接");
+      //     } else {
+      //       // 发生了一些设置请求时的错误
+      //       ElMessage.error("发生了一个错误，请稍后再试");
+      //     }
+      //   });
     } else {
       ElMessage.error("登录失败，请检查表单填写是否正确");
     }
