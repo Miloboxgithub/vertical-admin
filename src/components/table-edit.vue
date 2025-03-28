@@ -9,23 +9,37 @@
       <el-col :span="options.span" v-for="item in options.list">
         <el-form-item :label="item.label" :prop="item.prop">
           <!-- 文本框、数字框、下拉框、日期框、开关、上传 -->
-<div v-if="item.type === 'sss'" style="width: 100%; height: 100%; ">
-  <div style="width: 100%; height: 40px; border: 1px solid #ccc; border-radius: 5px; padding: 10px; display: flex;  align-items: center;">
-      <div style="color:#2272FB;">指定学生（{{numnum}}人）</div>
-      <el-input v-model="inputname" style="width: 240px" placeholder="学生姓名查询" />
-  </div>
-          <div class="scrollable-window">
-  <div class="window-content">
-    <el-table :data="stableData" class="custom-table-font-size" >
-    
-    <el-table-column prop="name" label="name" width="80" />
-    <el-table-column prop="sno" label="sno" width="80" />
-    <el-table-column prop="major" label="major" width="130" />
-    <el-table-column prop="class" label="class" width="60" />
-    <el-table-column prop="phone" label="phone" width="120" />
-  </el-table>
-  </div>
-</div></div>
+          <div v-if="item.type === 'sss'" style="width: 100%; height: 100%">
+            <div
+              style="
+                width: 100%;
+                height: 40px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px;
+                display: flex;
+                align-items: center;
+              "
+            >
+              <div style="color: #2272fb">指定学生（{{ numnum }}人）</div>
+              <el-input
+                v-model="inputname"
+                style="width: 240px"
+                placeholder="学生姓名查询"
+              />
+            </div>
+            <div class="scrollable-window">
+              <div class="window-content">
+                <el-table :data="stableData" class="custom-table-font-size">
+                  <el-table-column prop="name" label="name" width="80" />
+                  <el-table-column prop="sno" label="sno" width="80" />
+                  <el-table-column prop="major" label="major" width="130" />
+                  <el-table-column prop="class" label="class" width="60" />
+                  <el-table-column prop="phone" label="phone" width="120" />
+                </el-table>
+              </div>
+            </div>
+          </div>
           <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop]"
@@ -135,11 +149,17 @@
           <el-upload
             v-else-if="item.type === 'upload'"
             class="avatar-uploader"
-            action="#"
+            action="/api/carousel/imageUpload"
+            :headers="getHeaders()"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
           >
-            <img v-if="form[item.prop]" :src="form[item.prop]" class="avatar" />
+            <img
+              v-if="form[item.prop]"
+              :src="form[item.prop]"
+              mode="widthFix"
+              class="avatar"
+            />
             <el-icon v-else class="avatar-uploader-icon">
               <Plus />
             </el-icon>
@@ -182,8 +202,8 @@ const stableData = ref([
     class: "1班",
     phone: "12345678903",
     major: "计算机科学与技术",
-  }
-])
+  },
+]);
 const { options, formData, edit, update, edits } = defineProps({
   options: {
     type: Object as PropType<FormOption>,
@@ -321,7 +341,7 @@ const rules: FormRules = options.list
     return {};
   })
   .reduce((acc, cur) => ({ ...acc, ...cur }), {});
-  function formatDate(dateString) {
+function formatDate(dateString) {
   // 创建 Date 对象
   const date = new Date(dateString);
 
@@ -345,10 +365,9 @@ const rules: FormRules = options.list
 }
 const formRef = ref<FormInstance>();
 const saveEdit = (formEl: FormInstance | undefined) => {
-  
   if (!formEl) return;
 
-    update(form.value);
+  update(form.value);
 
   //console.log(form.value, "form.value444444");
   // if (edits) {
@@ -367,13 +386,20 @@ const saveEdit = (formEl: FormInstance | undefined) => {
   //   }
   // }
 };
-
-
-const handleAvatarSuccess: UploadProps["onSuccess"] = (
-  response,
-  uploadFile
-) => {
-  form.value.thumb = URL.createObjectURL(uploadFile.raw!);
+const getHeaders = () => {
+  const token = localStorage.getItem("vuems_token"); // 假设 token 存储在 localStorage 中
+  return {
+    'token': token,
+  };
+};
+const handleAvatarSuccess = (response: any, file: File) => {
+  // 假设后端返回的数据格式为 { url: '图片链接' }
+  console.log(response, "response");
+  if (response.code==1 && response.data) {
+    form.value['image'] = response.data;
+  } else {
+    console.error('上传失败或未返回链接');
+  }
 };
 </script>
 
@@ -400,9 +426,13 @@ const handleAvatarSuccess: UploadProps["onSuccess"] = (
   cursor: pointer;
   position: relative;
   overflow: hidden;
+
   transition: var(--el-transition-duration-fast);
 }
-
+.avatar {
+  width: 100%;
+  height: auto;
+}
 .avatar-uploader .el-upload:hover {
   border-color: var(--el-color-primary);
 }

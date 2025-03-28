@@ -96,15 +96,6 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/smessage.vue'),
             },
             {
-                path: '/system-management',
-                name: 'system-management',
-                meta: {
-                    title: '系统管理',
-                    permiss: '21',
-                },
-                component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/management.vue'),
-            },
-            {
                 path: '/pages-reset-pwd',
                 name: 'pages-reset-pwd',
                 meta: {
@@ -112,15 +103,6 @@ const routes: RouteRecordRaw[] = [
                     permiss: '22',
                 },
                 component: () => import(/* webpackChunkName: "system-notice" */ '../views/pages/reset-pwd.vue'),
-            },
-            {
-                path: '/system-journal',
-                name: 'system-journal',
-                meta: {
-                    title: '发现日志',
-                    permiss: '23',
-                },
-                component: () => import(/* webpackChunkName: "system-notice" */ '../views/system/journal.vue'),
             },
             // {
             //     path: '/system-logviewer',

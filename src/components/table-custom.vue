@@ -53,10 +53,12 @@
           v-if="item.visible"
           :prop="item.prop"
           :label="item.label"
+          show-overflow-tooltip
           :width="item.width"
           :type="item.type"
           :align="item.align || 'center'"
           :sortable="item.sortable"
+          :fixed="item.fixed||false"
         >
           <template
             #default="{ row, column, $index }"
@@ -64,17 +66,30 @@
           >
             {{ getIndex($index) }}
           </template>
+          <template
+            #default="{ row, column, $index }"
+            v-if="item.type === 'img'"
+          >
+            <el-image
+              :src="row[item.prop]"
+              :preview-src-list="[row[item.prop]]"
+              show-progress
+              fit="cover"
+              style="width: 80%; height: 80% ;z-index: 9999"
+              :preview-teleported="true"
+            />
+          </template>
           <template #default="{ row, column, $index }" v-if="!item.type">
             <slot :name="item.prop" :rows="row" :index="$index">
               <template v-if="item.prop == 'operator'">
-                <el-button
+                <!-- <el-button
                   type="warning"
                   size="small"
                   :icon="View"
                   @click="viewFunc(row)"
                 >
                   查看
-                </el-button>
+                </el-button> -->
                 <el-button
                   type="primary"
                   size="small"
@@ -83,6 +98,16 @@
                 >
                   编辑
                 </el-button>
+                <el-button
+                  type="danger"
+                  size="small"
+                  :icon="Delete"
+                  @click="handleDelete(row)"
+                >
+                  删除
+                </el-button>
+              </template>
+              <template v-if="item.prop == 'operator1'">
                 <el-button
                   type="danger"
                   size="small"
@@ -136,7 +161,10 @@
 <script setup lang="ts">
 import { toRefs, PropType, ref } from "vue";
 import { Delete, Edit, View, Refresh } from "@element-plus/icons-vue";
-import { ElMessageBox } from "element-plus";
+import { ElMessageBox,ElImage } from "element-plus";
+import 'element-plus/dist/index.css';
+
+//app.use(ElImage);
 //import { fetchUserData } from "@/api";
 const props = defineProps({
   // 表格相关
@@ -307,9 +335,10 @@ const getIndex = (index: number) => {
   cursor: pointer;
   color: #676767;
 }
-</style>
-<style>
+/* 增加遮罩层的 z-index */
+/*  */
 .table-header .cell {
   color: #333;
 }
+/*  */
 </style>

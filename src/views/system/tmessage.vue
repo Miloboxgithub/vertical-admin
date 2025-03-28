@@ -12,7 +12,6 @@
         :delFunc="handleDelete"
         :changePage="changePage"
         :editFunc="handleEdit"
-        :delSelection="handleDelSelection"
       >
         <template #status="{ rows }">
           <el-tag type="warning" v-if="rows.status == 0">未开始</el-tag>
@@ -77,12 +76,8 @@ import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
 import {
-  fetchCourseData,
-  DeleteCourseData,
   SearchCourse,
-  createCourse,
-  updateCourse,
-  exportCourseData,
+  fetchInterShipData,
   fetchAdminData,
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
@@ -111,20 +106,20 @@ const searchOpt = ref<FormOptionList[]>([
 
 // 表格相关
 let columns = ref([
-  //{ type: "index", label: "序号", width: 55, align: "center" },
-  { type: "selection", width: 55, align: "center" },
-  { prop: "ad", label: "序号", width: 55, align: "center" },
-  { prop: "name", label: "公司名称", align: "center" },
-  { prop: "id", label: "职业ID", align: "center" },
-  { prop: "type", label: "职业类型", align: "center" },
-  { prop: "xing", label: "公司性质", align: "center" },
-  { prop: "wei", label: "招聘岗位" },
-  { prop: "time", label: "提交时间" },
-  { prop: "types", label: "实习类型" },
-  { prop: "sno", label: "用户账号" },
-  { prop: "value", label: "权重" },
-  { prop: "num", label: "浏览量" },
-  { prop: "operator", label: "操作", width: 250 },
+  { type: "index", label: "序号", width: 55, align: "center" },
+  //{ type: "selection", width: 55, align: "center" },
+  //{ prop: "ad", label: "序号", width: 55, align: "center" },
+  { prop: "companyName", label: "公司名称", align: "center" , width: 200},
+  { prop: "industryTypeId", label: "职业ID", align: "center" },
+  { prop: "industryType", label: "职业类型", align: "center" },
+  { prop: "businessNature", label: "公司性质", align: "center" },
+  { prop: "jobPosition", label: "招聘岗位" },
+  { prop: "createTime", label: "提交时间" },
+  { prop: "internshipType", label: "实习类型" },
+  { prop: "userAccount", label: "用户账号" },
+  { prop: "weights", label: "权重" },
+  { prop: "pageview", label: "浏览量" },
+  { prop: "operator", label: "操作", width: 200 },
 ]);
 const page = reactive({
   index: 1,
@@ -134,84 +129,73 @@ const page = reactive({
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref([]);
 const getData = async (e, p) => {
-  // const ress = await fetchCourseData(e, p);
-  // if (ress == "Request failed with status code 403") {
-  //   //goTologon();
-  // }
-  tableData.value = [
-    {
-      ad: 1,
-      name: "北京智谱华章科技有限公司",
-      id: "1",
-      type: "计算机/互联网/IT",
-      xing: "民营公司",
-      wei: "前端开发工程师",
-      time: "2023-11-01",
-      types: "实习",
-      sno: "2020110405",
-      value: "1",
-      num: "100",
-    },
-    {
-      ad: 2,
-      name: "北京智谱华章科技有限公司",
-      id: "1",
-      type: "计算机/互联网/IT",
-      xing: "民营公司",
-      wei: "前端开发工程师",
-      time: "2023-11-01",
-      types: "实习",
-      sno: "2020110405",
-      value: "1",
-      num: "100",
-    },
-    {
-      ad: 3,
-      name: "北京智谱华章科技有限公司",
-      id: "1",
-      type: "计算机/互联网/IT",
-      xing: "民营公司",
-      wei: "前端开发工程师",
-      time: "2023-11-01",
-      types: "实习",
-      sno: "2020110405",
-      value: "1",
-      num: "100",
-    },
-    {
-      ad: 4,
-      name: "北京智谱华章科技有限公司",
-      id: "1",
-      type: "计算机/互联网/IT",
-      xing: "民营公司",
-      wei: "前端开发工程师",
-      time: "2023-11-01",
-      types: "实习",
-      sno: "2020110405",
-      value: "1",
-      num: "100",
-    }
-  ];
-  page.total = 4;
+  const ress = await fetchInterShipData(e, p);
+  if (ress == "Request failed with status code 403") {
+    //goTologon();
+  }
+  // tableData.value = [
+  //   {
+  //     ad: 1,
+  //     name: "北京智谱华章科技有限公司",
+  //     id: "1",
+  //     type: "计算机/互联网/IT",
+  //     xing: "民营公司",
+  //     wei: "前端开发工程师",
+  //     time: "2023-11-01",
+  //     types: "实习",
+  //     sno: "2020110405",
+  //     value: "1",
+  //     num: "100",
+  //   },
+  //   {
+  //     ad: 2,
+  //     name: "北京智谱华章科技有限公司",
+  //     id: "1",
+  //     type: "计算机/互联网/IT",
+  //     xing: "民营公司",
+  //     wei: "前端开发工程师",
+  //     time: "2023-11-01",
+  //     types: "实习",
+  //     sno: "2020110405",
+  //     value: "1",
+  //     num: "100",
+  //   },
+  //   {
+  //     ad: 3,
+  //     name: "北京智谱华章科技有限公司",
+  //     id: "1",
+  //     type: "计算机/互联网/IT",
+  //     xing: "民营公司",
+  //     wei: "前端开发工程师",
+  //     time: "2023-11-01",
+  //     types: "实习",
+  //     sno: "2020110405",
+  //     value: "1",
+  //     num: "100",
+  //   },
+  //   {
+  //     ad: 4,
+  //     name: "北京智谱华章科技有限公司",
+  //     id: "1",
+  //     type: "计算机/互联网/IT",
+  //     xing: "民营公司",
+  //     wei: "前端开发工程师",
+  //     time: "2023-11-01",
+  //     types: "实习",
+  //     sno: "2020110405",
+  //     value: "1",
+  //     num: "100",
+  //   }
+  // ];
+  // page.total = 4;
+tableData.value = ress.data.records;
+page.total = ress.data.total;
 
   componentKey.value++;
   //console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
-const getadmindata = async () => {
-  const ress = await fetchAdminData();
-  if (ress.code != 50) {
-    let op = ress.data.propracticeList;
-    // let esp = [];
-    // op.forEach((item) => {
-    //   esp.push(item.projectPracticeCode);
-    // });
-    localStorage.setItem("v_codes", JSON.stringify(op));
-  } else {
-    //goTologon();
-  }
-};
-getadmindata();
+
 const handleSearch = async (queryData) => {
   if (!queryData.projectpracticeCode) {
     getData(1, 0);
@@ -226,38 +210,7 @@ const handleSearch = async (queryData) => {
     }
   }
 };
-async function daochu() {
-  ElMessageBox.confirm("确定要导出表格吗？", "提示", {
-    type: "info",
-  })
-    .then(async () => {
-      const res = await exportCourseData();
-      if (res.code == 50)
-        ElMessage({
-          type: "warning",
-          message: "导出失败",
-        });
-      else {
-        const url = window.URL.createObjectURL(new Blob([res],
-        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
-        link.style.display = 'none' // 隐藏元素
-        document.body.appendChild(link);
-        link.click();
-        
-        // 清理 DOM 和释放 URL 对象
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        ElMessage({
-          type: "success",
-          message: "导出成功",
-        });
-      }
-    })
-    .catch(() => {});
-}
+
 const changePage = (val: number, name: string, p) => {
   page.index = val;
   getData(page.index, p);
@@ -335,14 +288,14 @@ const updateData = async (e) => {
 
     if ("projectpracticeCode" in rowData.value) {
       e.projectpracticeCode = rowData.value.projectpracticeCode;
-      const res = await updateCourse(e);
-      console.log(res, "更新数据");
+      // const res = await updateCourse(e);
+      // console.log(res, "更新数据");
     } else {
       console.log("无数据");
     }
   } else {
-    const res = await createCourse(e);
-    console.log(res, "新建数据");
+    // const res = await createCourse(e);
+    // console.log(res, "新建数据");
   }
   closeDialog();
   setTimeout(() => {
@@ -389,32 +342,16 @@ const handleView = (row: User) => {
   ];
   visible1.value = true;
 };
-const handleDelSelection = (e) => {
-  let delt = [];
-  if (e.length > 0) {
-    e.forEach((value) => {
-      delt.push(value.projectpracticeCode);
-    });
-  }
-  DeleteCourseData(delt)
-    .then((res) => {
-      ElMessage.success("删除成功");
-      getData(1, 0);
-      page.index = 1;
-    })
-    .catch((err) => {
-      ElMessage.error("删除失败");
-    });
-};
+
 // 删除相关
 const handleDelete = async (row) => {
   //console.log(row, "删除");
-  const res = await DeleteCourseData(row.projectpracticeCode);
-  if (res.data.message == "success") {
-    ElMessage.success("删除成功");
-  } else {
-    ElMessage.error("删除失败");
-  }
+  // const res = await DeleteCourseData(row.projectpracticeCode);
+  // if (res.data.message == "success") {
+  //   ElMessage.success("删除成功");
+  // } else {
+  //   ElMessage.error("删除失败");
+  // }
   getData(1, 0);
   page.index = 1;
 };

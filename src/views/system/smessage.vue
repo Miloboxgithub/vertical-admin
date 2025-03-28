@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TableSearch :query="query" :options="searchOpt" :search="handleSearch" />
+    <!-- <TableSearch :query="query" :options="searchOpt" :search="handleSearch" /> -->
     <div class="container">
       <TableCustom
         :key="componentKey"
@@ -77,13 +77,9 @@ import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
 import {
-  fetchCourseData,
-  DeleteCourseData,
+  fetchReportData,
+  DeleteReportData,
   SearchCourse,
-  createCourse,
-  updateCourse,
-  exportCourseData,
-  fetchAdminData,
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
@@ -111,17 +107,17 @@ const searchOpt = ref<FormOptionList[]>([
 
 // 表格相关
 let columns = ref([
-  //{ type: "index", label: "序号", width: 55, align: "center" },
-  { type: "selection", width: 55, align: "center" },
-  { prop: "ad", label: "序号", width: 55, align: "center" },
+  { type: "index", label: "序号", width: 55, align: "center" },
+  //{ type: "selection", width: 55, align: "center" },
+  //{ prop: "ad", label: "序号", width: 55, align: "center" },
   
-  { prop: "sno", label: "用户账号" },
+  { prop: "internshipId", label: "举报目标ID" },
   { prop: "reason", label: "举报理由"},
-  { prop: "detail", label: "举报详情" },
-  { prop: "img", label: "相关图片" },
-  { prop: "time", label: "举报时间" },
-  { prop: "way", label: "联系方式"},
-  { prop: "operator", label: "操作", width: 250 },
+  { prop: "description", label: "举报详情" },
+  { type:'img',prop: "screenshot", label: "相关图片" },
+  { prop: "createTime", label: "举报时间" },
+  { prop: "contactWay", label: "联系方式"},
+  { prop: "operator1", label: "操作", width: 150 },
 ]);
 const page = reactive({
   index: 1,
@@ -131,68 +127,54 @@ const page = reactive({
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref([]);
 const getData = async (e, p) => {
-  // const ress = await fetchCourseData(e, p);
-  // if (ress == "Request failed with status code 403") {
-  //   //goTologon();
-  // }
-  tableData.value = [
-    {
-      ad: 1,
-      sno: "2020114104",
-      reason: "辱骂他人",
-      detail: "该用户辱骂他人",
-      img: "http://localhost:8080/img/1.jpg",
-      time: "2023-11-14 12:00:00",
-      way: "12345678901",
-    },
-    {
-      ad: 2,
-      sno: "2020114104",
-      reason: "辱骂他人",
-      detail: "该用户辱骂他人",
-      img: "http://localhost:8080/img/1.jpg",
-      time: "2023-11-14 12:00:00",
-      way: "12345678901",
-    },
-    {
-      ad: 3,
-      sno: "2020114104",
-      reason: "辱骂他人",
-        detail: "该用户辱骂他人",
-      img: "http://localhost:8080/img/1.jpg",
-      time: "2023-11-14 12:00:00",
-      way: "12345678901",
-    },
-    {
-      ad: 4,
-      sno: "2020114104",
-      reason: "辱骂他人",
-      detail: "该用户辱骂他人",
-      img: "http://localhost:8080/img/1.jpg",
-      time: "2023-11-14 12:00:00",
-      way: "12345678901",
-    }
-  ];
-  page.total = 4;
-
+  const ress = await fetchReportData(e, p);
+  if (ress == "Request failed with status code 403") {
+    //goTologon();
+  }
+  // tableData.value = [
+  //   {
+  //     ad: 1,
+  //     sno: "2020114104",
+  //     reason: "辱骂他人",
+  //     detail: "该用户辱骂他人",
+  //     img: "http://localhost:8080/img/1.jpg",
+  //     time: "2023-11-14 12:00:00",
+  //     way: "12345678901",
+  //   },
+  //   {
+  //     ad: 2,
+  //     sno: "2020114104",
+  //     reason: "辱骂他人",
+  //     detail: "该用户辱骂他人",
+  //     img: "http://localhost:8080/img/1.jpg",
+  //     time: "2023-11-14 12:00:00",
+  //     way: "12345678901",
+  //   },
+  //   {
+  //     ad: 3,
+  //     sno: "2020114104",
+  //     reason: "辱骂他人",
+  //       detail: "该用户辱骂他人",
+  //     img: "http://localhost:8080/img/1.jpg",
+  //     time: "2023-11-14 12:00:00",
+  //     way: "12345678901",
+  //   },
+  //   {
+  //     ad: 4,
+  //     sno: "2020114104",
+  //     reason: "辱骂他人",
+  //     detail: "该用户辱骂他人",
+  //     img: "http://localhost:8080/img/1.jpg",
+  //     time: "2023-11-14 12:00:00",
+  //     way: "12345678901",
+  //   }
+  // ];
+  // page.total = 4;
+  tableData.value = ress.data;
   componentKey.value++;
   //console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
-const getadmindata = async () => {
-  const ress = await fetchAdminData();
-  if (ress.code != 50) {
-    let op = ress.data.propracticeList;
-    // let esp = [];
-    // op.forEach((item) => {
-    //   esp.push(item.projectPracticeCode);
-    // });
-    localStorage.setItem("v_codes", JSON.stringify(op));
-  } else {
-    //goTologon();
-  }
-};
-getadmindata();
 const handleSearch = async (queryData) => {
   if (!queryData.projectpracticeCode) {
     getData(1, 0);
@@ -207,38 +189,38 @@ const handleSearch = async (queryData) => {
     }
   }
 };
-async function daochu() {
-  ElMessageBox.confirm("确定要导出表格吗？", "提示", {
-    type: "info",
-  })
-    .then(async () => {
-      const res = await exportCourseData();
-      if (res.code == 50)
-        ElMessage({
-          type: "warning",
-          message: "导出失败",
-        });
-      else {
-        const url = window.URL.createObjectURL(new Blob([res],
-        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
-        link.style.display = 'none' // 隐藏元素
-        document.body.appendChild(link);
-        link.click();
+// async function daochu() {
+//   ElMessageBox.confirm("确定要导出表格吗？", "提示", {
+//     type: "info",
+//   })
+//     .then(async () => {
+//       const res = await exportCourseData();
+//       if (res.code == 50)
+//         ElMessage({
+//           type: "warning",
+//           message: "导出失败",
+//         });
+//       else {
+//         const url = window.URL.createObjectURL(new Blob([res],
+//         { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+//         const link = document.createElement('a');
+//         link.href = url;
+//         link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
+//         link.style.display = 'none' // 隐藏元素
+//         document.body.appendChild(link);
+//         link.click();
         
-        // 清理 DOM 和释放 URL 对象
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        ElMessage({
-          type: "success",
-          message: "导出成功",
-        });
-      }
-    })
-    .catch(() => {});
-}
+//         // 清理 DOM 和释放 URL 对象
+//         document.body.removeChild(link);
+//         window.URL.revokeObjectURL(url);
+//         ElMessage({
+//           type: "success",
+//           message: "导出成功",
+//         });
+//       }
+//     })
+//     .catch(() => {});
+// }
 const changePage = (val: number, name: string, p) => {
   page.index = val;
   getData(page.index, p);
@@ -316,14 +298,14 @@ const updateData = async (e) => {
 
     if ("projectpracticeCode" in rowData.value) {
       e.projectpracticeCode = rowData.value.projectpracticeCode;
-      const res = await updateCourse(e);
-      console.log(res, "更新数据");
+      // const res = await updateCourse(e);
+      // console.log(res, "更新数据");
     } else {
       console.log("无数据");
     }
   } else {
-    const res = await createCourse(e);
-    console.log(res, "新建数据");
+    // const res = await createCourse(e);
+    // console.log(res, "新建数据");
   }
   closeDialog();
   setTimeout(() => {
@@ -377,7 +359,7 @@ const handleDelSelection = (e) => {
       delt.push(value.projectpracticeCode);
     });
   }
-  DeleteCourseData(delt)
+  DeleteReportData(delt)
     .then((res) => {
       ElMessage.success("删除成功");
       getData(1, 0);
@@ -390,8 +372,8 @@ const handleDelSelection = (e) => {
 // 删除相关
 const handleDelete = async (row) => {
   //console.log(row, "删除");
-  const res = await DeleteCourseData(row.projectpracticeCode);
-  if (res.data.message == "success") {
+  const res = await DeleteReportData(row.id);
+  if (res.code == 1) {
     ElMessage.success("删除成功");
   } else {
     ElMessage.error("删除失败");

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TableSearch :query="query" :options="searchOpt" :search="handleSearch" />
+    <!-- <TableSearch :query="query" :options="searchOpt" :search="handleSearch" /> -->
     <div class="container">
       <TableCustom
         :key="componentKey"
@@ -77,13 +77,10 @@ import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
 import {
-  fetchCourseData,
-  DeleteCourseData,
+  fetchSwiperData,
+  DeleteSwiperData,
   SearchCourse,
-  createCourse,
-  updateCourse,
-  exportCourseData,
-  fetchAdminData,
+  createSwiper,
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
@@ -112,14 +109,15 @@ const searchOpt = ref<FormOptionList[]>([
 // 表格相关
 let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
-  { type: "selection", width: 55, align: "center" },
-  { prop: "ad", label: "序号", width: 55, align: "center" },
+  //{ type: "selection", width: 55, align: "center" },
+  // { prop: "id", label: "序号", width: 55, align: "center" },
+  { type: "index", label: "序号", width: 55, align: "center" },
   { prop: "name", label: "名称" },
-  { prop: "picture", label: "图片"},
+  { type: "img", prop: "image",label: "图片"},
   { prop: "link", label: "链接" },
-  { prop: "time", label: "创建时间" },
-  { prop: "dian", label: "点击量" },
-  { prop: "operator", label: "操作", width: 250 },
+  { prop: "createTime", label: "创建时间" },
+  { prop: "weights", label: "点击量" },
+  { prop: "operator1", label: "操作", width: 150 },
 ]);
 const page = reactive({
   index: 1,
@@ -129,66 +127,54 @@ const page = reactive({
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref([]);
 const getData = async (e, p) => {
-  // const ress = await fetchCourseData(e, p);
-  // if (ress == "Request failed with status code 403") {
-  //   //goTologon();
-  // }
-  tableData.value = [
-    {
-      ad: 1,
-      name: "图片1",
-      picture: "https://img2",
-      link: "https://www.baidu.com",
-      time: "2023-11-11",
-      dian: 100,
-    },
-    {
-      ad: 2,
-      name: "图片2",
-      picture: "https://img2",
-      link: "https://www.baidu.com",
-      time: "2023-11-11",
-      dian: 100,
-    }
-    ,
-    {
-      ad: 3,
-      name: "图片3",
-      picture: "https://img2.",
-      link: "https://www.baidu.com",
-      time: "2023-11-11",
-      dian: 100,
+  const ress = await fetchSwiperData(e, p);
+  if (ress == "Request failed with status code 403") {
+    //goTologon();
+  }
+  // tableData.value = [
+  //   {
+  //     ad: 1,
+  //     name: "图片1",
+  //     picture: "https://img2",
+  //     link: "https://www.baidu.com",
+  //     time: "2023-11-11",
+  //     dian: 100,
+  //   },
+  //   {
+  //     ad: 2,
+  //     name: "图片2",
+  //     picture: "https://img2",
+  //     link: "https://www.baidu.com",
+  //     time: "2023-11-11",
+  //     dian: 100,
+  //   }
+  //   ,
+  //   {
+  //     ad: 3,
+  //     name: "图片3",
+  //     picture: "https://img2.",
+  //     link: "https://www.baidu.com",
+  //     time: "2023-11-11",
+  //     dian: 100,
 
-    },
-    {
-      ad: 4,
-      name: "图片4",
-      picture: "https://img2",
-      link: "https://www.baidu.com",
-      time: "2023-11-11",
-      dian: 100,
-    }
-  ];
-  page.total = 4;
+  //   },
+  //   {
+  //     ad: 4,
+  //     name: "图片4",
+  //     picture: "https://img2",
+  //     link: "https://www.baidu.com",
+  //     time: "2023-11-11",
+  //     dian: 100,
+  //   }
+  // ];
+  tableData.value = ress.data
+  page.total = ress.data.length;
 
   componentKey.value++;
   //console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
-const getadmindata = async () => {
-  const ress = await fetchAdminData();
-  if (ress.code != 50) {
-    let op = ress.data.propracticeList;
-    // let esp = [];
-    // op.forEach((item) => {
-    //   esp.push(item.projectPracticeCode);
-    // });
-    localStorage.setItem("v_codes", JSON.stringify(op));
-  } else {
-    //goTologon();
-  }
-};
-getadmindata();
+
 const handleSearch = async (queryData) => {
   if (!queryData.projectpracticeCode) {
     getData(1, 0);
@@ -203,38 +189,38 @@ const handleSearch = async (queryData) => {
     }
   }
 };
-async function daochu() {
-  ElMessageBox.confirm("确定要导出表格吗？", "提示", {
-    type: "info",
-  })
-    .then(async () => {
-      const res = await exportCourseData();
-      if (res.code == 50)
-        ElMessage({
-          type: "warning",
-          message: "导出失败",
-        });
-      else {
-        const url = window.URL.createObjectURL(new Blob([res],
-        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
-        link.style.display = 'none' // 隐藏元素
-        document.body.appendChild(link);
-        link.click();
+// async function daochu() {
+//   ElMessageBox.confirm("确定要导出表格吗？", "提示", {
+//     type: "info",
+//   })
+//     .then(async () => {
+//       const res = await exportCourseData();
+//       if (res.code == 50)
+//         ElMessage({
+//           type: "warning",
+//           message: "导出失败",
+//         });
+//       else {
+//         const url = window.URL.createObjectURL(new Blob([res],
+//         { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+//         const link = document.createElement('a');
+//         link.href = url;
+//         link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
+//         link.style.display = 'none' // 隐藏元素
+//         document.body.appendChild(link);
+//         link.click();
         
-        // 清理 DOM 和释放 URL 对象
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        ElMessage({
-          type: "success",
-          message: "导出成功",
-        });
-      }
-    })
-    .catch(() => {});
-}
+//         // 清理 DOM 和释放 URL 对象
+//         document.body.removeChild(link);
+//         window.URL.revokeObjectURL(url);
+//         ElMessage({
+//           type: "success",
+//           message: "导出成功",
+//         });
+//       }
+//     })
+//     .catch(() => {});
+// }
 const changePage = (val: number, name: string, p) => {
   page.index = val;
   getData(page.index, p);
@@ -277,7 +263,7 @@ const recentYears = getRecentYears(4); // 获取最近3年
 // 新增/编辑弹窗相关
 let options = ref<FormOption>({
   labelWidth: "140px",
-  span: 12,
+  span: 14,
   list: [
     {
       type: "input",
@@ -286,34 +272,22 @@ let options = ref<FormOption>({
       required: true,
     },
     {
-      type: "input",
+      type: "upload",
       label: "图片",
-      prop: "img",
+      prop: "image",
       required: true,
     },
     {
       type: "input",
-      label: "链接",
-      prop: "description",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "创建时间",
-      prop: "courseCode",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "点击量",
-      prop: "courseName",
+      label: "权重",
+      prop: "weights",
       required: true,
     }
   ],
 });
 let newoptions = ref<FormOption>({
   labelWidth: "140px",
-  span: 12,
+  span: 14,
   list: [
     {
       type: "input",
@@ -322,27 +296,15 @@ let newoptions = ref<FormOption>({
       required: true,
     },
     {
-      type: "input",
+      type: "upload",
       label: "图片",
-      prop: "img",
+      prop: "image",
       required: true,
     },
     {
       type: "input",
-      label: "链接",
-      prop: "description",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "创建时间",
-      prop: "courseCode",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "点击量",
-      prop: "courseName",
+      label: "权重",
+      prop: "weights",
       required: true,
     }
   ],
@@ -360,23 +322,19 @@ const handleEdit = (row: User) => {
 };
 
 const updateData = async (e) => {
-  e.selectEtime = formatDate(e.selectEtime);
-  e.selectStime = formatDate(e.selectStime);
-  e.titleEtime = formatDate(e.titleEtime);
-  e.titleStime = formatDate(e.titleStime);
-
   if (isEdit.value) {
     console.log(e, "编辑数据");
 
     if ("projectpracticeCode" in rowData.value) {
       e.projectpracticeCode = rowData.value.projectpracticeCode;
-      const res = await updateCourse(e);
-      console.log(res, "更新数据");
+      // const res = await updateCourse(e);
+      // console.log(res, "更新数据");
     } else {
       console.log("无数据");
     }
   } else {
-    const res = await createCourse(e);
+    console.log(e, "新建数据");
+    const res = await createSwiper(e);
     console.log(res, "新建数据");
   }
   closeDialog();
@@ -434,7 +392,7 @@ const handleDelSelection = (e) => {
       delt.push(value.projectpracticeCode);
     });
   }
-  DeleteCourseData(delt)
+  DeleteSwiperData(delt)
     .then((res) => {
       ElMessage.success("删除成功");
       getData(1, 0);
@@ -446,9 +404,9 @@ const handleDelSelection = (e) => {
 };
 // 删除相关
 const handleDelete = async (row) => {
-  //console.log(row, "删除");
-  const res = await DeleteCourseData(row.projectpracticeCode);
-  if (res.data.message == "success") {
+  console.log(row, "删除");
+  const res = await DeleteSwiperData(row.id);
+  if (res.code == 1) {
     ElMessage.success("删除成功");
   } else {
     ElMessage.error("删除失败");
@@ -458,4 +416,9 @@ const handleDelete = async (row) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+/* 增加遮罩层的 z-index */
+.el-overlay {
+  z-index: 9999 !important;
+}
+</style>

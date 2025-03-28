@@ -1,12 +1,12 @@
 import { Menus } from "@/types/menu";
 
 export const menuData: Menus[] = [
-  {
-    id: "0",
-    title: "首页",
-    index: "/404",
-    icon: "HomeFilled",
-  },
+  // {
+  //   id: "0",
+  //   title: "首页",
+  //   index: "/404",
+  //   icon: "HomeFilled",
+  // },
   {
     id: "0",
     icon: "WalletFilled",
