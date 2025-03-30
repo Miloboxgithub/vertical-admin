@@ -26,7 +26,7 @@
               visible = true;
               isEdit = false;
             "
-            >新增职位</el-button
+            >新增</el-button
           >
           <!-- <el-button type="success" @click="daochu()">
             <el-icon style="margin-right: 5px"
@@ -76,9 +76,16 @@ import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
 import {
+  changeIntership,
+  createIntership,
   SearchCourse,
   fetchInterShipData,
   fetchAdminData,
+  getIndustryType,
+  getBusinessNature,
+  getProvince,
+  getCity,
+  DeleteInterShipData
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
@@ -87,6 +94,7 @@ import { FormOption, FormOptionList } from "@/types/form-option";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { ElMessageBox } from "element-plus";
+import { inject } from 'vue';
 const router = useRouter();
 // const goTologon = () => {
 //   // 使用 router.push 方法进行页面跳转
@@ -188,7 +196,15 @@ const getData = async (e, p) => {
   //   }
   // ];
   // page.total = 4;
-tableData.value = ress.data.records;
+  
+  ress.data.records.forEach(item => {
+  item.deadline = item.deadline.split(' ')[0];
+})
+
+
+  tableData.value = ress.data.records;
+
+
 page.total = ress.data.total;
 
   componentKey.value++;
@@ -201,11 +217,12 @@ const handleSearch = async (queryData) => {
     getData(1, 0);
   } else {
     const ress = await SearchCourse(queryData.projectpracticeCode);
-    if (ress == null) {
+    if (ress.code != 1) {
       ElMessage.error("查询失败");
     } else {
-      tableData.value = ress.ProjectPracticeInfoList;
-      page.total = ress.total;
+      ElMessage.success("查询成功");
+      tableData.value = ress.data.records;
+      page.total = ress.data.total;
       componentKey.value++;
     }
   }
@@ -248,21 +265,218 @@ function getRecentYears(numYears) {
   }
   return years;
 }
+const industryTypeOptions = ref([])
+const businessNatureOptions = ref([])
 
+const locationOptions = ref([])
+  locationOptions.value = inject('locationOptions');
+    // newoptions.value.list[6].options = locationOptions.value;
+  console.log(locationOptions.value,'locationOptions')
+
+const getIndustryTypeOptions = async () => {
+  const res = await getIndustryType();
+  industryTypeOptions.value = res.data.map(item => ({
+    label: item.industryType,
+    value: item.id
+  }));
+  console.log(industryTypeOptions.value)
+  newoptions.value.list[2].options = industryTypeOptions.value
+};
+getIndustryTypeOptions();
+const getBusinessNatureOptions = async () => {
+  const res = await getBusinessNature();
+  businessNatureOptions.value = res.data.map(item => ({
+    label: item.businessNature,
+    value: item.id
+  }));
+  console.log(businessNatureOptions.value)
+  newoptions.value.list[3].options = businessNatureOptions.value
+};
+getBusinessNatureOptions();
 const recentYears = getRecentYears(4); // 获取最近3年
 // 新增/编辑弹窗相关
 let options = ref<FormOption>({
-  labelWidth: "140px",
-  span: 12,
+  labelWidth: "100px",
+  span: 16,
   list: [
-    
+  {
+      type: "input",
+      label: "公司名称",
+      prop: "companyName",
+      required: true,
+    },
+    {
+      type: "input",
+      label: "招聘岗位",
+      prop: "jobPosition",
+      required: true,
+    },
+    {
+      type: "select",
+      label: "行业类型",
+      prop: "industryTypeId",
+      required: true,
+      options: industryTypeOptions.value,
+    },{
+      type: "select",
+      label: "公司性质",
+      prop: "businessNatureId",
+      required: true,
+      options:businessNatureOptions.value ,
+    },{
+      type: "select",
+      label: "实习类型",
+      prop: "internshipType",
+      required: true,
+      options: [
+        { label: "线下", value: "线下" },
+        { label: "远程", value: "远程" },
+      ],
+    },
+    {
+      type: "date",
+      label: "截止时间",
+      prop: "deadline",
+      required: true
+    },{
+      type: "cascader",
+      label: "实习地点",
+      prop: "location",
+      required: true,
+      options: locationOptions.value,
+    },
+    {
+      type: "input1",
+      label: "岗位职责",
+      prop: "responsibility",
+      required: true,
+    },
+    {
+      type: "input1",
+      label: "岗位要求",
+      prop: "requirement",
+      required: true,
+    },
+    {
+      type: "input2",
+      label: "实习收获",
+      prop: "harvest",
+      required: true,
+    },
+    {
+      type: "input3",
+      label: "投递方式",
+      prop: "deliveryMethod",
+      required: true,
+    },
+    {
+      type: "input4",
+      label: "备注",
+      prop: "remark"
+    },
+    {
+      type: "uploaded",
+      label: "公司LOGO",
+      prop: "companyLogo",
+      required: true,
+    },
+    {
+      type: "uploads",
+      label: "资讯图片",
+      prop: "consultPhoto",
+    },
   ],
 });
 let newoptions = ref<FormOption>({
-  labelWidth: "140px",
-  span: 12,
+  labelWidth: "100px",
+  span: 16,
   list: [
-    
+  {
+      type: "input",
+      label: "公司名称",
+      prop: "companyName",
+      required: true,
+    },
+    {
+      type: "input",
+      label: "招聘岗位",
+      prop: "jobPosition",
+      required: true,
+    },
+    {
+      type: "select",
+      label: "行业类型",
+      prop: "industryTypeId",
+      required: true,
+      options: industryTypeOptions.value,
+    },{
+      type: "select",
+      label: "公司性质",
+      prop: "businessNatureId",
+      required: true,
+      options:businessNatureOptions.value ,
+    },{
+      type: "select",
+      label: "实习类型",
+      prop: "internshipType",
+      required: true,
+      options: [
+        { label: "线下", value: "线下" },
+        { label: "远程", value: "远程" },
+      ],
+    },
+    {
+      type: "date",
+      label: "截止时间",
+      prop: "deadline",
+      required: true
+    },{
+      type: "cascader",
+      label: "实习地点",
+      prop: "location",
+      required: true,
+      options: locationOptions.value,
+    },
+    {
+      type: "input1",
+      label: "岗位职责",
+      prop: "responsibility",
+      required: true,
+    },
+    {
+      type: "input1",
+      label: "岗位要求",
+      prop: "requirement",
+      required: true,
+    },
+    {
+      type: "input2",
+      label: "实习收获",
+      prop: "harvest",
+      required: true,
+    },
+    {
+      type: "input3",
+      label: "投递方式",
+      prop: "deliveryMethod",
+      required: true,
+    },
+    {
+      type: "input4",
+      label: "备注",
+      prop: "remark"
+    },
+    {
+      type: "uploaded",
+      label: "公司LOGO",
+      prop: "companyLogo",
+      required: true,
+    },
+    {
+      type: "uploads",
+      label: "资讯图片",
+      prop: "consultPhoto",
+    },
   ],
 });
 const visible = ref(false);
@@ -278,24 +492,28 @@ const handleEdit = (row: User) => {
 };
 
 const updateData = async (e) => {
-  e.selectEtime = formatDate(e.selectEtime);
-  e.selectStime = formatDate(e.selectStime);
-  e.titleEtime = formatDate(e.titleEtime);
-  e.titleStime = formatDate(e.titleStime);
+  //console.log(e, "数据kkk");
 
   if (isEdit.value) {
+    e.location = e.location[0]+'-'+e.location[1]
+    e.industryType = industryTypeOptions.value.find(item => item.value === e.industryTypeId).label
+    e.businessNature = businessNatureOptions.value.find(item => item.value === e.businessNatureId).label
     console.log(e, "编辑数据");
-
-    if ("projectpracticeCode" in rowData.value) {
-      e.projectpracticeCode = rowData.value.projectpracticeCode;
-      // const res = await updateCourse(e);
-      // console.log(res, "更新数据");
-    } else {
-      console.log("无数据");
+    const res = await changeIntership(e);
+    console.log(res, "编辑数据");
+    if(res.code==1){
+      ElMessage.success("编辑成功");
     }
   } else {
-    // const res = await createCourse(e);
-    // console.log(res, "新建数据");
+    e.location = e.location[0]+'-'+e.location[1]
+    e.industryType = industryTypeOptions.value.find(item => item.value === e.industryTypeId).label
+    e.businessNature = businessNatureOptions.value.find(item => item.value === e.businessNatureId).label
+    console.log(e, "新建数据");
+    const res = await createIntership(e);
+    console.log(res, "新建数据");
+    if(res.code==1){
+      ElMessage.success("新建成功");
+    }
   }
   closeDialog();
   setTimeout(() => {
@@ -345,13 +563,13 @@ const handleView = (row: User) => {
 
 // 删除相关
 const handleDelete = async (row) => {
-  //console.log(row, "删除");
-  // const res = await DeleteCourseData(row.projectpracticeCode);
-  // if (res.data.message == "success") {
-  //   ElMessage.success("删除成功");
-  // } else {
-  //   ElMessage.error("删除失败");
-  // }
+  console.log(row, "删除");
+  const res = await DeleteInterShipData(row.id);
+  if (res.code == 1) {
+    ElMessage.success("删除成功");
+  } else {
+    ElMessage.error("删除失败");
+  }
   getData(1, 0);
   page.index = 1;
 };

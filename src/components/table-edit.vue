@@ -46,6 +46,47 @@
             :disabled="item.disabled"
             :placeholder="item.placeholder"
             clearable
+            type="text"
+          ></el-input>
+          <el-input
+            v-if="item.type === 'input1'"
+            v-model="form[item.prop]"
+            :disabled="item.disabled"
+            :placeholder="item.placeholder"
+            clearable
+            maxlength="650"
+            type="textarea"
+            show-word-limit
+          ></el-input>
+          <el-input
+            v-if="item.type === 'input2'"
+            v-model="form[item.prop]"
+            :disabled="item.disabled"
+            :placeholder="item.placeholder"
+            clearable
+            maxlength="350"
+            type="textarea"
+            show-word-limit
+          ></el-input>
+          <el-input
+            v-if="item.type === 'input3'"
+            v-model="form[item.prop]"
+            :disabled="item.disabled"
+            :placeholder="item.placeholder"
+            clearable
+            maxlength="150"
+            type="textarea"
+            show-word-limit
+          ></el-input>
+          <el-input
+            v-if="item.type === 'input4'"
+            v-model="form[item.prop]"
+            :disabled="item.disabled"
+            :placeholder="item.placeholder"
+            clearable
+            maxlength="200"
+            type="textarea"
+            show-word-limit
           ></el-input>
           <el-date-picker
             v-else-if="item.type === 'datetimerange'"
@@ -137,6 +178,7 @@
             type="date"
             v-model="form[item.prop]"
             :value-format="item.format"
+            :disabled-date="disabledDate"
           ></el-date-picker>
           <el-switch
             v-else-if="item.type === 'switch'"
@@ -146,6 +188,11 @@
             :active-text="item.activeText"
             :inactive-text="item.inactiveText"
           ></el-switch>
+          <el-cascader
+            v-else-if="item.type === 'cascader'"
+            v-model="form[item.prop]"
+            :options="item.options"
+          ></el-cascader>
           <el-upload
             v-else-if="item.type === 'upload'"
             class="avatar-uploader"
@@ -164,6 +211,43 @@
               <Plus />
             </el-icon>
           </el-upload>
+          <el-upload
+            v-else-if="item.type === 'uploaded'"
+            class="avatar-uploader"
+            action="/api/internship/companyLogoUpload"
+            :headers="getHeaders()"
+            :show-file-list="false"
+            :on-success="handleLogoSuccess"
+          >
+            <img
+              v-if="form[item.prop]"
+              :src="form[item.prop]"
+              mode="widthFix"
+              class="avatar"
+            />
+            <el-icon v-else class="avatar-uploader-icon">
+              <Plus />
+            </el-icon>
+          </el-upload>
+          <el-upload
+            v-else-if="item.type === 'uploads'"
+            v-model:file-list="fileList"
+            action="/api/internship/consultPhotoUpload"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :on-success="handleConsultSuccess"
+            :headers="getHeaders()"
+          >
+            <el-icon><Plus /></el-icon>
+          </el-upload>
+
+          <el-dialog
+            v-else-if="item.type === 'uploads'"
+            v-model="dialogVisible"
+          >
+            <img w-full :src="dialogImageUrl" alt="Preview Image" />
+          </el-dialog>
           <slot :name="item.prop" v-else> </slot>
         </el-form-item>
       </el-col>
@@ -181,29 +265,7 @@ import { FormInstance, FormRules, UploadProps } from "element-plus";
 import { PropType, ref } from "vue";
 const numnum = ref(0);
 const inputname = ref("");
-const stableData = ref([
-  {
-    name: "张三",
-    sno: "20210001",
-    class: "1班",
-    phone: "12345678901",
-    major: "计算机科学与技术",
-  },
-  {
-    name: "李四",
-    sno: "20210002",
-    class: "1班",
-    phone: "12345678902",
-    major: "计算机科学与技术",
-  },
-  {
-    name: "王五",
-    sno: "20210003",
-    class: "1班",
-    phone: "12345678903",
-    major: "计算机科学与技术",
-  },
-]);
+const stableData = ref([]);
 const { options, formData, edit, update, edits } = defineProps({
   options: {
     type: Object as PropType<FormOption>,
@@ -226,6 +288,32 @@ const { options, formData, edit, update, edits } = defineProps({
     required: true,
   },
 });
+const fileList = ref([
+  // {
+  //   name: "food.jpeg",
+  //   url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
+  // }
+]);
+// fileList.value = []
+// console.log(fileList.value, "fileList.value");
+const fileConsult = ref([]);
+const dialogImageUrl = ref("");
+const dialogVisible = ref(false);
+
+const handleRemove: UploadProps["onRemove"] = (uploadFile, uploadFiles) => {
+  console.log(uploadFile.url, uploadFiles,fileConsult.value);
+  fileConsult.value = fileConsult.value.filter(url => url.url != uploadFile.url);
+  let ans = fileConsult.value[0].url.toString();
+    for (let i = 1; i < fileConsult.value.length; i++) {
+      ans += "|" + fileConsult.value[i].url.toString();
+    }
+    form.value["consultPhoto"] = ans.toString();
+};
+
+const handlePictureCardPreview: UploadProps["onPreview"] = (uploadFile) => {
+  dialogImageUrl.value = uploadFile.url!;
+  dialogVisible.value = true;
+};
 options.list.forEach((item) => {
   item.opts = [
     {
@@ -327,8 +415,35 @@ options.list.forEach((item) => {
   ];
 });
 const form = ref({ ...(edit ? formData : {}) });
-//console.log(form.value.password, "form.value");
-form.value.password = "";
+if(form.value.location)
+form.value.location = form.value.location.split("-");
+let qs = []
+if(form.value.consultPhoto)
+ qs = form.value.consultPhoto.split("|");
+if (qs.length > 1) {
+  qs.forEach((item) => {
+    fileConsult.value.push({
+      name: "123",
+      url: item,
+    });
+    fileList.value.push({
+      name: "123",
+      url: item,
+    });
+  });
+}
+else if(form.value.consultPhoto){
+  fileConsult.value.push({
+    name: "123",
+    url: form.value.consultPhoto,
+  });
+  fileList.value.push({
+    name: "123",
+    url: form.value.consultPhoto,
+  });
+}
+
+//console.log(form.value, "form.val");
 const rules: FormRules = options.list
   .map((item) => {
     if (item.required) {
@@ -389,17 +504,51 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 const getHeaders = () => {
   const token = localStorage.getItem("vuems_token"); // 假设 token 存储在 localStorage 中
   return {
-    'token': token,
+    token: token,
   };
 };
 const handleAvatarSuccess = (response: any, file: File) => {
   // 假设后端返回的数据格式为 { url: '图片链接' }
   console.log(response, "response");
-  if (response.code==1 && response.data) {
-    form.value['image'] = response.data;
+  if (response.code == 1 && response.data) {
+    form.value["image"] = response.data;
   } else {
-    console.error('上传失败或未返回链接');
+    console.error("上传失败或未返回链接");
   }
+};
+const handleLogoSuccess = (response: any, file: File) => {
+  // 假设后端返回的数据格式为 { url: '图片链接' }
+  console.log(response, "response");
+  if (response.code == 1 && response.data) {
+    form.value["companyLogo"] = response.data;
+  } else {
+    console.error("上传失败或未返回链接");
+  }
+};
+const handleConsultSuccess = (response: any, file: File) => {
+  // 假设后端返回的数据格式为 { url: '图片链接' }
+  console.log(response, "responsesssss", fileList.value, fileConsult.value);
+  if (response.code == 1 && response.data) {
+    //form.value["consultPhoto"] = response.data;
+    fileConsult.value.push({
+      name: file.name,
+      url: response.data,
+    });
+    console.log(fileList.value, "fileList.value", fileConsult.value);
+    let ans = fileConsult.value[0].url.toString();
+    for (let i = 1; i < fileConsult.value.length; i++) {
+      ans += "|" + fileConsult.value[i].url.toString();
+    }
+    form.value["consultPhoto"] = ans.toString();
+    console.log(form.value["consultPhoto"], "form.value.consultPhoto");
+  } else {
+    console.error("上传失败或未返回链接");
+  }
+};
+const disabledDate = (time) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // 将今天的时间设置为午夜，以便于比较日期
+  return time.getTime() < today.getTime(); // 如果传入的时间早于今天，则返回 true，禁用该日期
 };
 </script>
 
