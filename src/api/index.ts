@@ -1,6 +1,8 @@
 import axios from "axios";
 import request from "../utils/request";
 
+const baseUrl = "https://shixi.xydsh.cn";
+
 function formatDate(dateString) {
   if (!dateString) {
     return ""; // 或者返回一个默认值
@@ -179,10 +181,16 @@ export const fetchUserData = async (e, p) => {
 //分页获取举报信息
 export const fetchReportData = async (e, p) => {
   try {
-    let res = await axios.get(
+    let res = await axios.post(
       "/api/report/getReportList",
       {
+        page : e,
+        pageSize : 20
+      },
+      {
+        
         headers: {
+          
           token: localStorage.getItem("vuems_token"),
         },
       }
@@ -248,7 +256,7 @@ export const SearchCourse = async (e) => {
 //分页获取发布信息
 export const fetchInterShipData = async (e, p) => {
   try {
-    let res = await axios.post("/api/internship/selectByContent",{
+    let res = await axios.post("/api/internship/getByPage",{
       "page": e,
       "pageSize": 20
     } ,{
@@ -348,7 +356,6 @@ export const getCity = async (e) => {
         'Cache-Control': 'no-cache',
       },
     });
-
     //console.log('Response Data:', response.data);
     return response.data;
   } catch (error) {
@@ -358,12 +365,31 @@ export const getCity = async (e) => {
 }
 //新建实习
 export const createIntership = async (e) => {
-  console.log({
-    e
-  })
+  console.log(
+    {
+      "companyName": e.companyName,
+      "industryType": e.industryType,
+      "businessNature": e.businessNature,
+      "jobPosition": e.jobPosition,
+      "internshipType": e.internshipType,
+      "location": e.location,
+      "responsibility": e.responsibility,
+      "requirement": e.requirement,
+      "harvest": e.harvest,
+      "deliveryMethod": e.deliveryMethod,
+      "deadline": formatDates(e.deadline),
+      "companyLogo": e.companyLogo,
+      "consultPhoto": e.consultPhoto,
+      "pageview" : 0,
+      "weights" : e.weights,
+      "remark": e.remark,
+      "industryTypeId": e.industryTypeId,
+      "businessNatureId": e.businessNatureId
+    }
+  )
   try {
     let res = await axios.post(
-      "/api/internship/addInternship",
+      "/api/internship/admin/addInternship",
       {
         "companyName": e.companyName,
         "industryType": e.industryType,
@@ -379,7 +405,7 @@ export const createIntership = async (e) => {
         "companyLogo": e.companyLogo,
         "consultPhoto": e.consultPhoto,
         "pageview" : 0,
-        "weights" : 1,
+        "weights" : e.weights,
         "remark": e.remark,
         "industryTypeId": e.industryTypeId,
         "businessNatureId": e.businessNatureId
@@ -423,7 +449,7 @@ export const changeIntership = async (e) => {
   })
   try {
     let res = await axios.put(
-      "/api/internship/modifyById",
+      "/api/internship/adminModifyById",
       {
         id: e.id,
         "companyName": e.companyName,
@@ -440,10 +466,36 @@ export const changeIntership = async (e) => {
         "companyLogo": e.companyLogo,
         "consultPhoto": e.consultPhoto,
         "pageview" : 0,
-        "weights" : 1,
         "remark": e.remark,
         "industryTypeId": e.industryTypeId,
         "businessNatureId": e.businessNatureId
+      },
+      {
+        headers: {
+          token: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error.message);
+    //返回登录页
+    return error.message;
+  }
+};
+//修改实习
+export const changeWeights = async (e) => {
+  console.log({
+    id: e.id,
+    "weights" : e.weights,
+  })
+  try {
+    let res = await axios.put(
+      "/api/internship/updateWeights",
+      {
+        id: e.id,
+        "weights" : e.weights,
       },
       {
         headers: {
@@ -486,5 +538,67 @@ export const DeleteInterShipData = async (e) => {
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);
     return error;
+  }
+};
+//默认
+// export const morenPicture = async (e) => {
+//   try {
+//     let res = await axios.post(
+//       "/api/internship/addInternship",
+//       {
+//         "companyName": e.companyName,
+//         "industryType": e.industryType,
+//         "businessNature": e.businessNature,
+//         "jobPosition": e.jobPosition,
+//         "internshipType": e.internshipType,
+//         "location": e.location,
+//         "responsibility": e.responsibility,
+//         "requirement": e.requirement,
+//         "harvest": e.harvest,
+//         "deliveryMethod": e.deliveryMethod,
+//         "deadline": formatDates(e.deadline),
+//         "companyLogo": e.companyLogo,
+//         "consultPhoto": e.consultPhoto,
+//         "pageview" : 0,
+//         "weights" : 1,
+//         "remark": e.remark,
+//         "industryTypeId": e.industryTypeId,
+//         "businessNatureId": e.businessNatureId
+//       },
+//       {
+//         headers: {
+//           token: localStorage.getItem("vuems_token"),
+//         },
+//       }
+//     );
+
+//     return res.data;
+//   } catch (error) {
+//     console.error("Error fetching user data:", error.message);
+//     //返回登录页
+//     return error.message;
+//   }
+// };
+
+//修改实习
+export const updateStatus = async (e) => {
+  console.log({
+    e
+  })
+  try {
+    let res = await axios.put(
+      `/api/user/modifyUserStatus?id=${e.id}&status=${e.status}`,
+      {
+        headers: {
+           token: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error.message);
+    //返回登录页
+    return error.message;
   }
 };

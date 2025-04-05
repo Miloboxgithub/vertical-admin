@@ -127,7 +127,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             //   ];
             // permiss.handleSet(keys);
             // ElMessage.success("登录成功");
-            router.push("/");
+            router.push("/system-course");
             // 如果用户勾选了记住我，则保存登录参数
             if (checked.value) {
               localStorage.setItem("login-param", JSON.stringify(param));

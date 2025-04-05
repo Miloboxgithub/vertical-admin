@@ -7,7 +7,7 @@ import 'nprogress/nprogress.css';
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
-        redirect: '/system-course',
+        redirect: '/Login',
     },
     {
         path: '/',
@@ -339,7 +339,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-    history: createWebHashHistory('/sadmin'), // 设置基础路径
+    history: createWebHashHistory(import.meta.env.BASE_URL), // 设置基础路径
     routes
   });
 

@@ -116,7 +116,8 @@ let columns = ref([
   { type: "img", prop: "image",label: "图片"},
   { prop: "link", label: "链接" },
   { prop: "createTime", label: "创建时间" },
-  { prop: "weights", label: "点击量" },
+  { prop: "weights", label: "权重" },
+  { prop: "clicks", label: "点击量"},
   { prop: "operator1", label: "操作", width: 150 },
 ]);
 const page = reactive({

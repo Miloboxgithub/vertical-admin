@@ -109,6 +109,7 @@
             :disabled="item.disabled"
             :placeholder="item.placeholder"
             clearable
+            @change="handleChange($event, item.prop, form[item.prop])"
           >
             <el-option
               v-for="opt in item.options"
@@ -299,16 +300,19 @@ const fileList = ref([
 const fileConsult = ref([]);
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
-
 const handleRemove: UploadProps["onRemove"] = (uploadFile, uploadFiles) => {
-  console.log(uploadFile.url, uploadFiles,fileConsult.value);
-  fileConsult.value = fileConsult.value.filter(url => url.url != uploadFile.url);
+  console.log(uploadFile.url, uploadFiles, fileConsult.value);
+  fileConsult.value = fileConsult.value.filter(
+    (url) => url.url != uploadFile.url
+  );
   let ans = fileConsult.value[0].url.toString();
-    for (let i = 1; i < fileConsult.value.length; i++) {
-      ans += "|" + fileConsult.value[i].url.toString();
-    }
-    form.value["consultPhoto"] = ans.toString();
+  for (let i = 1; i < fileConsult.value.length; i++) {
+    ans += "|" + fileConsult.value[i].url.toString();
+  }
+  form.value["consultPhoto"] = ans.toString();
 };
+const lasts = ref([])
+lasts.value = options.list.filter((item) => item.prop == "location");
 
 const handlePictureCardPreview: UploadProps["onPreview"] = (uploadFile) => {
   dialogImageUrl.value = uploadFile.url!;
@@ -378,11 +382,11 @@ options.list.forEach((item) => {
   item.status = [
     {
       label: "正常",
-      value: "正常",
+      value: 1,
     },
     {
-      label: "不可预约",
-      value: "不可预约",
+      label: "禁用",
+      value: 0,
     },
   ];
   item.st = [
@@ -414,12 +418,17 @@ options.list.forEach((item) => {
     },
   ];
 });
+const updateDependentOptions = (mainProp) => {
+  console.log(mainProp);
+  console.log(options);
+  options.list = options.list.filter((item) => item.prop !== mainProp);
+};
+console.log(options, "options.list");
 const form = ref({ ...(edit ? formData : {}) });
-if(form.value.location)
-form.value.location = form.value.location.split("-");
-let qs = []
-if(form.value.consultPhoto)
- qs = form.value.consultPhoto.split("|");
+if(form.value.internshipType == "远程") {updateDependentOptions("location");}
+if (form.value.location) form.value.location = form.value.location.split("-");
+let qs = [];
+if (form.value.consultPhoto) qs = form.value.consultPhoto.split("|");
 if (qs.length > 1) {
   qs.forEach((item) => {
     fileConsult.value.push({
@@ -431,8 +440,7 @@ if (qs.length > 1) {
       url: item,
     });
   });
-}
-else if(form.value.consultPhoto){
+} else if (form.value.consultPhoto) {
   fileConsult.value.push({
     name: "123",
     url: form.value.consultPhoto,
@@ -443,6 +451,24 @@ else if(form.value.consultPhoto){
   });
 }
 
+const handleChange = (event, a, b) => {
+  console.log("事件对象：", event);
+  console.log("第一个自定义值：", a);
+  console.log("第二个自定义值：", b);
+  console.log(form.value, "form.val");
+  if (a == "internshipType") {
+    if (b == "远程") {
+      updateDependentOptions("location");
+    } else {
+      console.log(lasts.value)
+      const index = options.list.findIndex((user) => user.prop === a);
+      const f = options.list.findIndex((user) => user.prop === lasts.value[0].prop);
+      if (index !== -1 && f == -1) {
+        options.list.splice(index + 1, 0, ...lasts.value);
+      }
+    }
+  }
+};
 //console.log(form.value, "form.val");
 const rules: FormRules = options.list
   .map((item) => {
@@ -549,6 +575,65 @@ const disabledDate = (time) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0); // 将今天的时间设置为午夜，以便于比较日期
   return time.getTime() < today.getTime(); // 如果传入的时间早于今天，则返回 true，禁用该日期
+};
+const compressImage = (
+  file: File,
+  maxWidth: number,
+  maxHeight: number,
+  quality: number
+): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    // 将文件读取为 Data URL
+    reader.onload = (event) => {
+      img.src = event.target?.result as string;
+    };
+    reader.onerror = (error) => reject(error);
+    reader.readAsDataURL(file);
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // 计算压缩后的宽高
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth || height > maxHeight) {
+        if (width > height) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        } else {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+      }
+
+      // 设置 canvas 尺寸
+      canvas.width = width;
+      canvas.height = height;
+
+      // 绘制图片到 canvas 上
+      ctx?.drawImage(img, 0, 0, width, height);
+
+      // 将 canvas 转换为 Blob 格式
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error("Canvas to Blob failed"));
+          }
+        },
+        "image/jpeg", // 输出格式
+        quality // 压缩质量（0 到 1）
+      );
+    };
+
+    img.onerror = (error) => reject(error);
+  });
 };
 </script>
 

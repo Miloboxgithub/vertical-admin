@@ -14,8 +14,8 @@
         :editFunc="handleEdit"
       >
         <template #status="{ rows }">
-          <el-tag type="warning" v-if="rows.status == 0">未开始</el-tag>
-          <el-tag type="success" v-else-if="rows.status == 1">已开始</el-tag>
+          <el-tag type="warning" v-if="rows.status == 0">禁用</el-tag>
+          <el-tag type="success" v-else-if="rows.status == 1">正常</el-tag>
           <el-tag type="info" v-else>已停止</el-tag>
         </template>
         <template #toolbarBtn>
@@ -69,7 +69,7 @@ import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
 import {
   fetchUserData,
-  
+  updateStatus,
   SearchCourse,
   fetchAdminData,
 } from "@/api";
@@ -107,9 +107,10 @@ let columns = ref([
   { prop: "name", label: "名称" },
   { prop: "gender", label: "性别" },
   { prop: "location", label: "地区" },
-  //{ prop: "time", label: "注册时间" },
+  { prop: "createTime", label: "创建时间" },
   { prop: "publicNumber", label: "发布实习数量" },
-  //{ prop: "operator", label: "操作", width: 250 },
+  {prop: "status", label: "状态", slotName: "status" },
+  { prop: "forbid", label: "操作", width: 150 },
 ]);
 const page = reactive({
   index: 1,
@@ -166,6 +167,12 @@ const getData = async (e, p) => {
   //   }
   // ];
   // page.total = 4;
+  ress.data.records.forEach((item) => {
+    if(item.createTime){
+    const dateTime = item.createTime;
+    item.createTime = dateTime.replace("T", " ");
+    }
+  })
   tableData.value = ress.data.records;
   page.total = ress.data.total;
   componentKey.value++;
@@ -232,7 +239,12 @@ let options = ref<FormOption>({
   labelWidth: "140px",
   span: 12,
   list: [
-     
+  {
+      type: "status",
+      label: "用户状态",
+      prop: "status",
+      required: true,
+    },
   ],
 });
 let newoptions = ref<FormOption>({
@@ -263,13 +275,9 @@ const updateData = async (e) => {
   if (isEdit.value) {
     console.log(e, "编辑数据");
 
-    if ("projectpracticeCode" in rowData.value) {
-      e.projectpracticeCode = rowData.value.projectpracticeCode;
-      // const res = await updateCourse(e);
-      // console.log(res, "更新数据");
-    } else {
-      console.log("无数据");
-    }
+       const res = await updateStatus(e);
+       console.log(res, "更新数据");
+
   } else {
 
   }

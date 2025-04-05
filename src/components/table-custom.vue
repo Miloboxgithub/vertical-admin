@@ -82,14 +82,22 @@
           <template #default="{ row, column, $index }" v-if="!item.type">
             <slot :name="item.prop" :rows="row" :index="$index">
               <template v-if="item.prop == 'operator'">
-                <!-- <el-button
+                <el-button
+                  type="info"
+                  size="small"
+                  :icon="CopyDocument"
+                  @click="Copys(row)"
+                >
+                  一键复制
+                </el-button>
+                <el-button
                   type="warning"
                   size="small"
-                  :icon="View"
-                  @click="viewFunc(row)"
+                  :icon="EditPen"
+                  @click="editFuncss(row)"
                 >
-                  查看
-                </el-button> -->
+                  修改权重
+                </el-button>
                 <el-button
                   type="primary"
                   size="small"
@@ -135,6 +143,16 @@
                   删除
                 </el-button>
               </template>
+              <template v-if="item.prop == 'forbid'">
+                <el-button
+                  type="primary"
+                  size="small"
+                  :icon="Edit"
+                  @click="editFunc(row)"
+                >
+                  改变状态
+                </el-button>
+              </template>
               <span v-else-if="item.formatter">
                 {{ item.formatter(row[item.prop]) }}
               </span>
@@ -160,10 +178,14 @@
 
 <script setup lang="ts">
 import { toRefs, PropType, ref } from "vue";
-import { Delete, Edit, View, Refresh } from "@element-plus/icons-vue";
-import { ElMessageBox,ElImage } from "element-plus";
+import { Delete, Edit, View, Refresh ,CopyDocument,EditPen} from "@element-plus/icons-vue";
+import { ElMessageBox,ElImage,ElMessage } from "element-plus";
 import 'element-plus/dist/index.css';
+const dialogVisible = ref(false);
 
+function handleClose() {
+      console.log('Dialog closed');
+    }
 //app.use(ElImage);
 //import { fetchUserData } from "@/api";
 const props = defineProps({
@@ -218,6 +240,10 @@ const props = defineProps({
     type: Function,
     default: () => {},
   },
+  editFuncss: {
+    type: Function,
+    default: () => {},
+  },
   delSelection: {
     type: Function,
     default: () => {},
@@ -267,7 +293,6 @@ const tableData = ref(props.tableData);
 // const hasToolbar = ref(props.hasToolbar);
 // const hasPagination = ref(props.hasPagination);
 // const layout = ref(props.layout);
-
 // 设置默认值
 
 columns.value.forEach((item) => {
@@ -275,6 +300,7 @@ columns.value.forEach((item) => {
     item.visible = true;
   }
 });
+
 let isAscending=true
  let sortState = localStorage.getItem("sortState");
 const customSortMethod=()=> {
@@ -318,6 +344,48 @@ const handleDelete = (row) => {
 const getIndex = (index: number) => {
   return index + 1 + (currentPage.value - 1) * pageSize.value;
 };
+const Copys = (row) => {
+  console.log(row, "row");
+  const companyName = row.companyName || '公司名称未提供';
+  const jobPosition = row.jobPosition || '招聘岗位未提供';
+  const internshipType = row.internshipType || '实习类型未提供';
+  const location = row.location || '实习地点未提供';
+  const responsibility = row.responsibility || '岗位职责未提供';
+  const requirement = row.requirement || '岗位要求未提供';
+  const harvest = row.harvest || '实习收获未提供';
+  const deliveryMethod = row.deliveryMethod || '投递方式未提供';
+
+  // 将提取的信息按照指定格式组织成字符串
+  const textToCopy = `公司名称：${companyName}\n招聘岗位：${jobPosition}\n实习类型：${internshipType}\n实习地点：${location}\n岗位职责：${responsibility}\n岗位要求：${requirement}\n实习收获：${harvest}\n投递方式：${deliveryMethod}`;
+  // 创建一个临时的 textarea 元素
+  const textarea = document.createElement('textarea');
+      textarea.value = textToCopy;
+      
+      // 将 textarea 元素添加到文档中
+      document.body.appendChild(textarea);
+      
+      // 选择 textarea 中的文本
+      textarea.select();
+      textarea.setSelectionRange(0, 99999); // 对于移动设备，可能需要指定范围
+      
+      // 执行复制操作
+      const successful = document.execCommand('copy');
+      
+      // 从文档中移除 textarea 元素
+      document.body.removeChild(textarea);
+      
+      // 根据复制操作是否成功，给出提示
+      if (successful) {
+        ElMessage.success('复制成功');
+      } else {
+        ElMessage.error('复制失败');
+      }
+    
+}
+const changesWeight = (row) => {
+  console.log(row, "row");
+
+}
 //handleCurrentChange(1)
 </script>
 

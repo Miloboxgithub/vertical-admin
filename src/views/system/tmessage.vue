@@ -12,6 +12,7 @@
         :delFunc="handleDelete"
         :changePage="changePage"
         :editFunc="handleEdit"
+        :editFuncss = "handleEdits"
       >
         <template #status="{ rows }">
           <el-tag type="warning" v-if="rows.status == 0">未开始</el-tag>
@@ -24,10 +25,28 @@
             :icon="CirclePlusFilled"
             @click="
               visible = true;
-              isEdit = false;
+              isEdit = 0;
             "
             >新增</el-button
           >
+          <el-button
+      type="success"
+      :icon="CirclePlusFilled"
+      @click="triggerUpload"
+    >
+      默认资讯图片上传
+    </el-button>
+
+    <!-- 隐藏的 el-upload 组件 -->
+    <el-upload
+      ref="uploadRef"
+      action="/api/admin/defaultConsultPhotoUpload"
+      :on-success="handleConsultSuccess"
+      :headers="getHeaders()"
+      style="display: none;" 
+    >
+      <!-- 可以在这里添加额外的内容 -->
+    </el-upload>
           <!-- <el-button type="success" @click="daochu()">
             <el-icon style="margin-right: 5px"
               ><el-icon><UploadFilled /></el-icon
@@ -46,12 +65,30 @@
       @close="closeDialog"
       bu
     >
+    <div v-if="isEdit === 0">
       <TableEdit
         :form-data="rowData"
-        :options="isEdit ? options : newoptions"
-        :edit="isEdit"
+        :options="newoptions"
+        :edit="false"
         :update="updateData"
       />
+    </div>
+    <div v-else-if="isEdit === 1">
+      <TableEdit
+        :form-data="rowData"
+        :options="options"
+        :edit="true"
+        :update="updateData"
+      />
+    </div>
+    <div v-else-if="isEdit === 2">
+      <TableEdit
+        :form-data="rowData"
+        :options="oppp"
+        :edit="true"
+        :update="updateData"
+      />
+    </div>
     </el-dialog>
     <el-dialog
       title="查看详情"
@@ -68,6 +105,7 @@
       </TableDetail>
     </el-dialog>
   </div>
+  
 </template>
 
 <script setup lang="ts" name="system-user">
@@ -85,7 +123,8 @@ import {
   getBusinessNature,
   getProvince,
   getCity,
-  DeleteInterShipData
+  DeleteInterShipData,
+  changeWeights
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
@@ -118,8 +157,8 @@ let columns = ref([
   //{ type: "selection", width: 55, align: "center" },
   //{ prop: "ad", label: "序号", width: 55, align: "center" },
   { prop: "companyName", label: "公司名称", align: "center" , width: 200},
-  { prop: "industryTypeId", label: "职业ID", align: "center" },
-  { prop: "industryType", label: "职业类型", align: "center" },
+  { prop: "industryTypeId", label: "职位ID", align: "center" },
+  { prop: "industryType", label: "行业类型", align: "center" },
   { prop: "businessNature", label: "公司性质", align: "center" },
   { prop: "jobPosition", label: "招聘岗位" },
   { prop: "createTime", label: "提交时间" },
@@ -127,7 +166,7 @@ let columns = ref([
   { prop: "userAccount", label: "用户账号" },
   { prop: "weights", label: "权重" },
   { prop: "pageview", label: "浏览量" },
-  { prop: "operator", label: "操作", width: 200 },
+  { prop: "operator", label: "操作", width: 400 },
 ]);
 const page = reactive({
   index: 1,
@@ -281,6 +320,7 @@ const getIndustryTypeOptions = async () => {
   }));
   console.log(industryTypeOptions.value)
   newoptions.value.list[2].options = industryTypeOptions.value
+  options.value.list[2].options = industryTypeOptions.value
 };
 getIndustryTypeOptions();
 const getBusinessNatureOptions = async () => {
@@ -291,6 +331,7 @@ const getBusinessNatureOptions = async () => {
   }));
   console.log(businessNatureOptions.value)
   newoptions.value.list[3].options = businessNatureOptions.value
+  options.value.list[3].options = businessNatureOptions.value
 };
 getBusinessNatureOptions();
 const recentYears = getRecentYears(4); // 获取最近3年
@@ -314,13 +355,13 @@ let options = ref<FormOption>({
     {
       type: "select",
       label: "行业类型",
-      prop: "industryTypeId",
+      prop: "industryType",
       required: true,
       options: industryTypeOptions.value,
     },{
       type: "select",
       label: "公司性质",
-      prop: "businessNatureId",
+      prop: "businessNature",
       required: true,
       options:businessNatureOptions.value ,
     },{
@@ -334,16 +375,17 @@ let options = ref<FormOption>({
       ],
     },
     {
-      type: "date",
-      label: "截止时间",
-      prop: "deadline",
-      required: true
-    },{
       type: "cascader",
       label: "实习地点",
       prop: "location",
       required: true,
       options: locationOptions.value,
+    },
+    {
+      type: "date",
+      label: "截止时间",
+      prop: "deadline",
+      required: true
     },
     {
       type: "input1",
@@ -370,6 +412,12 @@ let options = ref<FormOption>({
       required: true,
     },
     {
+      type: "number",
+      label: "权重",
+      prop: "weights",
+      required: true,
+    },
+    {
       type: "input4",
       label: "备注",
       prop: "remark"
@@ -385,6 +433,19 @@ let options = ref<FormOption>({
       label: "资讯图片",
       prop: "consultPhoto",
     },
+  ],
+});
+let oppp = ref<FormOption>({
+  labelWidth: "100px",
+  span: 16,
+  list: [
+    {
+      type: "number",
+      label: "权重",
+      prop: "weights",
+      required: true,
+    },
+   
   ],
 });
 let newoptions = ref<FormOption>({
@@ -426,16 +487,17 @@ let newoptions = ref<FormOption>({
       ],
     },
     {
-      type: "date",
-      label: "截止时间",
-      prop: "deadline",
-      required: true
-    },{
       type: "cascader",
       label: "实习地点",
       prop: "location",
       required: true,
       options: locationOptions.value,
+    },
+    {
+      type: "date",
+      label: "截止时间",
+      prop: "deadline",
+      required: true
     },
     {
       type: "input1",
@@ -462,6 +524,12 @@ let newoptions = ref<FormOption>({
       required: true,
     },
     {
+      type: "number",
+      label: "权重",
+      prop: "weights",
+      required: true,
+    },
+    {
       type: "input4",
       label: "备注",
       prop: "remark"
@@ -481,31 +549,59 @@ let newoptions = ref<FormOption>({
 });
 const visible = ref(false);
 const visible2 = ref(false);
-const isEdit = ref(false);
+const isEdit = ref(0);
 const isEdits = ref(false);
 const rowData = ref({});
 const handleEdit = (row: User) => {
   rowData.value = { ...row };
-  isEdit.value = true;
+  isEdit.value = 1;
   visible.value = true;
   getData(1, 0);
 };
-
+const handleEdits = (row: User) => {
+  rowData.value = { ...row };
+  isEdit.value = 2;
+  visible.value = true;
+  getData(1, 0);
+};
+const getHeaders = () => {
+  const token = localStorage.getItem("vuems_token"); // 假设 token 存储在 localStorage 中
+  return {
+    token: token,
+  };
+};
+const uploadRef = ref(null); // 获取 el-upload 的实例
+const triggerUpload = () => {
+      if (uploadRef.value) {
+        // 手动触发文件选择框
+        uploadRef.value.$el.querySelector('input[type="file"]').click();
+      }
+    };
 const updateData = async (e) => {
   //console.log(e, "数据kkk");
 
-  if (isEdit.value) {
+  if (isEdit.value==1) {
+    if(e.location)
     e.location = e.location[0]+'-'+e.location[1]
+  else e.location = ""
     e.industryType = industryTypeOptions.value.find(item => item.value === e.industryTypeId).label
     e.businessNature = businessNatureOptions.value.find(item => item.value === e.businessNatureId).label
-    console.log(e, "编辑数据");
     const res = await changeIntership(e);
-    console.log(res, "编辑数据");
+    
     if(res.code==1){
       ElMessage.success("编辑成功");
     }
-  } else {
+  } else if (isEdit.value==2) {
+    const res = await changeWeights(e); 
+    if(res.code==1){
+      ElMessage.success("编辑成功");
+    }
+  }
+  
+  else {
+    if(e.location)
     e.location = e.location[0]+'-'+e.location[1]
+  else e.location = ""
     e.industryType = industryTypeOptions.value.find(item => item.value === e.industryTypeId).label
     e.businessNature = businessNatureOptions.value.find(item => item.value === e.businessNatureId).label
     console.log(e, "新建数据");
@@ -520,11 +616,19 @@ const updateData = async (e) => {
     getData(1, 0);
   }, 500);
 };
-
+const handleConsultSuccess = (response: any, file: File) => {
+  // 假设后端返回的数据格式为 { url: '图片链接' }
+  console.log(response, "responsesssss");
+  if (response.code == 1 && response.data) {
+    ElMessage.success("上传成功");
+  } else {
+    console.error("上传失败或未返回链接");
+  }
+};
 const closeDialog = () => {
   visible.value = false;
   visible2.value = false;
-  isEdit.value = false;
+  isEdit.value = 0;
 };
 
 // 查看详情弹窗相关
