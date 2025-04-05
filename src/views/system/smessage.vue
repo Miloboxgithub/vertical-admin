@@ -111,10 +111,12 @@ let columns = ref([
   //{ type: "selection", width: 55, align: "center" },
   //{ prop: "ad", label: "序号", width: 55, align: "center" },
   
-  { prop: "internshipId", label: "举报目标ID" },
-  { prop: "reason", label: "举报理由"},
-  { prop: "description", label: "举报详情" },
-  { type:'img',prop: "screenshot", label: "相关图片" },
+  { prop: "account", label: " 用户账号"},
+  {prop: "internshipId", label: "实习ID" },
+  { prop: "positionId", label: "职位ID" },
+  { prop: "reason", label: "举报原因"},
+  { prop: "description", label: "描述详情" },
+  { type:'img',prop: "screenshot", label: "相关截图" },
   { prop: "createTime", label: "举报时间" },
   { prop: "contactWay", label: "联系方式"},
   { prop: "operator1", label: "操作", width: 150 },
@@ -170,7 +172,8 @@ const getData = async (e, p) => {
   //   }
   // ];
   // page.total = 4;
-  tableData.value = ress.data;
+  tableData.value = ress.data.records;
+  page.total = ress.data.total;
   componentKey.value++;
   //console.log(ress, tableData.value, "tableData");
 };

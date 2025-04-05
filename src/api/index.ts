@@ -582,15 +582,18 @@ export const DeleteInterShipData = async (e) => {
 
 //修改实习
 export const updateStatus = async (e) => {
-  console.log({
-    e
-  })
+  console.log(e.id, e.status);
   try {
     let res = await axios.put(
-      `/api/user/modifyUserStatus?id=${e.id}&status=${e.status}`,
+      `/api/user/modifyUserStatus`, // 基础 URL
+      {}, // 空的请求体
       {
+        params: {
+          id: e.id,
+          status: e.status,
+        },
         headers: {
-           token: localStorage.getItem("vuems_token"),
+          token: localStorage.getItem("vuems_token"),
         },
       }
     );
@@ -598,7 +601,7 @@ export const updateStatus = async (e) => {
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error.message);
-    //返回登录页
+    // 返回登录页或其他处理逻辑
     return error.message;
   }
 };
