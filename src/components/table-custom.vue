@@ -79,6 +79,38 @@
               :preview-teleported="true"
             />
           </template>
+          <template
+            #default="{ row, column, $index }"
+            v-if="item.type === 'imgs'"
+          >
+            <el-image
+              v-if="row[item.prop1]"
+              :src="row[item.prop1]"
+              :preview-src-list="[row[item.prop1]]"
+              show-progress
+              fit="cover"
+              style="width: 50px; height: auto ;z-index: 9999"
+              :preview-teleported="true"
+            />
+            <el-image
+            v-if="row[item.prop2]"
+              :src="row[item.prop2]"
+              :preview-src-list="[row[item.prop2]]"
+              show-progress
+              fit="cover"
+              style="width: 50px;margin-right: 20px; margin-left: 20px; height: auto ;z-index: 9999"
+              :preview-teleported="true"
+            />
+            <el-image
+            v-if="row[item.prop3]"
+              :src="row[item.prop3]"
+              :preview-src-list="[row[item.prop3]]"
+              show-progress
+              fit="cover"
+              style="width: 50px; height: auto ;z-index: 9999"
+              :preview-teleported="true"
+            />
+          </template>
           <template #default="{ row, column, $index }" v-if="!item.type">
             <slot :name="item.prop" :rows="row" :index="$index">
               <template v-if="item.prop == 'operator'">

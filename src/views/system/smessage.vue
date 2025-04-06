@@ -116,7 +116,7 @@ let columns = ref([
   { prop: "positionId", label: "职位ID" },
   { prop: "reason", label: "举报原因"},
   { prop: "description", label: "描述详情" },
-  { type:'img',prop: "screenshot", label: "相关截图" },
+  { type:'imgs',prop1: "screenshot1", prop2: "screenshot2", prop3: "screenshot3", label: "相关截图" ,width: 250 },
   { prop: "createTime", label: "举报时间" },
   { prop: "contactWay", label: "联系方式"},
   { prop: "operator1", label: "操作", width: 150 },
@@ -172,6 +172,13 @@ const getData = async (e, p) => {
   //   }
   // ];
   // page.total = 4;
+  ress.data.records.forEach((item) => {
+    const urls = item.screenshot.split("|");
+    console.log(urls);
+    item.screenshot1 = urls[0];
+    item.screenshot2 = urls[1];
+    item.screenshot3 = urls[2];
+  })
   tableData.value = ress.data.records;
   page.total = ress.data.total;
   componentKey.value++;
