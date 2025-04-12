@@ -94,7 +94,7 @@ const router = useRouter();
 //   router.push("/login");
 //   ElMessage.error("获取数据失败");
 // };
-console.log(TableSearch.props, "search");
+//console.log(TableSearch.props, "search");
 const startTime = ref("");
 const endTime = ref("");
 // 查询相关
@@ -113,7 +113,6 @@ let columns = ref([
   
   { prop: "account", label: " 用户账号"},
   {prop: "internshipId", label: "实习ID" },
-  { prop: "positionId", label: "职位ID" },
   { prop: "reason", label: "举报原因"},
   { prop: "description", label: "描述详情" },
   { type:'imgs',prop1: "screenshot1", prop2: "screenshot2", prop3: "screenshot3", label: "相关截图" ,width: 250 },
@@ -174,7 +173,7 @@ const getData = async (e, p) => {
   // page.total = 4;
   ress.data.records.forEach((item) => {
     const urls = item.screenshot.split("|");
-    console.log(urls);
+    //console.log(urls);
     item.screenshot1 = urls[0];
     item.screenshot2 = urls[1];
     item.screenshot3 = urls[2];
@@ -182,7 +181,7 @@ const getData = async (e, p) => {
   tableData.value = ress.data.records;
   page.total = ress.data.total;
   componentKey.value++;
-  //console.log(ress, tableData.value, "tableData");
+  ////console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
 const handleSearch = async (queryData) => {
@@ -304,18 +303,18 @@ const updateData = async (e) => {
   e.titleStime = formatDate(e.titleStime);
 
   if (isEdit.value) {
-    console.log(e, "编辑数据");
+    //console.log(e, "编辑数据");
 
     if ("projectpracticeCode" in rowData.value) {
       e.projectpracticeCode = rowData.value.projectpracticeCode;
       // const res = await updateCourse(e);
-      // console.log(res, "更新数据");
+      // //console.log(res, "更新数据");
     } else {
-      console.log("无数据");
+      //console.log("无数据");
     }
   } else {
     // const res = await createCourse(e);
-    // console.log(res, "新建数据");
+    // //console.log(res, "新建数据");
   }
   closeDialog();
   setTimeout(() => {
@@ -381,7 +380,7 @@ const handleDelSelection = (e) => {
 };
 // 删除相关
 const handleDelete = async (row) => {
-  //console.log(row, "删除");
+  ////console.log(row, "删除");
   const res = await DeleteReportData(row.id);
   if (res.code == 1) {
     ElMessage.success("删除成功");

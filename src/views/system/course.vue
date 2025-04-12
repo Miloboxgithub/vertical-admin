@@ -95,7 +95,7 @@ const router = useRouter();
 //   router.push("/login");
 //   ElMessage.error("获取数据失败");
 // };
-console.log(TableSearch.props, "search");
+//console.log(TableSearch.props, "search");
 const startTime = ref("");
 const endTime = ref("");
 // 查询相关
@@ -172,7 +172,7 @@ const getData = async (e, p) => {
   page.total = ress.data.length;
 
   componentKey.value++;
-  //console.log(ress, tableData.value, "tableData");
+  ////console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
 
@@ -324,19 +324,19 @@ const handleEdit = (row: User) => {
 
 const updateData = async (e) => {
   if (isEdit.value) {
-    console.log(e, "编辑数据");
+    //console.log(e, "编辑数据");
 
     if ("projectpracticeCode" in rowData.value) {
       e.projectpracticeCode = rowData.value.projectpracticeCode;
       // const res = await updateCourse(e);
-      // console.log(res, "更新数据");
+      // //console.log(res, "更新数据");
     } else {
-      console.log("无数据");
+      //console.log("无数据");
     }
   } else {
-    console.log(e, "新建数据");
+    //console.log(e, "新建数据");
     const res = await createSwiper(e);
-    console.log(res, "新建数据");
+    //console.log(res, "新建数据");
   }
   closeDialog();
   setTimeout(() => {
@@ -405,7 +405,7 @@ const handleDelSelection = (e) => {
 };
 // 删除相关
 const handleDelete = async (row) => {
-  console.log(row, "删除");
+  //console.log(row, "删除");
   const res = await DeleteSwiperData(row.id);
   if (res.code == 1) {
     ElMessage.success("删除成功");

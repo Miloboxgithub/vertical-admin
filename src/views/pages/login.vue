@@ -116,7 +116,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         })
         .then((response) => {
           // 登录成功
-          console.log(response.data);
+          //console.log(response.data);
           if (response.data.code == 1) {
             ElMessage.success("登录成功");
             // localStorage.setItem("vuems_role", response.data.data.role);

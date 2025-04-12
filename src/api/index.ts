@@ -17,7 +17,7 @@ export const fetchSwiperData = async (e, p) => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data, "---");
+    //console.log(res.data, "---");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -27,13 +27,7 @@ export const fetchSwiperData = async (e, p) => {
 };
 //新建轮播图
 export const createSwiper = async (e) => {
-  console.log({
-    name: e.name,
-    image: e.image,
-    link: e.image,
-    clicks: 0,
-    weights: parseInt(e.weights),
-  })
+
   try {
     let res = await axios.post(
       "/api/carousel/addCarousel",
@@ -89,7 +83,7 @@ export const fetchAdminData = async (e, p) => {
         token: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data, "---");
+    //console.log(res.data, "---");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -99,18 +93,13 @@ export const fetchAdminData = async (e, p) => {
 };
 //新建管理员
 export const createAdmin = async (e) => {
-  console.log({
-    "account": e.account,
-    "password": e.password,
-    "name": e.name,
-  })
   try {
     let res = await axios.post(
       "/api/admin/add",
       {
-        "account": e.account,
-        "password": e.password,
-        "name": e.name,
+        account: e.account,
+        password: e.password,
+        name: e.name,
       },
       {
         headers: {
@@ -129,7 +118,7 @@ export const createAdmin = async (e) => {
 //删除管理员
 export const DeleteAdminData = async (e) => {
   try {
-    //console.log(e);
+    ////console.log(e);
     // 发起 POST 请求
     const response = await fetch(`/api/admin/delete/${e}`, {
       method: "DELETE", // 指定请求方法为 POST
@@ -145,7 +134,7 @@ export const DeleteAdminData = async (e) => {
 
     // 解析响应数据为 JSON
     const res = await response.json();
-    //console.log(res); // 输出获取到的数据
+    ////console.log(res); // 输出获取到的数据
 
     // 处理 result 数据
     // ...
@@ -170,7 +159,7 @@ export const fetchUserData = async (e, p) => {
         },
       }
     );
-    console.log(res.data, "user");
+    //console.log(res.data, "user");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -184,18 +173,16 @@ export const fetchReportData = async (e, p) => {
     let res = await axios.post(
       "/api/report/getReportList",
       {
-        page : e,
-        pageSize : 20
+        page: e,
+        pageSize: 20,
       },
       {
-        
         headers: {
-          
           token: localStorage.getItem("vuems_token"),
         },
       }
     );
-    console.log(res.data, "report");
+    //console.log(res.data, "report");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -206,7 +193,7 @@ export const fetchReportData = async (e, p) => {
 //删除举报信息
 export const DeleteReportData = async (e) => {
   try {
-    //console.log(e);
+    ////console.log(e);
     // 发起 POST 请求
     const response = await fetch(`/api/report/delReport/${e}`, {
       method: "DELETE", // 指定请求方法为 POST
@@ -222,7 +209,7 @@ export const DeleteReportData = async (e) => {
 
     // 解析响应数据为 JSON
     const res = await response.json();
-    //console.log(res); // 输出获取到的数据
+    ////console.log(res); // 输出获取到的数据
 
     // 处理 result 数据
     // ...
@@ -235,17 +222,12 @@ export const DeleteReportData = async (e) => {
 //查询发布信息
 export const SearchCourse = async (e) => {
   try {
-    let res = await axios.post("/api/internship/esSearch",{
-      "page": 1,
-      "pageSize": 100,
-      "content": e
-    } ,{
-      
+    let res = await axios.get(`/api/internship/select/${e}`, {
       headers: {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data, "iqi");
+    //console.log(res.data, "iqi");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error.message);
@@ -256,15 +238,19 @@ export const SearchCourse = async (e) => {
 //分页获取发布信息
 export const fetchInterShipData = async (e, p) => {
   try {
-    let res = await axios.post("/api/internship/getByPage",{
-      "page": e,
-      "pageSize": 20
-    } ,{
-      headers: {
-        Authorization: localStorage.getItem("vuems_token"),
+    let res = await axios.post(
+      "/api/internship/getByPage",
+      {
+        page: e,
+        pageSize: 20,
       },
-    });
-    console.log(res.data, "iii");
+      {
+        headers: {
+          Authorization: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
+    //console.log(res.data, "iii");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -281,7 +267,7 @@ export const getIndustryType = async () => {
         token: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data, "---");
+    //console.log(res.data, "---");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -297,7 +283,7 @@ export const getBusinessNature = async () => {
         token: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data, "---");
+    //console.log(res.data, "---");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -314,7 +300,7 @@ export const getProvince = async () => {
         token: localStorage.getItem("vuems_token"),
       },
     });
-    console.log(res.data, "---666");
+    //console.log(res.data, "---666");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -324,19 +310,19 @@ export const getProvince = async () => {
 };
 //获取城市
 // export const getCity = async (e) => {
-//   console.log(e);
+//   //console.log(e);
 //   e = e.toString();
-  
+
 //   try {
 //     const url = `/api/getCityByProvinceId/${e}`;
 //     let res = await axios.post(url,{
-      
+
 //       headers: {
 //         'Content-Type': 'application/json', // 设置Content-Type为application/json
 //         token: localStorage.getItem("vuems_token"),
 //       },
 //     });
-//     console.log(res, "ll---");
+//     //console.log(res, "ll---");
 //     return res.data;
 //   } catch (error) {
 //     console.error("Error fetching user data:", error);
@@ -348,67 +334,46 @@ export const getProvince = async () => {
 export const getCity = async (e) => {
   try {
     const response = await axios({
-      method: 'post',
+      method: "post",
       url: `/api/getCityByProvinceId/${e}`, // 确保这里的'1'是你想要查询的provinceId
       headers: {
-        'token':  localStorage.getItem("vuems_token"),
-        'Accept': '*/*',
-        'Cache-Control': 'no-cache',
+        token: localStorage.getItem("vuems_token"),
+        Accept: "*/*",
+        "Cache-Control": "no-cache",
       },
     });
-    //console.log('Response Data:', response.data);
+    ////console.log('Response Data:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error occurred:', error.message);
+    console.error("Error occurred:", error.message);
     throw error;
   }
-}
+};
 //新建实习
 export const createIntership = async (e) => {
-  console.log(
-    {
-      "companyName": e.companyName,
-      "industryType": e.industryType,
-      "businessNature": e.businessNature,
-      "jobPosition": e.jobPosition,
-      "internshipType": e.internshipType,
-      "location": e.location,
-      "responsibility": e.responsibility,
-      "requirement": e.requirement,
-      "harvest": e.harvest,
-      "deliveryMethod": e.deliveryMethod,
-      "deadline": formatDates(e.deadline),
-      "companyLogo": e.companyLogo,
-      "consultPhoto": e.consultPhoto,
-      "pageview" : 0,
-      "weights" : e.weights,
-      "remark": e.remark,
-      "industryTypeId": e.industryTypeId,
-      "businessNatureId": e.businessNatureId
-    }
-  )
+
   try {
     let res = await axios.post(
       "/api/internship/admin/addInternship",
       {
-        "companyName": e.companyName,
-        "industryType": e.industryType,
-        "businessNature": e.businessNature,
-        "jobPosition": e.jobPosition,
-        "internshipType": e.internshipType,
-        "location": e.location,
-        "responsibility": e.responsibility,
-        "requirement": e.requirement,
-        "harvest": e.harvest,
-        "deliveryMethod": e.deliveryMethod,
-        "deadline": formatDates(e.deadline),
-        "companyLogo": e.companyLogo,
-        "consultPhoto": e.consultPhoto,
-        "pageview" : 0,
-        "weights" : e.weights,
-        "remark": e.remark,
-        "industryTypeId": e.industryTypeId,
-        "businessNatureId": e.businessNatureId
+        companyName: e.companyName,
+        industryType: e.industryType,
+        businessNature: e.businessNature,
+        jobPosition: e.jobPosition,
+        internshipType: e.internshipType,
+        location: e.location,
+        responsibility: e.responsibility,
+        requirement: e.requirement,
+        harvest: e.harvest,
+        deliveryMethod: e.deliveryMethod,
+        deadline: formatDates(e.deadline),
+        companyLogo: e.companyLogo,
+        consultPhoto: e.consultPhoto,
+        pageview: 0,
+        weights: e.weights,
+        remark: e.remark,
+        industryTypeId: e.industryTypeId,
+        businessNatureId: e.businessNatureId,
       },
       {
         headers: {
@@ -433,42 +398,40 @@ function formatDates(dateStr) {
 
   // 格式化日期
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始计数
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  console.log(`${year}-${month}-${day} ${hours}:${minutes}:${seconds}`)
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // 月份从0开始计数
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  //console.log(`${year}-${month}-${day} ${hours}:${minutes}:${seconds}`);
   // 返回格式化后的日期字符串
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 //修改实习
 export const changeIntership = async (e) => {
-  console.log({
-    e
-  })
+
   try {
     let res = await axios.put(
       "/api/internship/adminModifyById",
       {
         id: e.id,
-        "companyName": e.companyName,
-        "industryType": e.industryType,
-        "businessNature": e.businessNature,
-        "jobPosition": e.jobPosition,
-        "internshipType": e.internshipType,
-        "location": e.location,
-        "responsibility": e.responsibility,
-        "requirement": e.requirement,
-        "harvest": e.harvest,
-        "deliveryMethod": e.deliveryMethod,
-        "deadline": formatDates(e.deadline),
-        "companyLogo": e.companyLogo,
-        "consultPhoto": e.consultPhoto,
-        "pageview" : 0,
-        "remark": e.remark,
-        "industryTypeId": e.industryTypeId,
-        "businessNatureId": e.businessNatureId
+        companyName: e.companyName,
+        industryType: e.industryType,
+        businessNature: e.businessNature,
+        jobPosition: e.jobPosition,
+        internshipType: e.internshipType,
+        location: e.location,
+        responsibility: e.responsibility,
+        requirement: e.requirement,
+        harvest: e.harvest,
+        deliveryMethod: e.deliveryMethod,
+        deadline: formatDates(e.deadline),
+        companyLogo: e.companyLogo,
+        consultPhoto: e.consultPhoto,
+        pageview: 0,
+        remark: e.remark,
+        industryTypeId: e.industryTypeId,
+        businessNatureId: e.businessNatureId,
       },
       {
         headers: {
@@ -486,16 +449,13 @@ export const changeIntership = async (e) => {
 };
 //修改实习
 export const changeWeights = async (e) => {
-  console.log({
-    id: e.id,
-    "weights" : e.weights,
-  })
+
   try {
     let res = await axios.put(
       "/api/internship/updateWeights",
       {
         id: e.id,
-        "weights" : e.weights,
+        weights: e.weights,
       },
       {
         headers: {
@@ -514,7 +474,7 @@ export const changeWeights = async (e) => {
 //删除举报信息
 export const DeleteInterShipData = async (e) => {
   try {
-    //console.log(e);
+    ////console.log(e);
     // 发起 POST 请求
     const response = await fetch(`/api/internship/deleteById/${e}`, {
       method: "DELETE", // 指定请求方法为 POST
@@ -530,7 +490,7 @@ export const DeleteInterShipData = async (e) => {
 
     // 解析响应数据为 JSON
     const res = await response.json();
-    //console.log(res); // 输出获取到的数据
+    ////console.log(res); // 输出获取到的数据
 
     // 处理 result 数据
     // ...
@@ -582,7 +542,7 @@ export const DeleteInterShipData = async (e) => {
 
 //修改实习
 export const updateStatus = async (e) => {
-  console.log(e.id, e.status);
+  //console.log(e.id, e.status);
   try {
     let res = await axios.put(
       `/api/user/modifyUserStatus`, // 基础 URL

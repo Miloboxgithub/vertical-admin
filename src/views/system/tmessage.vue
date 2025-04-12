@@ -15,9 +15,9 @@
         :editFuncss = "handleEdits"
       >
         <template #status="{ rows }">
-          <el-tag type="warning" v-if="rows.status == 0">未开始</el-tag>
-          <el-tag type="success" v-else-if="rows.status == 1">已开始</el-tag>
-          <el-tag type="info" v-else>已停止</el-tag>
+          <el-tag type="warning" v-if="rows.overTime == 2">审核中</el-tag>
+          <el-tag type="success" v-else-if="rows.overTime == 0">招募中</el-tag>
+          <el-tag type="info" v-else>已结束</el-tag>
         </template>
         <template #toolbarBtn>
           <el-button
@@ -140,7 +140,7 @@ const router = useRouter();
 //   router.push("/login");
 //   ElMessage.error("获取数据失败");
 // };
-console.log(TableSearch.props, "search");
+//console.log(TableSearch.props, "search");
 const startTime = ref("");
 const endTime = ref("");
 // 查询相关
@@ -148,7 +148,7 @@ const query = reactive({
   //name: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "查询：", prop: "projectpracticeCode" },
+  { type: "input", label: "实习ID查询：", prop: "internshipId" },
 ]);
 
 // 表格相关
@@ -157,7 +157,7 @@ let columns = ref([
   //{ type: "selection", width: 55, align: "center" },
   //{ prop: "ad", label: "序号", width: 55, align: "center" },
   { prop: "companyName", label: "公司名称", align: "center" , width: 200},
-  { prop: "industryTypeId", label: "职位ID", align: "center" },
+  { prop: "id", label: "实习ID", align: "center" },
   { prop: "industryType", label: "行业类型", align: "center" },
   { prop: "businessNature", label: "公司性质", align: "center" },
   { prop: "jobPosition", label: "招聘岗位" },
@@ -166,6 +166,7 @@ let columns = ref([
   { prop: "userAccount", label: "用户账号" },
   { prop: "weights", label: "权重" },
   { prop: "pageview", label: "浏览量" },
+  {prop: "status", label: "状态", slotName: "status" },
   { prop: "operator", label: "操作", width: 400 },
 ]);
 const page = reactive({
@@ -247,21 +248,23 @@ const getData = async (e, p) => {
 page.total = ress.data.total;
 
   componentKey.value++;
-  //console.log(ress, tableData.value, "tableData");
+  ////console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
 
 const handleSearch = async (queryData) => {
-  if (!queryData.projectpracticeCode) {
+  if (!queryData.internshipId) {
     getData(1, 0);
   } else {
-    const ress = await SearchCourse(queryData.projectpracticeCode);
+    const ress = await SearchCourse(queryData.internshipId);
     if (ress.code != 1) {
       ElMessage.error("查询失败");
     } else {
       ElMessage.success("查询成功");
-      tableData.value = ress.data.records;
-      page.total = ress.data.total;
+      let t = []
+      t.push(ress.data)
+      tableData.value = t;
+      page.total = 1;
       componentKey.value++;
     }
   }
@@ -310,7 +313,7 @@ const businessNatureOptions = ref([])
 const locationOptions = ref([])
   locationOptions.value = inject('locationOptions');
     // newoptions.value.list[6].options = locationOptions.value;
-  console.log(locationOptions.value,'locationOptions')
+  //console.log(locationOptions.value,'locationOptions')
 
 const getIndustryTypeOptions = async () => {
   const res = await getIndustryType();
@@ -318,7 +321,7 @@ const getIndustryTypeOptions = async () => {
     label: item.industryType,
     value: item.id
   }));
-  console.log(industryTypeOptions.value)
+  //console.log(industryTypeOptions.value)
   newoptions.value.list[2].options = industryTypeOptions.value
   options.value.list[2].options = industryTypeOptions.value
 };
@@ -329,7 +332,7 @@ const getBusinessNatureOptions = async () => {
     label: item.businessNature,
     value: item.id
   }));
-  console.log(businessNatureOptions.value)
+  //console.log(businessNatureOptions.value)
   newoptions.value.list[3].options = businessNatureOptions.value
   options.value.list[3].options = businessNatureOptions.value
 };
@@ -578,7 +581,7 @@ const triggerUpload = () => {
       }
     };
 const updateData = async (e) => {
-  //console.log(e, "数据kkk");
+  ////console.log(e, "数据kkk");
 
   if (isEdit.value==1) {
     if(e.location)
@@ -604,9 +607,9 @@ const updateData = async (e) => {
   else e.location = ""
     e.industryType = industryTypeOptions.value.find(item => item.value === e.industryTypeId).label
     e.businessNature = businessNatureOptions.value.find(item => item.value === e.businessNatureId).label
-    console.log(e, "新建数据");
+    //console.log(e, "新建数据");
     const res = await createIntership(e);
-    console.log(res, "新建数据");
+    //console.log(res, "新建数据");
     if(res.code==1){
       ElMessage.success("新建成功");
     }
@@ -618,7 +621,7 @@ const updateData = async (e) => {
 };
 const handleConsultSuccess = (response: any, file: File) => {
   // 假设后端返回的数据格式为 { url: '图片链接' }
-  console.log(response, "responsesssss");
+  //console.log(response, "responsesssss");
   if (response.code == 1 && response.data) {
     ElMessage.success("上传成功");
   } else {
@@ -667,7 +670,7 @@ const handleView = (row: User) => {
 
 // 删除相关
 const handleDelete = async (row) => {
-  console.log(row, "删除");
+  //console.log(row, "删除");
   const res = await DeleteInterShipData(row.id);
   if (res.code == 1) {
     ElMessage.success("删除成功");

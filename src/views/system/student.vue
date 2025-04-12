@@ -86,7 +86,7 @@ const router = useRouter();
 //   router.push("/login");
 //   ElMessage.error("获取数据失败");
 // };
-console.log(TableSearch.props, "search");
+//console.log(TableSearch.props, "search");
 const startTime = ref("");
 const endTime = ref("");
 // 查询相关
@@ -103,7 +103,7 @@ let columns = ref([
  // { type: "selection", width: 55, align: "center" },
   //{ prop: "ad", label: "序号", width: 55, align: "center" },
   { prop: "account", label: "用户账号", align: "center" },
-  { prop: "avatar", label: "头像", align: "center" },
+  { type:"img",prop: "avatar", label: "头像", align: "center" },
   { prop: "name", label: "名称" },
   { prop: "gender", label: "性别" },
   { prop: "location", label: "地区" },
@@ -176,7 +176,7 @@ const getData = async (e, p) => {
   tableData.value = ress.data.records;
   page.total = ress.data.total;
   componentKey.value++;
-  //console.log(ress, tableData.value, "tableData");
+  ////console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
 
@@ -273,10 +273,10 @@ const updateData = async (e) => {
   e.titleStime = formatDate(e.titleStime);
 
   if (isEdit.value) {
-    console.log(e, "编辑数据");
+    //console.log(e, "编辑数据");
 
        const res = await updateStatus(e);
-       console.log(res, "更新数据");
+       //console.log(res, "更新数据");
 
   } else {
 
@@ -329,7 +329,7 @@ const handleView = (row: User) => {
 
 // 删除相关
 const handleDelete = async (row) => {
-  //console.log(row, "删除");
+  ////console.log(row, "删除");
   //const res = await DeleteCourseData(row.projectpracticeCode);
  
   getData(1, 0);
