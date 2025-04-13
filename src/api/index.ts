@@ -191,12 +191,13 @@ export const fetchReportData = async (e, p) => {
   }
 };
 //删除举报信息
-export const DeleteReportData = async (e) => {
+export const DeleteReportData = async (e,d) => {
   try {
     ////console.log(e);
     // 发起 POST 请求
-    const response = await fetch(`/api/report/delReport/${e}`, {
+    const response = await fetch(`/api/report/delReport`, {
       method: "DELETE", // 指定请求方法为 POST
+      body: JSON.stringify({ id: e ,screenshot:d}), // 将数据作为请求体发送
       headers: {
         token: localStorage.getItem("vuems_token"),
       },
@@ -472,12 +473,13 @@ export const changeWeights = async (e) => {
   }
 };
 //删除举报信息
-export const DeleteInterShipData = async (e) => {
+export const DeleteInterShipData = async (e,a,b) => {
   try {
     ////console.log(e);
     // 发起 POST 请求
-    const response = await fetch(`/api/internship/deleteById/${e}`, {
+    const response = await fetch(`/api/internship/deleteById`, {
       method: "DELETE", // 指定请求方法为 POST
+      body: JSON.stringify({ id: e ,companyLogo:a, consultPhoto:b}), // 将数据作为请求体发送
       headers: {
         token: localStorage.getItem("vuems_token"),
       },

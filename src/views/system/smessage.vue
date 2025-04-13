@@ -12,7 +12,6 @@
         :delFunc="handleDelete"
         :changePage="changePage"
         :editFunc="handleEdit"
-        :delSelection="handleDelSelection"
       >
         <template #status="{ rows }">
           <el-tag type="warning" v-if="rows.status == 0">未开始</el-tag>
@@ -361,27 +360,27 @@ const handleView = (row: User) => {
   ];
   visible1.value = true;
 };
-const handleDelSelection = (e) => {
-  let delt = [];
-  if (e.length > 0) {
-    e.forEach((value) => {
-      delt.push(value.projectpracticeCode);
-    });
-  }
-  DeleteReportData(delt)
-    .then((res) => {
-      ElMessage.success("删除成功");
-      getData(1, 0);
-      page.index = 1;
-    })
-    .catch((err) => {
-      ElMessage.error("删除失败");
-    });
-};
+// const handleDelSelection = (e) => {
+//   let delt = [];
+//   if (e.length > 0) {
+//     e.forEach((value) => {
+//       delt.push(value.projectpracticeCode);
+//     });
+//   }
+//   DeleteReportData(delt)
+//     .then((res) => {
+//       ElMessage.success("删除成功");
+//       getData(1, 0);
+//       page.index = 1;
+//     })
+//     .catch((err) => {
+//       ElMessage.error("删除失败");
+//     });
+// };
 // 删除相关
 const handleDelete = async (row) => {
   ////console.log(row, "删除");
-  const res = await DeleteReportData(row.id);
+  const res = await DeleteReportData(row.id,row.screenshot);
   if (res.code == 1) {
     ElMessage.success("删除成功");
   } else {

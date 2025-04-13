@@ -671,7 +671,7 @@ const handleView = (row: User) => {
 // 删除相关
 const handleDelete = async (row) => {
   //console.log(row, "删除");
-  const res = await DeleteInterShipData(row.id);
+  const res = await DeleteInterShipData(row.id,row.companyLogo,row.consultPhoto);
   if (res.code == 1) {
     ElMessage.success("删除成功");
   } else {
