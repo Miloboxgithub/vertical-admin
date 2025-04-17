@@ -199,6 +199,7 @@ export const DeleteReportData = async (e,d) => {
       method: "DELETE", // 指定请求方法为 POST
       body: JSON.stringify({ id: e ,screenshot:d}), // 将数据作为请求体发送
       headers: {
+        "Content-Type": "application/json", // 明确指定请求体为 JSON 格式
         token: localStorage.getItem("vuems_token"),
       },
     });
@@ -481,6 +482,7 @@ export const DeleteInterShipData = async (e,a,b) => {
       method: "DELETE", // 指定请求方法为 POST
       body: JSON.stringify({ id: e ,companyLogo:a, consultPhoto:b}), // 将数据作为请求体发送
       headers: {
+        "Content-Type": "application/json", // 明确指定请求体为 JSON 格式
         token: localStorage.getItem("vuems_token"),
       },
     });

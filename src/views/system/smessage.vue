@@ -381,6 +381,7 @@ const handleView = (row: User) => {
 const handleDelete = async (row) => {
   ////console.log(row, "删除");
   const res = await DeleteReportData(row.id,row.screenshot);
+  console.log(res, "删除数据");
   if (res.code == 1) {
     ElMessage.success("删除成功");
   } else {

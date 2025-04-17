@@ -376,19 +376,33 @@ const handleDelete = (row) => {
 const getIndex = (index: number) => {
   return index + 1 + (currentPage.value - 1) * pageSize.value;
 };
+function getValueAfterDash(str) {
+  const parts = str.split("-");
+  if (parts.length > 1) {
+    return parts[1]; // 返回"-"后面的部分
+  } else {
+    return null; // 如果没有"-"，返回null
+  }
+}
+
 const Copys = (row) => {
   console.log(row, "row");
   const companyName = row.companyName || '公司名称未提供';
   const jobPosition = row.jobPosition || '招聘岗位未提供';
+  
   const internshipType = row.internshipType || '实习类型未提供';
   const location = row.location || '实习地点未提供';
+  let base=''
+  if(location!='实习地点未提供'){
+   base ="——base"+ getValueAfterDash(location)
+  }
   const responsibility = row.responsibility || '岗位职责未提供';
   const requirement = row.requirement || '岗位要求未提供';
   const harvest = row.harvest || '实习收获未提供';
   const deliveryMethod = row.deliveryMethod || '投递方式未提供';
 
   // 将提取的信息按照指定格式组织成字符串
-  const textToCopy = `公司名称：${companyName}\n招聘岗位：${jobPosition}\n实习类型：${internshipType}\n实习地点：${location}\n岗位职责：${responsibility}\n岗位要求：${requirement}\n实习收获：${harvest}\n投递方式：${deliveryMethod}`;
+  const textToCopy = `#${companyName}${jobPosition}${base}\n实习类型：${internshipType}\n实习地点：${getValueAfterDash(location)}\n【岗位职责】\n${responsibility}\n【岗位要求】\n${requirement}\n【实习收获】\n${harvest}\n【投递方式】\n${deliveryMethod}`;
   // 创建一个临时的 textarea 元素
   const textarea = document.createElement('textarea');
       textarea.value = textToCopy;
