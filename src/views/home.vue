@@ -5,6 +5,7 @@
         <div class="content-box" :class="{ 'content-collapse': sidebar.collapse }">
             <!-- <v-tabs></v-tabs> -->
             <div class="content">
+                
                 <router-view v-slot="{ Component }">
                     <transition name="move" mode="out-in">
                         <keep-alive :include="tabs.nameList">

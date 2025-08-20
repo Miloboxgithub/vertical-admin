@@ -117,6 +117,7 @@ import {
   changeIntership,
   createIntership,
   SearchCourse,
+  SearchCompanyName,
   fetchInterShipData,
   fetchAdminData,
   getIndustryType,
@@ -149,6 +150,9 @@ const query = reactive({
 });
 const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "实习ID查询：", prop: "internshipId" },
+  {
+    type: "input", label: "公司查询：", prop: "companyName" 
+  }
 ]);
 
 // 表格相关
@@ -253,10 +257,11 @@ page.total = ress.data.total;
 getData(1, 0);
 
 const handleSearch = async (queryData) => {
-  if (!queryData.internshipId) {
+  if (!queryData.internshipId&&!queryData.companyName) {
     getData(1, 0);
-  } else {
+  } else if(queryData.internshipId){
     const ress = await SearchCourse(queryData.internshipId);
+    console.log(ress,'9890')
     if (ress.code != 1) {
       ElMessage.error("查询失败");
     } else {
@@ -264,6 +269,20 @@ const handleSearch = async (queryData) => {
       let t = []
       t.push(ress.data)
       tableData.value = t;
+      page.total = 1;
+      componentKey.value++;
+    }
+  }
+  else{
+    const ress = await SearchCompanyName(queryData.companyName);
+    console.log(ress,'990')
+    if (ress.code != 1) {
+      ElMessage.error("查询失败");
+    } else {
+      ElMessage.success("查询成功");
+      // let t = []
+      // t.push(ress.data.records)
+      tableData.value = ress.data.records;
       page.total = 1;
       componentKey.value++;
     }

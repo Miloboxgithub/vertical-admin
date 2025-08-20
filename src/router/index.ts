@@ -3,7 +3,7 @@ import { usePermissStore } from '../store/permiss';
 import Home from '../views/home.vue';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-
+//配置路由规则
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
@@ -337,12 +337,11 @@ const routes: RouteRecordRaw[] = [
     },
     { path: '/:path(.*)', redirect: '/404' },
 ];
-
+//创建路由器
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL), // 设置基础路径
     routes
   });
-
 
   router.beforeEach((to, from, next) => {
     //   NProgress.start();

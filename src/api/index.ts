@@ -27,7 +27,6 @@ export const fetchSwiperData = async (e, p) => {
 };
 //新建轮播图
 export const createSwiper = async (e) => {
-
   try {
     let res = await axios.post(
       "/api/carousel/addCarousel",
@@ -191,13 +190,13 @@ export const fetchReportData = async (e, p) => {
   }
 };
 //删除举报信息
-export const DeleteReportData = async (e,d) => {
+export const DeleteReportData = async (e, d) => {
   try {
     ////console.log(e);
     // 发起 POST 请求
     const response = await fetch(`/api/report/delReport`, {
       method: "DELETE", // 指定请求方法为 POST
-      body: JSON.stringify({ id: e ,screenshot:d}), // 将数据作为请求体发送
+      body: JSON.stringify({ id: e, screenshot: d }), // 将数据作为请求体发送
       headers: {
         "Content-Type": "application/json", // 明确指定请求体为 JSON 格式
         token: localStorage.getItem("vuems_token"),
@@ -233,6 +232,30 @@ export const SearchCourse = async (e) => {
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error.message);
+    //返回登录页
+    return error.message;
+  }
+};
+//根据公司名查找
+export const SearchCompanyName = async (e) => {
+  try {
+    let res = await axios.post(
+      "/api/internship/getByCompanyName",
+      {
+        content: e, // 必需：要搜索的公司名称（支持模糊匹配）
+        page: 1, // 可选：页码，从1开始
+        pageSize: 10, // 可选：每页显示的记录数
+      },
+      {
+        headers: {
+          token: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
+    console.log(res.data, "iqi");
+    return res.data;
+  } catch (error) {
+    console.error( error.message);
     //返回登录页
     return error.message;
   }
@@ -353,7 +376,6 @@ export const getCity = async (e) => {
 };
 //新建实习
 export const createIntership = async (e) => {
-
   try {
     let res = await axios.post(
       "/api/internship/admin/addInternship",
@@ -411,7 +433,6 @@ function formatDates(dateStr) {
 }
 //修改实习
 export const changeIntership = async (e) => {
-
   try {
     let res = await axios.put(
       "/api/internship/adminModifyById",
@@ -451,7 +472,6 @@ export const changeIntership = async (e) => {
 };
 //修改实习
 export const changeWeights = async (e) => {
-
   try {
     let res = await axios.put(
       "/api/internship/updateWeights",
@@ -474,13 +494,13 @@ export const changeWeights = async (e) => {
   }
 };
 //删除举报信息
-export const DeleteInterShipData = async (e,a,b) => {
+export const DeleteInterShipData = async (e, a, b) => {
   try {
     ////console.log(e);
     // 发起 POST 请求
     const response = await fetch(`/api/internship/deleteById`, {
       method: "DELETE", // 指定请求方法为 POST
-      body: JSON.stringify({ id: e ,companyLogo:a, consultPhoto:b}), // 将数据作为请求体发送
+      body: JSON.stringify({ id: e, companyLogo: a, consultPhoto: b }), // 将数据作为请求体发送
       headers: {
         "Content-Type": "application/json", // 明确指定请求体为 JSON 格式
         token: localStorage.getItem("vuems_token"),
